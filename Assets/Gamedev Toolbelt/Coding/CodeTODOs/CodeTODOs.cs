@@ -15,7 +15,7 @@ public class CodeTODOs : EditorWindow
     // Constants used in more than one method.
     private const int BUTTON_WIDTH = 100;    
 
-    [MenuItem("Gamedev toolbelt/CodeTODOs")]
+    [MenuItem("Gamedev Toolbelt/CodeTODOs")]
     public static void Init()
     {
         // Get existing open window or if none, make a new one.
