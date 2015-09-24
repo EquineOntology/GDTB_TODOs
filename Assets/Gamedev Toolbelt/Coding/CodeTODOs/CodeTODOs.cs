@@ -13,13 +13,16 @@ public class CodeTODOs : EditorWindow
     private List<string> _qqqTasks = new List<string>();
 
     // Constants used in more than one method.
-    private const int BUTTON_WIDTH = 100;    
+    private const int BUTTON_WIDTH = 100;   
 
+    private const int EDITOR_WINDOW_MINSIZE_X = 300;
+    private const int EDITOR_WINDOW_MINSIZE_Y = 300;
     [MenuItem("Gamedev Toolbelt/CodeTODOs")]
     public static void Init()
     {
         // Get existing open window or if none, make a new one.
         CodeTODOs window = (CodeTODOs)EditorWindow.GetWindow(typeof(CodeTODOs));
+        window.minSize = new Vector2(EDITOR_WINDOW_MINSIZE_X, EDITOR_WINDOW_MINSIZE_Y);        
         window.Show();
     }
 
