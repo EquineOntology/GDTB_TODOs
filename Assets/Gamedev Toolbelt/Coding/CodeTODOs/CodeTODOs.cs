@@ -5,30 +5,52 @@ using System.Collections.Generic;
 
 public class CodeTODOs : EditorWindow
 {
-    // QQQ variables used in more than one method.
+    // ====================================================================
+    // ============== Variables used in more than one method ==============
+    // ====================================================================          
     //public ReorderableList _reorderableQQQs;
     public List<QQQ> _qqqs = new List<QQQ>();
     //private List<int> _priorities = new List<int>();
     private List<string> _qqqScripts = new List<string>();
     private List<string> _qqqTasks = new List<string>();
 
-    // Constants used in more than one method.
-    private const int BUTTON_WIDTH = 100;   
-
+    // ====================================================================
+    // =========================== Editor stuff ===========================
+    // ==================================================================== 
+    private const int BUTTON_WIDTH = 100;
     private const int EDITOR_WINDOW_MINSIZE_X = 300;
     private const int EDITOR_WINDOW_MINSIZE_Y = 300;
+    private const string WINDOW_TITLE = "CodeTODOs";
+    private GUISkin _GDTBSkin;
+     
+    // ====================================================================
+    // ======================= Class functionality ========================
+    // ==================================================================== 
     [MenuItem("Gamedev Toolbelt/CodeTODOs")]
     public static void Init()
     {
         // Get existing open window or if none, make a new one.
         CodeTODOs window = (CodeTODOs)EditorWindow.GetWindow(typeof(CodeTODOs));
-        window.minSize = new Vector2(EDITOR_WINDOW_MINSIZE_X, EDITOR_WINDOW_MINSIZE_Y);        
+        window.title = WINDOW_TITLE;
+        window.minSize = new Vector2(EDITOR_WINDOW_MINSIZE_X, EDITOR_WINDOW_MINSIZE_Y);    
         window.Show();
     }
 
     public void OnEnable()
     {
         UpdateEditorPrefs();
+        if(_GDTBSkin == null)
+        {
+            //var todoType = ScriptableObject.FindObjectOfType(typeof(CodeTodos))
+            _GDTBSkin = GDTB_IOUtils.GetGUISkin();
+            GUI.skin = _GDTBSkin; 
+        }
+        else
+        {
+            GUI.skin = _GDTBSkin;
+
+        }
+        
         _showOptions = new AnimBool(false);
         _qqqs = CodeTODOsHelper.CheckAllScriptsForQQQs(out _qqqTasks, out _qqqScripts);
         /*_reorderableQQQs = new ReorderableList(_qqqs, typeof(QQQ), true, true, true, true);
