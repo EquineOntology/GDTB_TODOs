@@ -41,7 +41,7 @@ public static class GDTB_IOUtils {
             }
             catch (System.Exception ex)
             {
-                Debug.LogError(ex);
+                //Debug.LogError(ex);
             }
             string[] files = null;
             try
@@ -50,7 +50,7 @@ public static class GDTB_IOUtils {
             }
             catch (System.Exception ex)
             {
-                Debug.LogError(ex);
+                //Debug.LogError(ex);
             }
             if (files != null)
             {
@@ -64,7 +64,7 @@ public static class GDTB_IOUtils {
             }
         }
         var relativePath = absolutePath.Remove(0, projectDirectoryPath.Length + 1);
-        Debug.Log(relativePath);
+        //Debug.Log(relativePath);
         return relativePath;
     }
 }
