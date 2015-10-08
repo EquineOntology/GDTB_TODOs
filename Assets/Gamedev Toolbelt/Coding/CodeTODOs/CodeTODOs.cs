@@ -18,6 +18,7 @@ public class CodeTODOs : EditorWindow
     // =========================== Editor stuff ===========================
     // ====================================================================
     private const int BUTTON_WIDTH = 100;
+    private const int BOX_WIDTH = 400;
     private const int EDITOR_WINDOW_MINSIZE_X = 300;
     private const int EDITOR_WINDOW_MINSIZE_Y = 300;
     private const string WINDOW_TITLE = "CodeTODOs";
@@ -75,6 +76,7 @@ public class CodeTODOs : EditorWindow
             GUI.skin = _GDTBSkin;
         }
         EditorGUILayout.BeginVertical();
+        GUILayout.Space(10);
         DrawQQQList();
         EditorGUILayout.Space();
         DrawListButton();
@@ -83,25 +85,55 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndVertical();
     }
 
-    private const int BOX_WIDTH = 400;
+    // The horizontal and vertical space reserved for each character in a label.
+    private float _characterWidthCoefficient = 3f;
+    private float _characterHeightCoefficient = 15.0f;
     private void DrawQQQList()
     {
         EditorGUILayout.BeginVertical();
 
-        for(int i= 0; i< _qqqs.Count; i++)
+        for (int i = 0; i < _qqqs.Count; i++)
         {
-            EditorGUILayout.BeginHorizontal(EditorStyles.helpBox, GUILayout.Width(BOX_WIDTH));
+            // Calculate how high the box must be to accomodate the task & script.
+            var taskLines = ((_qqqs[i].Task.Length / _charsBeforeNewline) > 0) && _cutoffSwitch == false ? (_qqqs[i].Task.Length / _charsBeforeNewline) + 1 : 1;
+            var taskHeight = taskLines * _characterHeightCoefficient * 1.1f;
+            var scriptLines = ((_qqqs[i].Script.Length / _charsBeforeNewline) > 0) && _cutoffSwitch == false ? (_qqqs[i].Script.Length / _charsBeforeNewline) + 1 : 1;
+            var scriptHeight = scriptLines * _characterHeightCoefficient;
+            var boxHeight = taskHeight + scriptHeight;
 
+            EditorGUILayout.BeginHorizontal(EditorStyles.helpBox, GUILayout.Height(boxHeight));
             EditorGUILayout.BeginVertical();
 
             EditorGUILayout.BeginHorizontal();
             GUILayout.Space(10);
-            EditorGUILayout.LabelField(_qqqs[i].Task, EditorStyles.boldLabel, GUILayout.Width(BOX_WIDTH - 20));
+
+            // Build correctly formatted "task" label.
+            // The number of characters before a newline is reduced to account for the bold label style.
+            string taskLabel;
+            if (_cutoffSwitch == true)
+            {
+                taskLabel = CodeTODOsHelper.GetStringEnd(_qqqs[i].Task, _charsBeforeNewline - 8);
+            }
+            else
+            {
+                taskLabel = CodeTODOsHelper.DivideStringWithNewlines(_qqqs[i].Task, _charsBeforeNewline - 8);
+            }
+            EditorGUILayout.LabelField(taskLabel, EditorStyles.boldLabel, GUILayout.Height(taskHeight));
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.LabelField("In \"" + _qqqs[i].Script + "\".", GUILayout.Width(BOX_WIDTH - 20));
+
+            // Build correctly formatted "script" label.
+            string scriptLabel;
+            if (_cutoffSwitch == true)
+            {
+                scriptLabel = "In \"..." + CodeTODOsHelper.GetStringEnd(_qqqs[i].Script, _charsBeforeNewline) + "\"";
+            }
+            else
+            {
+                scriptLabel = "In \"" + CodeTODOsHelper.DivideStringWithNewlines(_qqqs[i].Script, _charsBeforeNewline) + "\"";
+            }
+            EditorGUILayout.LabelField(scriptLabel, GUILayout.Height(scriptHeight));
 
             EditorGUILayout.EndVertical();
-
             EditorGUILayout.EndHorizontal();
         }
 
@@ -136,13 +168,13 @@ public class CodeTODOs : EditorWindow
 
     // Cutoff or newline
     public const string PREFS_CODETODOS_CUTOFF = "GDTB_CodeTODOs_Cutoff";
-    private bool _cutoffSwitch = false;
-    private bool _oldCutoffSwitchValue = false;
+    private bool _cutoffSwitch = true;
+    private bool _oldCutoffSwitchValue = true;
 
     // Characters in QQQs before newline/cutoff
     public const string PREFS_CODETODOS_CHARS_BEFORE_NEWLINE = "GDTB_CodeTODOs_CharsBeforeNewline";
-    private int _charsBeforeNewline = 60;
-    private int _oldCharsBeforeNewlineValue = 60;
+    private int _charsBeforeNewline = 40;
+    private int _oldCharsBeforeNewlineValue = 50;
 
     private AnimBool _showOptions;
 
