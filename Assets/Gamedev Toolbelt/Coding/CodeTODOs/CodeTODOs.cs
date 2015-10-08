@@ -86,7 +86,6 @@ public class CodeTODOs : EditorWindow
     }
 
     // The horizontal and vertical space reserved for each character in a label.
-    private float _characterWidthCoefficient = 3f;
     private float _characterHeightCoefficient = 15.0f;
     private void DrawQQQList()
     {
