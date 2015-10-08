@@ -8,7 +8,7 @@ public static class CodeTODOsHelper
     public static List<string> FindAllScripts()
     {
         var allAssets = AssetDatabase.GetAllAssetPaths();
-        var allScripts = new List<string>();
+        var allScripts = new List<string> ();
 
         foreach (var path in allAssets)
         {
