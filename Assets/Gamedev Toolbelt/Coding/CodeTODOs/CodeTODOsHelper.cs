@@ -1,5 +1,4 @@
 ﻿using UnityEditor;
-using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 
@@ -34,13 +33,14 @@ public static class CodeTODOsHelper
 
             for(int i = 0; i < QQQsInScript.Count; i++)
             {
-                // Since the string "QQQ" is repeated many times in these three files listed, its default value would give
+                // Since the string "QQQ" is repeated many times in the files listed, its default value would give
                 // a bunch of false positives in these files. So either the token doesn't use the default value,
-                // or we exclude these three files from the collection.
+                // or we exclude these files from the collection.
                 if (!script.EndsWith("CodeTODOs.cs") &&
                     !script.EndsWith("CodeTODOsHelper.cs") &&
                     !script.EndsWith("QQQ.cs") &&
-                    !script.EndsWith("GamedevToolbelt.cs"))
+                    !script.EndsWith("GamedevToolbelt.cs") &&
+                    !script.EndsWith("CodeTODOsPrefs.cs"))
                 {
                     scripts.Add(script);
                     qqqTasks.Add(QQQsInScript[i]);
@@ -66,11 +66,11 @@ public static class CodeTODOsHelper
         for (int i = 0; i < lines.Length; i++)
         {
             completeQQQ = "";
-            if (lines[i].Contains(CodeTODOs.TODOToken))
+            if (lines[i].Contains(CodeTODOsPrefs.TODOToken))
             {
-                var index = lines[i].IndexOf(CodeTODOs.TODOToken);
+                var index = lines[i].IndexOf(CodeTODOsPrefs.TODOToken);
                 var tempString = lines[i].Substring(index);
-                tempString = tempString.Substring(CodeTODOs.TODOToken.Length);
+                tempString = tempString.Substring(CodeTODOsPrefs.TODOToken.Length);
                 tempString.Trim();
                 completeQQQ += tempString;
 

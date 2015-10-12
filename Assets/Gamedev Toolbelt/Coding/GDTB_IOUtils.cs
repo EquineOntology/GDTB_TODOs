@@ -39,7 +39,7 @@ public static class GDTB_IOUtils {
                     q.Enqueue(subDir);
                 }
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
                 //Debug.LogError(ex);
             }
@@ -48,7 +48,7 @@ public static class GDTB_IOUtils {
             {
                 files = Directory.GetFiles(path);
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
                 //Debug.LogError(ex);
             }
