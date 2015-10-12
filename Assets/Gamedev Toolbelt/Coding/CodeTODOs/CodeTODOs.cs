@@ -8,7 +8,7 @@ public class CodeTODOs : EditorWindow
     // ============== Variables used in more than one method ==============
     // ====================================================================
     //public ReorderableList _reorderableQQQs;
-    public List<QQQ> _qqqs = new List<QQQ>();
+    public static List<QQQ> QQQs = new List<QQQ>();
     //private List<int> _priorities = new List<int>();
     private List<string> _qqqScripts = new List<string>();
     private List<string> _qqqTasks = new List<string>();
@@ -50,7 +50,7 @@ public class CodeTODOs : EditorWindow
             _GUISkinWasAssigned = true;
         }
 
-        _qqqs = CodeTODOsHelper.CheckAllScriptsForQQQs(out _qqqTasks, out _qqqScripts);
+        QQQs = CodeTODOsHelper.GetQQQsFromAllScripts(out _qqqTasks, out _qqqScripts);
         /*_reorderableQQQs = new ReorderableList(_qqqs, typeof(QQQ), true, true, true, true);
 
         _reorderableQQQs.drawElementBackgroundCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
@@ -86,12 +86,12 @@ public class CodeTODOs : EditorWindow
     {
         EditorGUILayout.BeginVertical();
 
-        for (int i = 0; i < _qqqs.Count; i++)
+        for (int i = 0; i < QQQs.Count; i++)
         {
             // Calculate how high the box must be to accomodate the task & script.
-            var taskLines = ((_qqqs[i].Task.Length / CodeTODOsPrefs.CharsBeforeNewline) > 0) && CodeTODOsPrefs.CutoffSwitch == false ? (_qqqs[i].Task.Length / CodeTODOsPrefs.CharsBeforeNewline) + 1 : 1;
+            var taskLines = ((QQQs[i].Task.Length / CodeTODOsPrefs.CharsBeforeNewline) > 0) && CodeTODOsPrefs.CutoffSwitch == false ? (QQQs[i].Task.Length / CodeTODOsPrefs.CharsBeforeNewline) + 1 : 1;
             var taskHeight = taskLines * _characterHeightCoefficient * 1.1f;
-            var scriptLines = ((_qqqs[i].Script.Length / CodeTODOsPrefs.CharsBeforeNewline) > 0) && CodeTODOsPrefs.CutoffSwitch == false ? (_qqqs[i].Script.Length / CodeTODOsPrefs.CharsBeforeNewline) + 1 : 1;
+            var scriptLines = ((QQQs[i].Script.Length / CodeTODOsPrefs.CharsBeforeNewline) > 0) && CodeTODOsPrefs.CutoffSwitch == false ? (QQQs[i].Script.Length / CodeTODOsPrefs.CharsBeforeNewline) + 1 : 1;
             var scriptHeight = scriptLines * _characterHeightCoefficient;
             var boxHeight = taskHeight + scriptHeight;
 
@@ -106,11 +106,11 @@ public class CodeTODOs : EditorWindow
             string taskLabel;
             if (CodeTODOsPrefs.CutoffSwitch == true)
             {
-                taskLabel = CodeTODOsHelper.GetStringEnd(_qqqs[i].Task, CodeTODOsPrefs.CharsBeforeNewline - 8);
+                taskLabel = CodeTODOsHelper.GetStringEnd(QQQs[i].Task, CodeTODOsPrefs.CharsBeforeNewline - 8);
             }
             else
             {
-                taskLabel = CodeTODOsHelper.DivideStringWithNewlines(_qqqs[i].Task, CodeTODOsPrefs.CharsBeforeNewline - 8);
+                taskLabel = CodeTODOsHelper.DivideStringWithNewlines(QQQs[i].Task, CodeTODOsPrefs.CharsBeforeNewline - 8);
             }
             EditorGUILayout.LabelField(taskLabel, EditorStyles.boldLabel, GUILayout.Height(taskHeight));
             EditorGUILayout.EndHorizontal();
@@ -119,11 +119,11 @@ public class CodeTODOs : EditorWindow
             string scriptLabel;
             if (CodeTODOsPrefs.CutoffSwitch == true)
             {
-                scriptLabel = "In \"..." + CodeTODOsHelper.GetStringEnd(_qqqs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
+                scriptLabel = "In \"..." + CodeTODOsHelper.GetStringEnd(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
             }
             else
             {
-                scriptLabel = "In \"" + CodeTODOsHelper.DivideStringWithNewlines(_qqqs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
+                scriptLabel = "In \"" + CodeTODOsHelper.DivideStringWithNewlines(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
             }
             EditorGUILayout.LabelField(scriptLabel, GUILayout.Height(scriptHeight));
 
@@ -145,7 +145,7 @@ public class CodeTODOs : EditorWindow
         if (GUILayout.Button(LIST_QQQS, GUILayout.Width(BUTTON_WIDTH)))
         {
             CodeTODOsHelper.FindAllScripts();
-            CodeTODOsHelper.CheckAllScriptsForQQQs(out _qqqTasks, out _qqqScripts);
+            CodeTODOsHelper.GetQQQsFromAllScripts(out _qqqTasks, out _qqqScripts);
         }
         EditorGUILayout.Space();
         EditorGUILayout.EndHorizontal();
