@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using System.Collections.Generic;
+using UnityEngine;
 using System.IO;
 
 public static class CodeTODOsHelper
@@ -19,7 +20,7 @@ public static class CodeTODOsHelper
         return allScripts;
     }
 
-    public static List<QQQ> CheckAllScriptsForQQQs(out List<string> qqqTasks, out List<string> scripts)
+    public static List<QQQ> GetQQQsFromAllScripts(out List<string> qqqTasks, out List<string> scripts)
     {
         // Since we're rechecking everything, let's clear the two lists.
         scripts = new List<string>();
@@ -29,7 +30,7 @@ public static class CodeTODOsHelper
         var AllScripts = FindAllScripts();
         foreach(var script in AllScripts)
         {
-            var QQQsInScript = CheckScriptForQQQs(script);
+            var QQQsInScript = GetQQQsFromScript(script);
 
             for(int i = 0; i < QQQsInScript.Count; i++)
             {
@@ -40,7 +41,8 @@ public static class CodeTODOsHelper
                     !script.EndsWith("CodeTODOsHelper.cs") &&
                     !script.EndsWith("QQQ.cs") &&
                     !script.EndsWith("GamedevToolbelt.cs") &&
-                    !script.EndsWith("CodeTODOsPrefs.cs"))
+                    !script.EndsWith("CodeTODOsPrefs.cs") &&
+                    !script.EndsWith("ScriptsPostProcessor.cs"))
                 {
                     scripts.Add(script);
                     qqqTasks.Add(QQQsInScript[i]);
@@ -57,7 +59,7 @@ public static class CodeTODOsHelper
         return qqqs;
     }
 
-    private static List<string> CheckScriptForQQQs(string path)
+    public static List<string> GetQQQsFromScript(string path)
     {
         var currentQQQs = new List<string>();
 
@@ -78,6 +80,31 @@ public static class CodeTODOsHelper
             }
         }
         return currentQQQs;
+    }
+
+    public static void RemoveScriptFromDB(string script)
+    {
+        for(int i = 0; i < CodeTODOs.QQQs.Count; i++)
+        {
+            if(CodeTODOs.QQQs[i].Script == script)
+            {
+                CodeTODOs.QQQs.Remove(CodeTODOs.QQQs[i]);
+                i--;
+                Debug.Log("Removed QQQ");
+            }
+        }
+    }
+
+    public static void ChangeScriptOfQQQ(string fromPath, string toPath)
+    {
+        for (int i = 0; i < CodeTODOs.QQQs.Count; i++)
+        {
+            if (CodeTODOs.QQQs[i].Script == fromPath)
+            {
+                CodeTODOs.QQQs[i].Script = toPath;
+                Debug.Log("Moved QQQ");
+            }
+        }
     }
 
     public static string GetStringEnd (string completeString, int numberOfCharacters)
