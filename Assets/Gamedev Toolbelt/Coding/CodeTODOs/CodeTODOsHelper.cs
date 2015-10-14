@@ -7,7 +7,7 @@ public static class CodeTODOsHelper
     public static List<string> FindAllScripts()
     {
         var allAssets = AssetDatabase.GetAllAssetPaths();
-        var allScripts = new List<string> ();
+        var allScripts = new List<string>();
 
         foreach (var path in allAssets)
         {
@@ -19,32 +19,21 @@ public static class CodeTODOsHelper
         return allScripts;
     }
 
-    public static List<QQQ> CheckAllScriptsForQQQs(out List<string> qqqTasks, out List<string> scripts)
+    public static List<QQQ> GetQQQsFromAllScripts()
     {
-        // Since we're rechecking everything, let's clear the two lists.
-        scripts = new List<string>();
-        qqqTasks = new List<string>();
+        var scripts = new List<string>();
+        var qqqTasks = new List<string>();
 
         // First we collect all scripts in the project, and then we check them for QQQs.
         var AllScripts = FindAllScripts();
-        foreach(var script in AllScripts)
+        foreach (var script in AllScripts)
         {
-            var QQQsInScript = CheckScriptForQQQs(script);
+            var QQQsInScript = GetQQQsFromScript(script);
 
-            for(int i = 0; i < QQQsInScript.Count; i++)
+            for (int i = 0; i < QQQsInScript.Count; i++)
             {
-                // Since the string "QQQ" is repeated many times in the files listed, its default value would give
-                // a bunch of false positives in these files. So either the token doesn't use the default value,
-                // or we exclude these files from the collection.
-                if (!script.EndsWith("CodeTODOs.cs") &&
-                    !script.EndsWith("CodeTODOsHelper.cs") &&
-                    !script.EndsWith("QQQ.cs") &&
-                    !script.EndsWith("GamedevToolbelt.cs") &&
-                    !script.EndsWith("CodeTODOsPrefs.cs"))
-                {
-                    scripts.Add(script);
-                    qqqTasks.Add(QQQsInScript[i]);
-                }
+                scripts.Add(script);
+                qqqTasks.Add(QQQsInScript[i]);
             }
         }
 
@@ -57,9 +46,21 @@ public static class CodeTODOsHelper
         return qqqs;
     }
 
-    private static List<string> CheckScriptForQQQs(string path)
+    public static List<string> GetQQQsFromScript(string path)
     {
         var currentQQQs = new List<string>();
+
+        // Since the string "QQQ" is repeated many times in the files listed, its default value would give
+        // a bunch of false positives in these files, so we exclude them.
+        if (path.EndsWith("CodeTODOs.cs") ||
+            path.EndsWith("CodeTODOsHelper.cs") ||
+            path.EndsWith("QQQ.cs") ||
+            path.EndsWith("GamedevToolbelt.cs") ||
+            path.EndsWith("CodeTODOsPrefs.cs") ||
+            path.EndsWith("ScriptsPostProcessor.cs"))
+        {
+            return currentQQQs;
+        }
 
         var lines = File.ReadAllLines(path);
         string completeQQQ;
@@ -77,7 +78,48 @@ public static class CodeTODOsHelper
                 currentQQQs.Add(completeQQQ);
             }
         }
+
         return currentQQQs;
+    }
+
+    public static void AddQQQs(string script)
+    {
+        var qqqs = CodeTODOsHelper.GetQQQsFromScript(script);
+
+        for (int i = 0; i < qqqs.Count; i++)
+        {
+            var newQQQ = new QQQ(qqqs[i], script);
+            if (!CodeTODOs.QQQs.Contains(newQQQ))
+            {
+                //UnityEngine.Debug.Log("Added QQQ");
+                CodeTODOs.QQQs.Add(newQQQ);
+            }
+        }
+    }
+
+    public static void RemoveScript(string script)
+    {
+        for(int i = 0; i < CodeTODOs.QQQs.Count; i++)
+        {
+            if(CodeTODOs.QQQs[i].Script == script)
+            {
+                CodeTODOs.QQQs.Remove(CodeTODOs.QQQs[i]);
+                i--;
+                //UnityEngine.Debug.Log("Removed QQQ");
+            }
+        }
+    }
+
+    public static void ChangeScriptOfQQQ(string fromPath, string toPath)
+    {
+        for (int i = 0; i < CodeTODOs.QQQs.Count; i++)
+        {
+            if (CodeTODOs.QQQs[i].Script == fromPath)
+            {
+                CodeTODOs.QQQs[i].Script = toPath;
+                //UnityEngine.Debug.Log("Moved QQQ");
+            }
+        }
     }
 
     public static string GetStringEnd (string completeString, int numberOfCharacters)

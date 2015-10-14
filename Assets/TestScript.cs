@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 
-public class TestScript : MonoBehaviour {
+public class TestScript : MonoBehaviour
+{
+    void Start()
+    {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {//QQQ Bananas
-	///QQQMelonas
-	
-	}//QQQTUTTIFRUTTISUMMERLOVE
+    }
+
+    void Update()
+    {//QQQ Bananas
+     ///QQQMelonas
+
+    }//QQQTUTTIFRUTTISUMMERLOVE
 }
+//QQQ HELLO
