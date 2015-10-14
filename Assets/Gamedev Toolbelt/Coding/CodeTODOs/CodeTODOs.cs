@@ -47,7 +47,8 @@ public class CodeTODOs : EditorWindow
         }
         if (QQQs.Count == 0)
         {
-            QQQs = CodeTODOsHelper.GetQQQsFromAllScripts();
+            CodeTODOsHelper.GetQQQsFromAllScripts();
+            CodeTODOsHelper.ReorderQQQs();
         }
     }
 
@@ -69,6 +70,7 @@ public class CodeTODOs : EditorWindow
     // The horizontal and vertical space reserved for each character in a label.
     private float _characterHeightCoefficient = 15.0f;
     private Vector2 _scrollPosition = new Vector2(Screen.width - 5,Screen.height);
+    private string[] _qqqPriorities = { "Urgent", "Normal", "Minor"};
     private void DrawQQQList()
     {
         _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, _GDTBSkin.scrollView);
@@ -83,6 +85,7 @@ public class CodeTODOs : EditorWindow
             var boxHeight = taskHeight + scriptHeight;
 
             EditorGUILayout.BeginHorizontal(EditorStyles.helpBox, GUILayout.Height(boxHeight));
+            QQQs[i].Priority = (QQQPriority)EditorGUILayout.Popup(System.Convert.ToInt32(QQQs[i].Priority), _qqqPriorities);
             EditorGUILayout.BeginVertical();
 
             EditorGUILayout.BeginHorizontal();
@@ -130,6 +133,7 @@ public class CodeTODOs : EditorWindow
         {
             QQQs.Clear();
             CodeTODOsHelper.GetQQQsFromAllScripts();
+            CodeTODOsHelper.ReorderQQQs();
         }
         EditorGUILayout.Space();
         EditorGUILayout.EndHorizontal();
