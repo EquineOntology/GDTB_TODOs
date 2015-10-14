@@ -32,6 +32,13 @@ public class QQQ: System.Object
         this.Task = task;
         this.Script = script;
     }
+
+    public QQQ()
+    {
+        this.Priority = QQQPriority.NORMAL;
+        this.Task = "";
+        this.Script = "";
+    }
 }
 
 
