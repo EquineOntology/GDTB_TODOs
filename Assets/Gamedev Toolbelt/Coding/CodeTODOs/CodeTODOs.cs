@@ -7,39 +7,35 @@ public class CodeTODOs : EditorWindow
     // ====================================================================
     // ============== Variables used in more than one method ==============
     // ====================================================================
-    //public ReorderableList _reorderableQQQs;
     public static List<QQQ> QQQs = new List<QQQ>();
-    //private List<int> _priorities = new List<int>();
-    private List<string> _qqqScripts = new List<string>();
-    private List<string> _qqqTasks = new List<string>();
 
     // ====================================================================
     // =========================== Editor stuff ===========================
     // ====================================================================
-    private const int BUTTON_WIDTH = 100;
+    private const int BUTTON_WIDTH = 150;
     private const int BOX_WIDTH = 400;
     private const int EDITOR_WINDOW_MINSIZE_X = 300;
-    private const int EDITOR_WINDOW_MINSIZE_Y = 300;
+    private const int EDITOR_WINDOW_MINSIZE_Y = 250;
     private const string WINDOW_TITLE = "CodeTODOs";
-    private GUISkin _GDTBSkin;
-    private bool _GUISkinWasAssigned = false;
 
     // ====================================================================
     // ======================= Class functionality ========================
     // ====================================================================
+    private GUISkin _GDTBSkin;
+    private bool _GUISkinWasAssigned = false;
+
     [MenuItem("Gamedev Toolbelt/CodeTODOs")]
     public static void Init()
     {
         // Get existing open window or if none, make a new one.
         CodeTODOs window = (CodeTODOs)EditorWindow.GetWindow(typeof(CodeTODOs));
-        window.titleContent = new GUIContent(WINDOW_TITLE);
         window.minSize = new Vector2(EDITOR_WINDOW_MINSIZE_X, EDITOR_WINDOW_MINSIZE_Y);
+        window.titleContent = new GUIContent(WINDOW_TITLE);
         window.Show();
     }
 
     public void OnEnable()
     {
-        //UpdateEditorPrefs();
         if(_GDTBSkin == null)
         {
             _GDTBSkin = GDTB_IOUtils.GetGUISkin();
@@ -49,21 +45,10 @@ public class CodeTODOs : EditorWindow
         {
             _GUISkinWasAssigned = true;
         }
-
-        QQQs = CodeTODOsHelper.GetQQQsFromAllScripts(out _qqqTasks, out _qqqScripts);
-        /*_reorderableQQQs = new ReorderableList(_qqqs, typeof(QQQ), true, true, true, true);
-
-        _reorderableQQQs.drawElementBackgroundCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+        if (QQQs.Count == 0)
         {
-            var element = _reorderableQQQs.serializedProperty.GetArrayElementAtIndex(index);
-            rect.y += 2;
-            EditorGUI.PropertyField(
-                new Rect(rect.x, rect.y, 60, EditorGUIUtility.singleLineHeight),
-                element.FindPropertyRelative("Task"));
-            EditorGUI.PropertyField(
-                new Rect(rect.x + 60, rect.y, rect.width - 60 - 30, EditorGUIUtility.singleLineHeight),
-                element.FindPropertyRelative("Script"));
-        };*/
+            QQQs = CodeTODOsHelper.GetQQQsFromAllScripts();
+        }
     }
 
     private void OnGUI()
@@ -77,14 +62,16 @@ public class CodeTODOs : EditorWindow
         DrawQQQList();
         EditorGUILayout.Space();
         DrawListButton();
+        GUILayout.Space(10);
         EditorGUILayout.EndVertical();
     }
 
     // The horizontal and vertical space reserved for each character in a label.
     private float _characterHeightCoefficient = 15.0f;
+    private Vector2 _scrollPosition = new Vector2(Screen.width - 5,Screen.height);
     private void DrawQQQList()
     {
-        EditorGUILayout.BeginVertical();
+        _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, _GDTBSkin.scrollView);
 
         for (int i = 0; i < QQQs.Count; i++)
         {
@@ -131,21 +118,18 @@ public class CodeTODOs : EditorWindow
             EditorGUILayout.EndHorizontal();
         }
 
-        EditorGUILayout.EndVertical();
-
-        //_reorderableQQQs.DoLayoutList();
-        //_reorderableQQQs.DoList(new Rect(20, 20, 200, 200));
+        EditorGUILayout.EndScrollView();
     }
 
-    private const string LIST_QQQS = "Refresh list";
+    private const string LIST_QQQS = "Force list refresh";
     private void DrawListButton()
     {
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.Space();
         if (GUILayout.Button(LIST_QQQS, GUILayout.Width(BUTTON_WIDTH)))
         {
-            CodeTODOsHelper.FindAllScripts();
-            CodeTODOsHelper.GetQQQsFromAllScripts(out _qqqTasks, out _qqqScripts);
+            QQQs.Clear();
+            CodeTODOsHelper.GetQQQsFromAllScripts();
         }
         EditorGUILayout.Space();
         EditorGUILayout.EndHorizontal();
