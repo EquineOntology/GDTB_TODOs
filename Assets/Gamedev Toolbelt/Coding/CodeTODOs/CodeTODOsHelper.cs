@@ -19,36 +19,22 @@ public static class CodeTODOsHelper
         return allScripts;
     }
 
-    public static List<QQQ> GetQQQsFromAllScripts()
+    public static void GetQQQsFromAllScripts()
     {
-        var scripts = new List<string>();
-        var qqqTasks = new List<string>();
-
-        // First we collect all scripts in the project, and then we check them for QQQs.
-        var AllScripts = FindAllScripts();
-        foreach (var script in AllScripts)
-        {
-            var QQQsInScript = GetQQQsFromScript(script);
-
-            for (int i = 0; i < QQQsInScript.Count; i++)
-            {
-                scripts.Add(script);
-                qqqTasks.Add(QQQsInScript[i]);
-            }
-        }
-
+        // We collect all scripts in the project, and then we check them for QQQs.
+        var allScripts = FindAllScripts();
         var qqqs = new List<QQQ>();
-        for (int j = 0; j < scripts.Count; j++)
-        {
-            qqqs.Add(new QQQ(qqqTasks[j], scripts[j]));
-        }
 
-        return qqqs;
+        for (int i = 0; i < allScripts.Count; i++)
+        {
+            qqqs.AddRange(GetQQQsFromScript(allScripts[i]));
+        }
+        CodeTODOs.QQQs = qqqs;
     }
 
-    public static List<string> GetQQQsFromScript(string path)
+    public static List<QQQ> GetQQQsFromScript(string path)
     {
-        var currentQQQs = new List<string>();
+        var currentQQQs = new List<QQQ>();
 
         // Since the string "QQQ" is repeated many times in the files listed, its default value would give
         // a bunch of false positives in these files, so we exclude them.
@@ -63,22 +49,54 @@ public static class CodeTODOsHelper
         }
 
         var lines = File.ReadAllLines(path);
-        string completeQQQ;
+
+        QQQ newQQQ;
         for (int i = 0; i < lines.Length; i++)
         {
-            completeQQQ = "";
+            newQQQ = new QQQ();
             if (lines[i].Contains(CodeTODOsPrefs.TODOToken))
             {
                 var index = lines[i].IndexOf(CodeTODOsPrefs.TODOToken);
+                var hasExplicitPriority = false;
+
+                // First we find the QQQ's priority.
+                // QQQ1 means urgent, QQQ2 means normal, QQQ3 means minor. In case there's nothing (or something else/incorrect), we default to normal.
+                switch (lines[i][index + 3])
+                {
+                    case '1':
+                        newQQQ.Priority = QQQPriority.URGENT;
+                        hasExplicitPriority = true;
+                        break;
+                    case '2':
+                        newQQQ.Priority = QQQPriority.NORMAL;
+                        hasExplicitPriority = true;
+                        break;
+                    case '3':
+                        newQQQ.Priority = QQQPriority.MINOR;
+                        hasExplicitPriority = true;
+                        break;
+                    default:
+                        newQQQ.Priority = QQQPriority.NORMAL;
+                        break;
+                }
+
+                // After the priority we get the task.
+                // If the QQQ has an explicit priority, we add 1 to the index so that the number doesn't appear in the task.
+                if (hasExplicitPriority == true)
+                {
+                    index += 1;
+                }
                 var tempString = lines[i].Substring(index);
                 tempString = tempString.Substring(CodeTODOsPrefs.TODOToken.Length);
                 tempString.Trim();
-                completeQQQ += tempString;
+                newQQQ.Task = tempString;
 
-                currentQQQs.Add(completeQQQ);
+                // Third, we save the source script.
+                newQQQ.Script = path;
+
+                currentQQQs.Add(newQQQ);
             }
         }
-
         return currentQQQs;
     }
 
@@ -88,11 +106,10 @@ public static class CodeTODOsHelper
 
         for (int i = 0; i < qqqs.Count; i++)
         {
-            var newQQQ = new QQQ(qqqs[i], script);
-            if (!CodeTODOs.QQQs.Contains(newQQQ))
+            if (!CodeTODOs.QQQs.Contains(qqqs[i]))
             {
                 //UnityEngine.Debug.Log("Added QQQ");
-                CodeTODOs.QQQs.Add(newQQQ);
+                CodeTODOs.QQQs.Add(qqqs[i]);
             }
         }
     }
@@ -151,5 +168,41 @@ public static class CodeTODOsHelper
             index += 2 + numberOfCharacters;
         }
         return newString;
+    }
+
+    // Reorder the given QQQ list based on the urgency of tasks.
+    public static void ReorderQQQs()
+    {
+        var originalQQQs = CodeTODOs.QQQs;
+        var orderedQQQs = new List<QQQ>();
+
+        // First add urgent tasks.
+        for(int i = 0; i < originalQQQs.Count; i++)
+        {
+            if(originalQQQs[i].Priority == QQQPriority.URGENT)
+            {
+                orderedQQQs.Add(originalQQQs[i]);
+            }
+        }
+
+        // Then normal ones.
+        for(int i = 0; i < originalQQQs.Count; i++)
+        {
+            if(originalQQQs[i].Priority == QQQPriority.NORMAL)
+            {
+                orderedQQQs.Add(originalQQQs[i]);
+            }
+        }
+
+        // Then minor ones.
+        for(int i = 0; i < originalQQQs.Count; i++)
+        {
+            if(originalQQQs[i].Priority == QQQPriority.MINOR)
+            {
+                orderedQQQs.Add(originalQQQs[i]);
+            }
+        }
+
+        CodeTODOs.QQQs = orderedQQQs;
     }
 }
