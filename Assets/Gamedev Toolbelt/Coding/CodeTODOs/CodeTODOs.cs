@@ -14,6 +14,7 @@ public class CodeTODOs : EditorWindow
     // ====================================================================
     private const int BUTTON_WIDTH = 150;
     private const int BOX_WIDTH = 400;
+    private const int POPUP_WIDTH = 60;
     private const int EDITOR_WINDOW_MINSIZE_X = 300;
     private const int EDITOR_WINDOW_MINSIZE_Y = 250;
     private const string WINDOW_TITLE = "CodeTODOs";
@@ -85,7 +86,7 @@ public class CodeTODOs : EditorWindow
             var boxHeight = taskHeight + scriptHeight;
 
             EditorGUILayout.BeginHorizontal(EditorStyles.helpBox, GUILayout.Height(boxHeight));
-            QQQs[i].Priority = (QQQPriority)EditorGUILayout.Popup(System.Convert.ToInt32(QQQs[i].Priority), _qqqPriorities);
+            QQQs[i].Priority = (QQQPriority)EditorGUILayout.Popup(System.Convert.ToInt32(QQQs[i].Priority), _qqqPriorities, GUILayout.Width(POPUP_WIDTH));
             EditorGUILayout.BeginVertical();
 
             EditorGUILayout.BeginHorizontal();
@@ -109,11 +110,11 @@ public class CodeTODOs : EditorWindow
             string scriptLabel;
             if (CodeTODOsPrefs.CutoffSwitch == true)
             {
-                scriptLabel = "In \"..." + CodeTODOsHelper.GetStringEnd(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
+                scriptLabel = "Line " + QQQs[i].LineNumber + " in \"..." + CodeTODOsHelper.GetStringEnd(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
             }
             else
             {
-                scriptLabel = "In \"" + CodeTODOsHelper.DivideStringWithNewlines(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
+                scriptLabel = "Line " + QQQs[i].LineNumber + " in \"" + CodeTODOsHelper.DivideStringWithNewlines(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
             }
             EditorGUILayout.LabelField(scriptLabel, GUILayout.Height(scriptHeight));
 

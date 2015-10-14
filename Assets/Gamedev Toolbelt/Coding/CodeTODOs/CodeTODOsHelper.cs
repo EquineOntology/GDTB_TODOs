@@ -43,6 +43,7 @@ public static class CodeTODOsHelper
             path.EndsWith("QQQ.cs") ||
             path.EndsWith("GamedevToolbelt.cs") ||
             path.EndsWith("CodeTODOsPrefs.cs") ||
+            path.EndsWith("QQQPriority.cs") ||
             path.EndsWith("ScriptsPostProcessor.cs"))
         {
             return currentQQQs;
@@ -93,6 +94,9 @@ public static class CodeTODOsHelper
 
                 // Third, we save the source script.
                 newQQQ.Script = path;
+
+                // Lastly, we save the line number.
+                newQQQ.LineNumber = i;
 
                 currentQQQs.Add(newQQQ);
             }
