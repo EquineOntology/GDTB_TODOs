@@ -30,7 +30,7 @@ public class CodeTODOs : EditorWindow
     {
         // Get existing open window or if none, make a new one.
         CodeTODOs window = (CodeTODOs)EditorWindow.GetWindow(typeof(CodeTODOs));
-        window.minSize = new Vector2(EDITOR_WINDOW_MINSIZE_X, EDITOR_WINDOW_MINSIZE_Y);
+        //window.minSize = new Vector2(EDITOR_WINDOW_MINSIZE_X, EDITOR_WINDOW_MINSIZE_Y);
         window.titleContent = new GUIContent(WINDOW_TITLE);
         window.Show();
     }
@@ -59,6 +59,8 @@ public class CodeTODOs : EditorWindow
         {
             GUI.skin = _GDTBSkin;
         }
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(5);
         EditorGUILayout.BeginVertical();
         GUILayout.Space(10);
         DrawQQQList();
@@ -66,6 +68,8 @@ public class CodeTODOs : EditorWindow
         DrawListButton();
         GUILayout.Space(10);
         EditorGUILayout.EndVertical();
+        GUILayout.Space(10);
+        EditorGUILayout.EndHorizontal();
     }
 
     // The horizontal and vertical space reserved for each character in a label.
