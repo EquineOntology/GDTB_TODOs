@@ -11,6 +11,12 @@ public static class GDTB_IOUtils {
         return skin;
     }
 
+    public static string GetGDTBPath()
+    {
+        var path = GetFirstInstanceOfFolder("Gamedev Toolbelt");
+        return path;
+    }
+
 	private static string GetFirstInstanceOfFile(string fileName)
 	{
         var projectDirectoryPath = Directory.GetCurrentDirectory();
@@ -59,6 +65,63 @@ public static class GDTB_IOUtils {
                     if (files[i].EndsWith(fileName))
                     {
                         absolutePath = files[i];
+                    }
+                }
+            }
+        }
+        var relativePath = absolutePath.Remove(0, projectDirectoryPath.Length + 1);
+        //Debug.Log(relativePath);
+        return relativePath;
+    }
+
+    private static string GetFirstInstanceOfFolder(string folderName)
+	{
+        var projectDirectoryPath = Directory.GetCurrentDirectory();
+        var projectDirectoryInfo = new DirectoryInfo(projectDirectoryPath);
+        var listOfAssetsDirs = projectDirectoryInfo.GetDirectories("Assets");
+        var assetsDir = "";
+        foreach(var dir in listOfAssetsDirs)
+        {
+            if (dir.FullName.EndsWith("\\Assets"))
+            {
+                assetsDir = dir.FullName;
+            }
+        }
+        var path = assetsDir;
+
+        var q = new Queue<string>();
+        q.Enqueue(path);
+        var absolutePath = "";
+        while (q.Count > 0)
+        {
+            path = q.Dequeue();
+            try
+            {
+                foreach (string subDir in Directory.GetDirectories(path))
+                {
+                    q.Enqueue(subDir);
+                }
+            }
+            catch (System.Exception /*ex*/)
+            {
+                //Debug.LogError(ex);
+            }
+            string[] folders = null;
+            try
+            {
+                folders = Directory.GetDirectories(path);
+            }
+            catch (System.Exception /*ex*/)
+            {
+                //Debug.LogError(ex);
+            }
+            if (folders != null)
+            {
+                for (int i = 0; i < folders.Length; i++)
+                {
+                    if (folders[i].EndsWith(folderName))
+                    {
+                        absolutePath = folders[i];
                     }
                 }
             }
