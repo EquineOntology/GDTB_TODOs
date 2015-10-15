@@ -3,7 +3,7 @@ using UnityEditor;
 
 public class CodeTODOsPrefs
 {
-  // TODO token (QQQ)
+    // TODO token (QQQ)
     public const string PREFS_CODETODOS_TOKEN = "GDTB_CodeTODOs_TODOToken";
     private static string _todoToken = "QQQ";
     public static string TODOToken
@@ -27,21 +27,32 @@ public class CodeTODOsPrefs
         get { return _charsBeforeNewline; }
     }
 
+    // Priority displayed as text, icon, text + icon
+    public const string PREFS_CODETODOS_PRIORITY_DISPLAY = "GDTB_CodeTODOs_PriorityDisplay";
+    private static PriorityDisplayFormat _priorityDisplay = PriorityDisplayFormat.ICON_ONLY;
+    public static PriorityDisplayFormat QQQPriorityDisplay
+    {
+        get { return _priorityDisplay; }
+    }
+    private static string[] _displayFormatsString = { "Text only", "Icon only", "Icon and Text" };
+
     [PreferenceItem("Code TODOs")]
     public static void PreferencesGUI()
     {
-        /*  ===================================================
-         * | Options                                           |
-         * |   TODO token ____________________                 |
-         * |   Cutoff TODOs _                                  |
-         * |   Characters before newline __                    |
-         *  =================================================== */
+        /*  ===============================================
+         * | Options                                       |
+         * |   TODO token ____________________             |
+         * |   Cutoff TODOs __________________             |
+         * |   Characters before newline _____             |
+         * |   Priority format _______________             |
+         *  =============================================== */
         EditorGUILayout.BeginVertical();
         _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
         _cutoffSwitch = EditorGUILayout.Toggle("Cutoff TODOs", _cutoffSwitch);
         _charsBeforeNewline = EditorGUILayout.IntField("Characters on line", _charsBeforeNewline);
+        _priorityDisplay = (PriorityDisplayFormat) EditorGUILayout.Popup("Priority format", System.Convert.ToInt16(_priorityDisplay), _displayFormatsString);
 
-        if(GUI.changed)
+        if (GUI.changed)
         {
             UpdatePreferences();
         }
@@ -52,6 +63,7 @@ public class CodeTODOsPrefs
         UpdateQQQTemplate(_todoToken);
         UpdateCutoffSwitch(_cutoffSwitch);
         UpdateCharsBeforeNewline(_charsBeforeNewline);
+        UpdatePriorityDisplay(_priorityDisplay);
     }
 
     private static void UpdateQQQTemplate(string newToken)
@@ -67,6 +79,11 @@ public class CodeTODOsPrefs
     private static void UpdateCutoffSwitch(bool newSwitchValue)
     {
         EditorPrefs.SetBool(PREFS_CODETODOS_CUTOFF, newSwitchValue);
+    }
+
+    private static void UpdatePriorityDisplay(PriorityDisplayFormat display)
+    {
+        EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(display));
     }
 
     private void UpdateEditorPrefs()
@@ -100,5 +117,22 @@ public class CodeTODOsPrefs
         {
             _cutoffSwitch = EditorPrefs.GetBool(PREFS_CODETODOS_CUTOFF, false);
         }
+
+        // QQQ Priority display
+        if (!EditorPrefs.HasKey(PREFS_CODETODOS_PRIORITY_DISPLAY))
+        {
+            EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, 2);
+        }
+        else
+        {
+            _priorityDisplay = (PriorityDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, 2);
+        }
     }
+}
+
+public enum PriorityDisplayFormat
+{
+    TEXT_ONLY,
+    ICON_ONLY,
+    ICON_AND_TEXT
 }
