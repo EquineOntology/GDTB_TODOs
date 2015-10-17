@@ -121,11 +121,11 @@ public class CodeTODOs : EditorWindow
             string scriptLabel;
             if (CodeTODOsPrefs.CutoffSwitch == true)
             {
-                scriptLabel = "Line " + QQQs[i].LineNumber + " in \"..." + CodeTODOsHelper.GetStringEnd(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
+                scriptLabel = "Line " + (QQQs[i].LineNumber + 1) + " in \"..." + CodeTODOsHelper.GetStringEnd(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
             }
             else
             {
-                scriptLabel = "Line " + QQQs[i].LineNumber + " in \"" + CodeTODOsHelper.DivideStringWithNewlines(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
+                scriptLabel = "Line " + (QQQs[i].LineNumber + 1) + " in \"" + CodeTODOsHelper.DivideStringWithNewlines(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
             }
             EditorGUILayout.LabelField(scriptLabel, GUILayout.Height(scriptHeight));
 
