@@ -153,7 +153,7 @@ public static class CodeTODOsHelper
         var startIndex = completeString.Length - numberOfCharacters;
         return completeString.Substring(startIndex);
     }
-
+    
     public static string DivideStringWithNewlines(string completeString, int numberOfCharacters)
     {
         if(numberOfCharacters >= completeString.Length)
@@ -223,7 +223,7 @@ public static class CodeTODOsHelper
             // The number of characters before a newline (for tasks) is reduced to account for the bold label style.
             if (taskLabel.Length < CodeTODOsPrefs.CharsBeforeNewline)
             {
-                taskLabel = CodeTODOsHelper.GetStringEnd(qqq.Task, CodeTODOsPrefs.CharsBeforeNewline);
+                taskLabel = qqq.Task;
             }
             else // Add the "..." before the label if it's longer than the CharsBeforeNewline option.
             {
@@ -234,7 +234,7 @@ public static class CodeTODOsHelper
             // Script
             if (scriptLabel.Length < CodeTODOsPrefs.CharsBeforeNewline)
             {
-                scriptLabel = "Line " + (qqq.LineNumber + 1) + " in \"" + CodeTODOsHelper.GetStringEnd(qqq.Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
+                scriptLabel = "Line " + (qqq.LineNumber + 1) + " in \"" + qqq.Script + "\"";
             }
             else // Add the "..." before the script name if it's longer than the CharsBeforeNewline option.
             {
@@ -246,7 +246,7 @@ public static class CodeTODOsHelper
         {
             // Task
             // The number of characters before a newline (for tasks) is reduced to account for the bold label style.
-            taskLabel = CodeTODOsHelper.DivideStringWithNewlines(qqq.Task, CodeTODOsPrefs.CharsBeforeNewline - 8);
+            taskLabel = CodeTODOsHelper.DivideStringWithNewlines(qqq.Task, CodeTODOsPrefs.CharsBeforeNewline/* - 8*/);
             formattedLabels[0] = taskLabel;
 
             // Script
