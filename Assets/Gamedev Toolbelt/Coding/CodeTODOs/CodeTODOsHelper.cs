@@ -254,7 +254,7 @@ public static class CodeTODOsHelper
             formattedLabels[1] = scriptLabel;
         }
         return formattedLabels;
-    }
+   }
 
     public static void CompleteQQQ(QQQ qqq)
     {
