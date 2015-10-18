@@ -72,19 +72,18 @@ public class CodeTODOs : EditorWindow
         GUILayout.Space(5);
         EditorGUILayout.BeginVertical();
         GUILayout.Space(10);
-        DrawQQQList();
+        DrawQQQs();
         EditorGUILayout.Space();
         DrawListButton();
         GUILayout.Space(10);
         EditorGUILayout.EndVertical();
-        GUILayout.Space(10);
         EditorGUILayout.EndHorizontal();
     }
 
     // The horizontal and vertical space reserved for each character in a label.
     private float _characterHeightCoefficient = 15.0f;
     private Vector2 _scrollPosition = new Vector2(Screen.width - 5,Screen.height);
-    private void DrawQQQList()
+    private void DrawQQQs()
     {
         _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, _GDTBSkin.scrollView);
         for (int i = 0; i < QQQs.Count; i++)
@@ -99,13 +98,13 @@ public class CodeTODOs : EditorWindow
             EditorGUILayout.BeginHorizontal(EditorStyles.helpBox, GUILayout.Height(boxHeight));
             DrawPriority(QQQs[i]);
             DrawTaskAndScriptLabels(QQQs[i], taskHeight, scriptHeight);
+            DrawCompleteTaskButton(QQQs[i]);
             EditorGUILayout.EndHorizontal();
         }
-
         EditorGUILayout.EndScrollView();
     }
 
-    #region QQQPriorityMethods
+#region QQQPriorityMethods
     // This method was added to improve readability of inside OnGUI.
     // It simply selects which priority format to use based on the user preference.
     private void DrawPriority(QQQ qqq)
@@ -211,7 +210,7 @@ public class CodeTODOs : EditorWindow
         }
         return tex;
     }
-    #endregion
+#endregion
 
     private void DrawTaskAndScriptLabels(QQQ qqq, float taskHeight, float scriptHeight)
     {
@@ -226,7 +225,28 @@ public class CodeTODOs : EditorWindow
 
         EditorGUILayout.LabelField(labels[1], GUILayout.Height(scriptHeight));
         EditorGUILayout.EndVertical();
+    }
 
+    private const string QQQ_DONE = "Complete\ntask";
+    private void DrawCompleteTaskButton(QQQ qqq)
+    {
+        var tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + "/GUI/qqq_DONE.psd", typeof(Texture2D)) as Texture2D;
+        var content = new GUIContent(QQQ_DONE, tex);
+        var propertyRect = EditorGUILayout.GetControlRect(GUILayout.Width(20));
+        propertyRect.width = tex.width + QQQ_DONE.Length*5.5f;
+        propertyRect.height = tex.height;
+
+        EditorGUILayout.BeginVertical();
+
+        EditorGUILayout.BeginHorizontal();
+
+        if(GUI.Button(propertyRect, content))
+        {
+            CodeTODOsHelper.CompleteQQQ(qqq);
+        }
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.Space();
+        EditorGUILayout.EndVertical();
     }
 
     private const string LIST_QQQS = "Force list refresh";

@@ -44,6 +44,7 @@ public static class CodeTODOsHelper
             path.EndsWith("GamedevToolbelt.cs") ||
             path.EndsWith("CodeTODOsPrefs.cs") ||
             path.EndsWith("QQQPriority.cs") ||
+            path.EndsWith("GDTB_IOUtils.cs") ||
             path.EndsWith("ScriptsPostProcessor.cs"))
         {
             return currentQQQs;
@@ -253,5 +254,11 @@ public static class CodeTODOsHelper
             formattedLabels[1] = scriptLabel;
         }
         return formattedLabels;
+    }
+
+    public static void CompleteQQQ(QQQ qqq)
+    {
+        GDTB_IOUtils.RemoveLineFromFile(qqq.Script, qqq.LineNumber);
+        CodeTODOs.QQQs.Remove(qqq);
     }
 }
