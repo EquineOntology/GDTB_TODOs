@@ -46,6 +46,7 @@ public class CodeTODOsPrefs
          * |   Characters before newline _____             |
          * |   Priority format _______________             |
          *  =============================================== */
+        UpdateEditorPrefs();
         EditorGUILayout.BeginVertical();
         _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
         _cutoffSwitch = EditorGUILayout.Toggle("Cutoff TODOs", _cutoffSwitch);
@@ -55,6 +56,7 @@ public class CodeTODOsPrefs
         if (GUI.changed)
         {
             UpdatePreferences();
+            UpdateEditorPrefs();
         }
     }
 
@@ -86,7 +88,7 @@ public class CodeTODOsPrefs
         EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(display));
     }
 
-    private void UpdateEditorPrefs()
+    private static void UpdateEditorPrefs()
     {
         /// TODO token.
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_TOKEN))
