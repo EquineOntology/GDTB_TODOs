@@ -91,51 +91,21 @@ public class CodeTODOs : EditorWindow
         {
             // Calculate how high the box must be to accomodate the task & script.
             var taskLines = ((QQQs[i].Task.Length / CodeTODOsPrefs.CharsBeforeNewline) > 0) && CodeTODOsPrefs.CutoffSwitch == false ? (QQQs[i].Task.Length / CodeTODOsPrefs.CharsBeforeNewline) + 1 : 1;
-            var taskHeight = taskLines * _characterHeightCoefficient * 1.1f;
+            var taskHeight = taskLines * _characterHeightCoefficient * 1.2f;
             var scriptLines = ((QQQs[i].Script.Length / CodeTODOsPrefs.CharsBeforeNewline) > 0) && CodeTODOsPrefs.CutoffSwitch == false ? (QQQs[i].Script.Length / CodeTODOsPrefs.CharsBeforeNewline) + 1 : 1;
             var scriptHeight = scriptLines * _characterHeightCoefficient;
             var boxHeight = taskHeight + scriptHeight;
 
             EditorGUILayout.BeginHorizontal(EditorStyles.helpBox, GUILayout.Height(boxHeight));
             DrawPriority(QQQs[i]);
-            EditorGUILayout.BeginVertical();
-
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Space(10);
-
-            // Build correctly formatted "task" label.
-            // The number of characters before a newline is reduced to account for the bold label style.
-            string taskLabel;
-            if (CodeTODOsPrefs.CutoffSwitch == true)
-            {
-                taskLabel = CodeTODOsHelper.GetStringEnd(QQQs[i].Task, CodeTODOsPrefs.CharsBeforeNewline - 8);
-            }
-            else
-            {
-                taskLabel = CodeTODOsHelper.DivideStringWithNewlines(QQQs[i].Task, CodeTODOsPrefs.CharsBeforeNewline - 8);
-            }
-            EditorGUILayout.LabelField(taskLabel, EditorStyles.boldLabel, GUILayout.Height(taskHeight));
-            EditorGUILayout.EndHorizontal();
-
-            // Build correctly formatted "script" label.
-            string scriptLabel;
-            if (CodeTODOsPrefs.CutoffSwitch == true)
-            {
-                scriptLabel = "Line " + QQQs[i].LineNumber + " in \"..." + CodeTODOsHelper.GetStringEnd(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
-            }
-            else
-            {
-                scriptLabel = "Line " + QQQs[i].LineNumber + " in \"" + CodeTODOsHelper.DivideStringWithNewlines(QQQs[i].Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
-            }
-            EditorGUILayout.LabelField(scriptLabel, GUILayout.Height(scriptHeight));
-
-            EditorGUILayout.EndVertical();
+            DrawTaskAndScriptLabels(QQQs[i], taskHeight, scriptHeight);
             EditorGUILayout.EndHorizontal();
         }
 
         EditorGUILayout.EndScrollView();
     }
 
+    #region QQQPriorityMethods
     // This method was added to improve readability of inside OnGUI.
     // It simply selects which priority format to use based on the user preference.
     private void DrawPriority(QQQ qqq)
@@ -240,6 +210,23 @@ public class CodeTODOs : EditorWindow
                 break;
         }
         return tex;
+    }
+    #endregion
+
+    private void DrawTaskAndScriptLabels(QQQ qqq, float taskHeight, float scriptHeight)
+    {
+        var labels = CodeTODOsHelper.FormatTaskAndScriptLabels(qqq);
+
+        EditorGUILayout.BeginVertical();
+
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        EditorGUILayout.LabelField(labels[0], EditorStyles.boldLabel, GUILayout.Height(taskHeight));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.LabelField(labels[1], GUILayout.Height(scriptHeight));
+        EditorGUILayout.EndVertical();
+
     }
 
     private const string LIST_QQQS = "Force list refresh";

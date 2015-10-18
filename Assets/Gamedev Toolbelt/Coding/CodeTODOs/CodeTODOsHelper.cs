@@ -209,4 +209,49 @@ public static class CodeTODOsHelper
 
         CodeTODOs.QQQs = orderedQQQs;
     }
+
+    // Formats a label (a qqq script or task) based on preferences.
+    public static string[] FormatTaskAndScriptLabels(QQQ qqq)
+    {
+        var formattedLabels = new string[2];
+        var taskLabel = "";
+        var scriptLabel = "";
+        if (CodeTODOsPrefs.CutoffSwitch == true)
+        {
+            // Task
+            // The number of characters before a newline (for tasks) is reduced to account for the bold label style.
+            if (taskLabel.Length < CodeTODOsPrefs.CharsBeforeNewline)
+            {
+                taskLabel = CodeTODOsHelper.GetStringEnd(qqq.Task, CodeTODOsPrefs.CharsBeforeNewline);
+            }
+            else // Add the "..." before the label if it's longer than the CharsBeforeNewline option.
+            {
+                taskLabel = "..." + CodeTODOsHelper.GetStringEnd(qqq.Task, CodeTODOsPrefs.CharsBeforeNewline - 11); //-11 is from a -8 (for the bold style) and -3 (for the 3 dots).
+            }
+            formattedLabels[0] = taskLabel;
+
+            // Script
+            if (scriptLabel.Length < CodeTODOsPrefs.CharsBeforeNewline)
+            {
+                scriptLabel = "Line " + (qqq.LineNumber + 1) + " in \"" + CodeTODOsHelper.GetStringEnd(qqq.Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
+            }
+            else // Add the "..." before the script name if it's longer than the CharsBeforeNewline option.
+            {
+                scriptLabel = "Line " + (qqq.LineNumber + 1) + " in \"..." + CodeTODOsHelper.GetStringEnd(qqq.Script, CodeTODOsPrefs.CharsBeforeNewline - 3) + "\"";
+            }
+            formattedLabels[1] = scriptLabel;
+        }
+        else
+        {
+            // Task
+            // The number of characters before a newline (for tasks) is reduced to account for the bold label style.
+            taskLabel = CodeTODOsHelper.DivideStringWithNewlines(qqq.Task, CodeTODOsPrefs.CharsBeforeNewline - 8);
+            formattedLabels[0] = taskLabel;
+
+            // Script
+            scriptLabel = "Line " + (qqq.LineNumber + 1) + " in \"" + CodeTODOsHelper.DivideStringWithNewlines(qqq.Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
+            formattedLabels[1] = scriptLabel;
+        }
+        return formattedLabels;
+    }
 }
