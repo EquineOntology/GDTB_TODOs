@@ -220,11 +220,12 @@ public class CodeTODOs : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        EditorGUILayout.LabelField(labels[0], EditorStyles.boldLabel, GUILayout.Height(taskHeight));
+        qqq.Task = EditorGUILayout.TextField(labels[0], EditorStyles.boldLabel, GUILayout.Height(taskHeight));
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.LabelField(labels[1], GUILayout.Height(scriptHeight));
         EditorGUILayout.EndVertical();
+        
     }
 
     private const string QQQ_DONE = "Complete\ntask";
