@@ -5,10 +5,10 @@ using System.IO;
 
 public static class GDTB_IOUtils {
 
-	public static GUISkin GetGUISkin()
+	public static string GetGUISkin()
 	{
-        GUISkin skin = AssetDatabase.LoadAssetAtPath(GetFirstInstanceOfFile("GDTBSkin.guiskin"), typeof(GUISkin)) as GUISkin;
-        return skin;
+        var skinPath = GetFirstInstanceOfFile("GDTBSkin.guiskin");
+        return skinPath;
     }
 
     public static string GetGDTBPath()
