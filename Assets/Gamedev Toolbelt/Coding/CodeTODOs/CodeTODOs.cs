@@ -231,7 +231,7 @@ public class CodeTODOs : EditorWindow
         var tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_DONE, typeof(Texture2D)) as Texture2D;
         var content = new GUIContent(GUIConstants.TEXT_QQQ_DONE, tex);
         var propertyRect = EditorGUILayout.GetControlRect(GUILayout.Width(20));
-        propertyRect.width = tex.width + GUIConstants.ICON_QQQ_URGENT.Length*5.5f;
+        propertyRect.width = tex.width + GUIConstants.TEXT_QQQ_DONE.Length*5.5f;
         propertyRect.height = tex.height;
 
         EditorGUILayout.BeginVertical();
