@@ -4,6 +4,8 @@ using System.IO;
 
 public static class CodeTODOsHelper
 {
+
+    // Find all files ending with .cs or .js.
     public static List<string> FindAllScripts()
     {
         var allAssets = AssetDatabase.GetAllAssetPaths();
@@ -19,9 +21,9 @@ public static class CodeTODOsHelper
         return allScripts;
     }
 
+    // Find all QQQs in all scripts.
     public static void GetQQQsFromAllScripts()
     {
-        // We collect all scripts in the project, and then we check them for QQQs.
         var allScripts = FindAllScripts();
         var qqqs = new List<QQQ>();
 
@@ -32,6 +34,7 @@ public static class CodeTODOsHelper
         CodeTODOs.QQQs = qqqs;
     }
 
+    // Find the QQQs in a single script.
     public static List<QQQ> GetQQQsFromScript(string path)
     {
         var currentQQQs = new List<QQQ>();
@@ -106,6 +109,7 @@ public static class CodeTODOsHelper
         return currentQQQs;
     }
 
+    // Add the QQQs in a script to the list in CodeTODOs.
     public static void AddQQQs(string script)
     {
         var qqqs = CodeTODOsHelper.GetQQQsFromScript(script);
@@ -120,6 +124,7 @@ public static class CodeTODOsHelper
         }
     }
 
+    // Remove all references to the given script in CodeTODOs.QQQs.
     public static void RemoveScript(string script)
     {
         for(int i = 0; i < CodeTODOs.QQQs.Count; i++)
@@ -133,6 +138,7 @@ public static class CodeTODOsHelper
         }
     }
 
+    // Change all references to a script in CodeTODOs.QQQs to another script (for when a script is moved).
     public static void ChangeScriptOfQQQ(string fromPath, string toPath)
     {
         for (int i = 0; i < CodeTODOs.QQQs.Count; i++)
@@ -145,6 +151,7 @@ public static class CodeTODOsHelper
         }
     }
 
+    // Get the last characters of a string.
     public static string GetStringEnd (string completeString, int numberOfCharacters)
     {
         if(numberOfCharacters >= completeString.Length)
@@ -155,6 +162,7 @@ public static class CodeTODOsHelper
         return completeString.Substring(startIndex);
     }
 
+    // Insert \n (newline characters) in a string, based on the limit provided.
     public static string DivideStringWithNewlines(string completeString, int numberOfCharacters)
     {
         if(numberOfCharacters >= completeString.Length)
@@ -259,6 +267,7 @@ public static class CodeTODOsHelper
         return formattedLabels;
    }
 
+    // Remove a QQQ (both from the list and from the file in which it was written).
     public static void CompleteQQQ(QQQ qqq)
     {
         GDTB_IOUtils.RemoveLineFromFile(qqq.Script, qqq.LineNumber);
