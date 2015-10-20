@@ -45,6 +45,7 @@ public static class CodeTODOsHelper
             path.EndsWith("CodeTODOsPrefs.cs") ||
             path.EndsWith("QQQPriority.cs") ||
             path.EndsWith("GDTB_IOUtils.cs") ||
+            path.EndsWith("GUIConstants.cs") ||
             path.EndsWith("ScriptsPostProcessor.cs"))
         {
             return currentQQQs;
