@@ -3,20 +3,17 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 
-public static class GDTB_IOUtils {
-
-	public static string GetGUISkin()
-	{
-        var skinPath = GetFirstInstanceOfFile("GDTBSkin.guiskin");
-        return skinPath;
-    }
-
+public static class GDTB_IOUtils
+{
+    // Return the path to the extension's folder.
     public static string GetGDTBPath()
     {
         var path = GetFirstInstanceOfFolder("Gamedev Toolbelt");
         return path;
     }
 
+    // Return the first instance of the given filename.
+    // This is a non-recursive, breadth-first search algorithm.
 	private static string GetFirstInstanceOfFile(string fileName)
 	{
         var projectDirectoryPath = Directory.GetCurrentDirectory();
@@ -74,6 +71,8 @@ public static class GDTB_IOUtils {
         return relativePath;
     }
 
+    // Return the first instance of the given folder.
+    // This is a non-recursive, breadth-first search algorithm.
     private static string GetFirstInstanceOfFolder(string folderName)
 	{
         var projectDirectoryPath = Directory.GetCurrentDirectory();
