@@ -9,7 +9,7 @@ public class CodeTODOs : EditorWindow
     // ====================================================================
     public static List<QQQ> QQQs = new List<QQQ>();
     private GUISkin _GDTBSkin;
-    private bool _GUISkinWasAssigned = false;
+    private string _skinPath;
     private string _GDTBAssetPath;
     private string[] _qqqPriorities = { "Urgent", "Normal", "Minor"};
 
@@ -38,21 +38,30 @@ public class CodeTODOs : EditorWindow
 
     public void OnEnable()
     {
-        if(!EditorPrefs.HasKey("GDTB_Path"))
+        // If the path to the asset folder has been saved, get it (without having to go searching for it again).
+        // Otherwise, find out where it is.
+        if (EditorPrefs.HasKey("GDTB_Path"))
+        {
+            _GDTBAssetPath = EditorPrefs.GetString("GDTB_Path");
+        }
+        else
         {
             _GDTBAssetPath = GDTB_IOUtils.GetGDTBPath();
             EditorPrefs.SetString("GDTB_Path", _GDTBAssetPath);
         }
-        else
-        {
-            _GDTBAssetPath = EditorPrefs.GetString("GDTB_Path");
-        }
 
-        if (_GDTBSkin == null)
+        // Try to load the skin. If there's an error loading it (i.e. if the user changed the asset folder),
+        // search for the folder again and retry.
+        try
         {
-            _GDTBSkin = GDTB_IOUtils.GetGUISkin();
+            _GDTBSkin = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
         }
-        _GUISkinWasAssigned = true;
+        catch (System.Exception)
+        {
+            _GDTBAssetPath = GDTB_IOUtils.GetGDTBPath();
+            EditorPrefs.SetString("GDTB_Path", _GDTBAssetPath);
+            _GDTBSkin = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+        }
 
         if (QQQs.Count == 0)
         {
@@ -63,10 +72,7 @@ public class CodeTODOs : EditorWindow
 
     private void OnGUI()
     {
-        if (_GUISkinWasAssigned == true)
-        {
-            GUI.skin = _GDTBSkin;
-        }
+        GUI.skin = _GDTBSkin;
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(5);
         EditorGUILayout.BeginVertical();
@@ -122,6 +128,7 @@ public class CodeTODOs : EditorWindow
         }
     }
 
+    // Draw priority for the "Text only" setting.
     private void DrawPriorityText(QQQ qqq)
     {
         var priorityIndex = System.Convert.ToInt16(qqq.Priority);
@@ -139,6 +146,7 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    // Draw priority for the "Icon and Text" setting.
     private void DrawPriorityIconAndText(QQQ qqq)
     {
         var priorityIndex = System.Convert.ToInt16(qqq.Priority);
@@ -168,6 +176,7 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    // Draw priority for the "Icon only" setting.
     private void DrawPriorityIcon(QQQ qqq)
     {
         var priorityIndex = System.Convert.ToInt16(qqq.Priority);
@@ -189,6 +198,7 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    // Get the correct texture for a priority.
     private Texture2D GetQQQPriorityTexture(int priority)
     {
         Texture2D tex;
@@ -211,6 +221,7 @@ public class CodeTODOs : EditorWindow
     }
 #endregion
 
+    // Draws the "Task" and "Script" texts for QQQs.
     private void DrawTaskAndScriptLabels(QQQ qqq, float taskHeight, float scriptHeight)
     {
         var labels = CodeTODOsHelper.FormatTaskAndScriptLabels(qqq);
@@ -224,8 +235,9 @@ public class CodeTODOs : EditorWindow
 
         EditorGUILayout.LabelField(labels[1], GUILayout.Height(scriptHeight));
         EditorGUILayout.EndVertical();
-
     }
+
+    // Draw the "Complete task" button on the right of a QQQ.
     private void DrawCompleteTaskButton(QQQ qqq)
     {
         var tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_DONE, typeof(Texture2D)) as Texture2D;
@@ -247,6 +259,7 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndVertical();
     }
 
+    // Draw the "Refresh list" button.
     private void DrawListButton()
     {
         EditorGUILayout.BeginHorizontal();
