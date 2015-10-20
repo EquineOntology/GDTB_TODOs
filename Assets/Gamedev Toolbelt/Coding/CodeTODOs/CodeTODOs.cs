@@ -21,7 +21,6 @@ public class CodeTODOs : EditorWindow
     private const int POPUP_WIDTH = 60;
     private const int EDITOR_WINDOW_MINSIZE_X = 300;
     private const int EDITOR_WINDOW_MINSIZE_Y = 250;
-    private const string WINDOW_TITLE = "CodeTODOs";
 
     // ====================================================================
     // ======================= Class functionality ========================
@@ -33,7 +32,7 @@ public class CodeTODOs : EditorWindow
         // Get existing open window or if none, make a new one.
         CodeTODOs window = (CodeTODOs)EditorWindow.GetWindow(typeof(CodeTODOs));
         //window.minSize = new Vector2(EDITOR_WINDOW_MINSIZE_X, EDITOR_WINDOW_MINSIZE_Y);
-        window.titleContent = new GUIContent(WINDOW_TITLE);
+        window.titleContent = new GUIContent(GUIConstants.TEXT_WINDOW_TITLE);
         window.Show();
     }
 
@@ -196,16 +195,16 @@ public class CodeTODOs : EditorWindow
         switch(priority)
         {
             case 0:
-                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + "/GUI/qqqPriority_URGENT.psd", typeof(Texture2D)) as Texture2D;
+                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_URGENT, typeof(Texture2D)) as Texture2D;
                 break;
             case 1:
-                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + "/GUI/qqqPriority_NORMAL.psd", typeof(Texture2D)) as Texture2D;
+                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_NORMAL, typeof(Texture2D)) as Texture2D;
                 break;
             case 2:
-                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + "/GUI/qqqPriority_MINOR.psd", typeof(Texture2D)) as Texture2D;
+                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_MINOR, typeof(Texture2D)) as Texture2D;
                 break;
             default:
-                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + "/GUI/qqqPriority_NORMAL.psd", typeof(Texture2D)) as Texture2D;
+                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_NORMAL, typeof(Texture2D)) as Texture2D;
                 break;
         }
         return tex;
@@ -225,16 +224,14 @@ public class CodeTODOs : EditorWindow
 
         EditorGUILayout.LabelField(labels[1], GUILayout.Height(scriptHeight));
         EditorGUILayout.EndVertical();
-        
-    }
 
-    private const string QQQ_DONE = "Complete\ntask";
+    }
     private void DrawCompleteTaskButton(QQQ qqq)
     {
-        var tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + "/GUI/qqq_DONE.psd", typeof(Texture2D)) as Texture2D;
-        var content = new GUIContent(QQQ_DONE, tex);
+        var tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_DONE, typeof(Texture2D)) as Texture2D;
+        var content = new GUIContent(GUIConstants.TEXT_QQQ_DONE, tex);
         var propertyRect = EditorGUILayout.GetControlRect(GUILayout.Width(20));
-        propertyRect.width = tex.width + QQQ_DONE.Length*5.5f;
+        propertyRect.width = tex.width + GUIConstants.ICON_QQQ_URGENT.Length*5.5f;
         propertyRect.height = tex.height;
 
         EditorGUILayout.BeginVertical();
@@ -250,12 +247,11 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndVertical();
     }
 
-    private const string LIST_QQQS = "Force list refresh";
     private void DrawListButton()
     {
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.Space();
-        if (GUILayout.Button(LIST_QQQS, GUILayout.Width(BUTTON_WIDTH)))
+        if (GUILayout.Button(GUIConstants.TEXT_REFRESH_LIST, GUILayout.Width(BUTTON_WIDTH)))
         {
             QQQs.Clear();
             CodeTODOsHelper.GetQQQsFromAllScripts();
