@@ -71,21 +71,25 @@ public class CodeTODOsPrefs
     private static void UpdateQQQTemplate(string newToken)
     {
         EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, newToken);
+        _todoToken = "QQQ";
     }
 
     private static void UpdateCharsBeforeNewline(int newCharLimit)
     {
         EditorPrefs.SetInt(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE, newCharLimit);
+        _charsBeforeNewline = 60;
     }
 
     private static void UpdateCutoffSwitch(bool newSwitchValue)
     {
         EditorPrefs.SetBool(PREFS_CODETODOS_CUTOFF, newSwitchValue);
+        _cutoffSwitch = false;
     }
 
     private static void UpdatePriorityDisplay(PriorityDisplayFormat display)
     {
         EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(display));
+        _priorityDisplay = PriorityDisplayFormat.ICON_ONLY;
     }
 
     private static void UpdateEditorPrefs()
@@ -94,6 +98,7 @@ public class CodeTODOsPrefs
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_TOKEN))
         {
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, "QQQ");
+            _todoToken = "QQQ";
         }
         else
         {
@@ -104,6 +109,7 @@ public class CodeTODOsPrefs
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE))
         {
             EditorPrefs.SetInt(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE, 60);
+            _charsBeforeNewline = 60;
         }
         else
         {
@@ -114,6 +120,7 @@ public class CodeTODOsPrefs
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_CUTOFF))
         {
             EditorPrefs.SetBool(PREFS_CODETODOS_CUTOFF, false);
+            _cutoffSwitch = false;
         }
         else
         {
@@ -124,6 +131,7 @@ public class CodeTODOsPrefs
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_PRIORITY_DISPLAY))
         {
             EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, 2);
+            _priorityDisplay = PriorityDisplayFormat.ICON_ONLY;
         }
         else
         {
