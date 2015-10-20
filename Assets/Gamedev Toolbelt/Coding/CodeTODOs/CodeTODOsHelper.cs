@@ -153,7 +153,7 @@ public static class CodeTODOsHelper
         var startIndex = completeString.Length - numberOfCharacters;
         return completeString.Substring(startIndex);
     }
-    
+
     public static string DivideStringWithNewlines(string completeString, int numberOfCharacters)
     {
         if(numberOfCharacters >= completeString.Length)
@@ -170,7 +170,9 @@ public static class CodeTODOsHelper
             var subStr2 = newString.Substring(index);
 
             newString = subStr1 + "\n" + subStr2;
-            index += 2 + numberOfCharacters;
+
+            index += 1 + numberOfCharacters; // \n counts as a single character.
+
         }
         return newString;
     }
