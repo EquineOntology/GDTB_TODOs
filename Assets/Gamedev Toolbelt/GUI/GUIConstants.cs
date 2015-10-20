@@ -8,4 +8,6 @@
     public const string TEXT_QQQ_DONE = "Complete\ntask";
     public const string TEXT_REFRESH_LIST = "Force list refresh";
     public const string TEXT_WINDOW_TITLE = "CodeTODOs";
+
+    public const string FILE_GUISKIN = "/GUI/GDTBSkin.guiskin";
 }
