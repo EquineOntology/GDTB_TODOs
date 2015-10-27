@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
@@ -46,7 +47,7 @@ public class CodeTODOs : EditorWindow
         }
         else
         {
-            _GDTBAssetPath = GDTB_IOUtils.GetGDTBPath();
+            _GDTBAssetPath = CodeTODOsIO.GetGDTBPath();
             EditorPrefs.SetString("GDTB_Path", _GDTBAssetPath);
         }
 
@@ -58,7 +59,7 @@ public class CodeTODOs : EditorWindow
         }
         catch (System.Exception)
         {
-            _GDTBAssetPath = GDTB_IOUtils.GetGDTBPath();
+            _GDTBAssetPath = CodeTODOsIO.GetGDTBPath();
             EditorPrefs.SetString("GDTB_Path", _GDTBAssetPath);
             _GDTBSkin = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
         }
@@ -274,3 +275,4 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 }
+#endif

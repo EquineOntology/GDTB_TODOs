@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 
@@ -47,7 +48,7 @@ public static class CodeTODOsHelper
             path.EndsWith("GamedevToolbelt.cs") ||
             path.EndsWith("CodeTODOsPrefs.cs") ||
             path.EndsWith("QQQPriority.cs") ||
-            path.EndsWith("GDTB_IOUtils.cs") ||
+            path.EndsWith("CodeTODOsIO.cs") ||
             path.EndsWith("GUIConstants.cs") ||
             path.EndsWith("ScriptsPostProcessor.cs"))
         {
@@ -270,7 +271,8 @@ public static class CodeTODOsHelper
     // Remove a QQQ (both from the list and from the file in which it was written).
     public static void CompleteQQQ(QQQ qqq)
     {
-        GDTB_IOUtils.RemoveLineFromFile(qqq.Script, qqq.LineNumber);
+        CodeTODOsIO.RemoveLineFromFile(qqq.Script, qqq.LineNumber);
         CodeTODOs.QQQs.Remove(qqq);
     }
 }
+#endif
