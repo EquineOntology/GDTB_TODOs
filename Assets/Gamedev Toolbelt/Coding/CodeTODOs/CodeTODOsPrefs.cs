@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 
 public class CodeTODOsPrefs
@@ -146,3 +147,4 @@ public enum PriorityDisplayFormat
     ICON_ONLY,
     ICON_AND_TEXT
 }
+#endif

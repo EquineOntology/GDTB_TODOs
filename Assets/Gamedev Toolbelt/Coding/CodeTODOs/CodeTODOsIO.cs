@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.IO;
 
-public static class GDTB_IOUtils
+public static class CodeTODOsIO
 {
     // Return the path to the extension's folder.
     public static string GetGDTBPath()
@@ -189,3 +188,4 @@ public static class GDTB_IOUtils
         return lineWithoutQQQ;
     }
 }
+#endif

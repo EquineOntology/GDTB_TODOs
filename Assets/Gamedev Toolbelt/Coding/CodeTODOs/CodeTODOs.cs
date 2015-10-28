@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
@@ -8,9 +9,7 @@ public class CodeTODOs : EditorWindow
     // ============== Variables used in more than one method ==============
     // ====================================================================
     public static List<QQQ> QQQs = new List<QQQ>();
-    private GUISkin _GDTBSkin;
-    private string _skinPath;
-    private string _GDTBAssetPath;
+    private GUISkin _GDTBSkin;    private string _skinPath;
     private string[] _qqqPriorities = { "Urgent", "Normal", "Minor"};
 
     // ====================================================================
@@ -40,28 +39,7 @@ public class CodeTODOs : EditorWindow
     {
         // If the path to the asset folder has been saved, get it (without having to go searching for it again).
         // Otherwise, find out where it is.
-        if (EditorPrefs.HasKey("GDTB_Path"))
-        {
-            _GDTBAssetPath = EditorPrefs.GetString("GDTB_Path");
-        }
-        else
-        {
-            _GDTBAssetPath = GDTB_IOUtils.GetGDTBPath();
-            EditorPrefs.SetString("GDTB_Path", _GDTBAssetPath);
-        }
-
-        // Try to load the skin. If there's an error loading it (i.e. if the user changed the asset folder),
-        // search for the folder again and retry.
-        try
-        {
-            _GDTBSkin = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
-        }
-        catch (System.Exception)
-        {
-            _GDTBAssetPath = GDTB_IOUtils.GetGDTBPath();
-            EditorPrefs.SetString("GDTB_Path", _GDTBAssetPath);
-            _GDTBSkin = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
-        }
+        _GDTBSkin = Resources.Load(GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
 
         if (QQQs.Count == 0)
         {
@@ -205,16 +183,16 @@ public class CodeTODOs : EditorWindow
         switch(priority)
         {
             case 0:
-                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_URGENT, typeof(Texture2D)) as Texture2D;
+                tex = Resources.Load(GUIConstants.FILE_QQQ_URGENT, typeof(Texture2D)) as Texture2D;
                 break;
             case 1:
-                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_NORMAL, typeof(Texture2D)) as Texture2D;
+                tex = Resources.Load(GUIConstants.FILE_QQQ_NORMAL, typeof(Texture2D)) as Texture2D;
                 break;
             case 2:
-                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_MINOR, typeof(Texture2D)) as Texture2D;
+                tex = Resources.Load(GUIConstants.FILE_QQQ_MINOR, typeof(Texture2D)) as Texture2D;
                 break;
             default:
-                tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_NORMAL, typeof(Texture2D)) as Texture2D;
+                tex = Resources.Load(GUIConstants.FILE_QQQ_NORMAL, typeof(Texture2D)) as Texture2D;
                 break;
         }
         return tex;
@@ -240,7 +218,7 @@ public class CodeTODOs : EditorWindow
     // Draw the "Complete task" button on the right of a QQQ.
     private void DrawCompleteTaskButton(QQQ qqq)
     {
-        var tex = AssetDatabase.LoadAssetAtPath(_GDTBAssetPath + GUIConstants.ICON_QQQ_DONE, typeof(Texture2D)) as Texture2D;
+        var tex = Resources.Load(GUIConstants.FILE_QQQ_DONE, typeof(Texture2D)) as Texture2D;
         var content = new GUIContent(GUIConstants.TEXT_QQQ_DONE, tex);
         var propertyRect = EditorGUILayout.GetControlRect(GUILayout.Width(20));
         propertyRect.width = tex.width + GUIConstants.TEXT_QQQ_DONE.Length*5.5f;
@@ -274,3 +252,4 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 }
+#endif
