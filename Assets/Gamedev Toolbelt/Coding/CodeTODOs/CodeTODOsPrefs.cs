@@ -44,14 +44,14 @@ public class CodeTODOsPrefs
          * | Options                                       |
          * |   TODO token ____________________             |
          * |   Cutoff TODOs __________________             |
-         * |   Characters before newline _____             |
+         * |   //Characters before newline _____             |
          * |   Priority format _______________             |
          *  =============================================== */
         UpdateEditorPrefs();
         EditorGUILayout.BeginVertical();
         _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
         _cutoffSwitch = EditorGUILayout.Toggle("Cutoff TODOs", _cutoffSwitch);
-        _charsBeforeNewline = EditorGUILayout.IntField("Characters on line", _charsBeforeNewline);
+        //_charsBeforeNewline = EditorGUILayout.IntField("Characters on line", _charsBeforeNewline);
         _priorityDisplay = (PriorityDisplayFormat) EditorGUILayout.Popup("Priority format", System.Convert.ToInt16(_priorityDisplay), _displayFormatsString);
 
         if (GUI.changed)
@@ -65,7 +65,7 @@ public class CodeTODOsPrefs
     {
         UpdateQQQTemplate(_todoToken);
         UpdateCutoffSwitch(_cutoffSwitch);
-        UpdateCharsBeforeNewline(_charsBeforeNewline);
+        //UpdateCharsBeforeNewline(_charsBeforeNewline);
         UpdatePriorityDisplay(_priorityDisplay);
     }
 
@@ -107,6 +107,7 @@ public class CodeTODOsPrefs
         }
 
         // Chars before newline.
+        /*
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE))
         {
             EditorPrefs.SetInt(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE, 60);
@@ -116,6 +117,7 @@ public class CodeTODOsPrefs
         {
             _charsBeforeNewline = EditorPrefs.GetInt(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE, 60);
         }
+        */
 
         // Cutoff or newline.
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_CUTOFF))
