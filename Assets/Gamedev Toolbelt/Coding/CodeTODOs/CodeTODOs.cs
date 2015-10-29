@@ -208,10 +208,20 @@ public class CodeTODOs : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        qqq.Task = EditorGUILayout.TextField(labels[0], EditorStyles.boldLabel, GUILayout.Height(taskHeight));
+        var taskLabelRect = EditorGUILayout.GetControlRect(GUILayout.Width(labels[0].Length * 10.0f), GUILayout.Height(taskHeight));
+        EditorGUI.LabelField(taskLabelRect, labels[0], EditorStyles.boldLabel);
         EditorGUILayout.EndHorizontal();
 
-        EditorGUILayout.LabelField(labels[1], GUILayout.Height(scriptHeight));
+        GUIStyle link = new GUIStyle(EditorStyles.label);
+        link.normal.textColor = Color.blue;
+        var scriptLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(scriptHeight));
+        EditorGUIUtility.AddCursorRect(scriptLabelRect, MouseCursor.Link);
+        if (Event.current.type == EventType.MouseUp && scriptLabelRect.Contains(Event.current.mousePosition))
+        {
+            CodeTODOsHelper.OpenScript(qqq);
+        }
+        EditorGUI.LabelField(scriptLabelRect, labels[1], link);
+
         EditorGUILayout.EndVertical();
     }
 

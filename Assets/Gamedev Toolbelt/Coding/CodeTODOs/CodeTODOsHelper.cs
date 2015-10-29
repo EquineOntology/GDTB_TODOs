@@ -274,5 +274,11 @@ public static class CodeTODOsHelper
         CodeTODOsIO.RemoveLineFromFile(qqq.Script, qqq.LineNumber);
         CodeTODOs.QQQs.Remove(qqq);
     }
+
+    public static void OpenScript(QQQ qqq)
+    {
+        var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(qqq.Script) as UnityEngine.TextAsset;
+        AssetDatabase.OpenAsset(script.GetInstanceID(), (qqq.LineNumber + 1));
+    }
 }
 #endif
