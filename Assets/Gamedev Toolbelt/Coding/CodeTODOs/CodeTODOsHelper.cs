@@ -275,6 +275,7 @@ public static class CodeTODOsHelper
         CodeTODOs.QQQs.Remove(qqq);
     }
 
+    // Open the script associated with the qqq in question.
     public static void OpenScript(QQQ qqq)
     {
         var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(qqq.Script) as UnityEngine.TextAsset;
