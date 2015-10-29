@@ -50,7 +50,7 @@ public class CodeTODOsPrefs
         UpdateEditorPrefs();
         EditorGUILayout.BeginVertical();
         _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
-        _cutoffSwitch = EditorGUILayout.Toggle("Cutoff TODOs", _cutoffSwitch);
+        //_cutoffSwitch = EditorGUILayout.Toggle("Cutoff TODOs", _cutoffSwitch);
         //_charsBeforeNewline = EditorGUILayout.IntField("Characters on line", _charsBeforeNewline);
         _priorityDisplay = (PriorityDisplayFormat) EditorGUILayout.Popup("Priority format", System.Convert.ToInt16(_priorityDisplay), _displayFormatsString);
 
@@ -64,7 +64,7 @@ public class CodeTODOsPrefs
     private static void UpdatePreferences()
     {
         UpdateQQQTemplate(_todoToken);
-        UpdateCutoffSwitch(_cutoffSwitch);
+        //UpdateCutoffSwitch(_cutoffSwitch);
         //UpdateCharsBeforeNewline(_charsBeforeNewline);
         UpdatePriorityDisplay(_priorityDisplay);
     }
@@ -117,7 +117,7 @@ public class CodeTODOsPrefs
         {
             _charsBeforeNewline = EditorPrefs.GetInt(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE, 60);
         }
-        */
+
 
         // Cutoff or newline.
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_CUTOFF))
@@ -129,6 +129,8 @@ public class CodeTODOsPrefs
         {
             _cutoffSwitch = EditorPrefs.GetBool(PREFS_CODETODOS_CUTOFF, false);
         }
+        */
+
 
         // QQQ Priority display
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_PRIORITY_DISPLAY))
