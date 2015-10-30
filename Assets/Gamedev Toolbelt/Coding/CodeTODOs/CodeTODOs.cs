@@ -10,7 +10,6 @@ public class CodeTODOs : EditorWindow
     // ====================================================================
     public static List<QQQ> QQQs = new List<QQQ>();
     private GUISkin _GDTBSkin;    private string _skinPath;
-    private string[] _qqqPriorities = { "Urgent", "Normal", "Minor"};
 
     // ====================================================================
     // =========================== Editor stuff ===========================
@@ -109,19 +108,8 @@ public class CodeTODOs : EditorWindow
     // Draw priority for the "Text only" setting.
     private void DrawPriorityText(QQQ qqq)
     {
-        var priorityIndex = System.Convert.ToInt16(qqq.Priority);
-
-        EditorGUILayout.BeginHorizontal(GUILayout.Width(16));
-        EditorGUILayout.Space();
-
-        EditorGUILayout.BeginVertical();
-        EditorGUILayout.Space();
-        qqq.Priority = (QQQPriority)EditorGUILayout.Popup(priorityIndex, _qqqPriorities, GUILayout.Width(POPUP_WIDTH));
-        EditorGUILayout.Space();
-        EditorGUILayout.EndVertical();
-
-        EditorGUILayout.Space();
-        EditorGUILayout.EndHorizontal();
+        var priorityRect = EditorGUILayout.GetControlRect(GUILayout.Width(50));
+        EditorGUI.LabelField(priorityRect, qqq.Priority.ToString());
     }
 
     // Draw priority for the "Icon and Text" setting.
@@ -146,7 +134,7 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.Space();
-        qqq.Priority = (QQQPriority)EditorGUILayout.Popup(priorityIndex, _qqqPriorities, GUILayout.Width(POPUP_WIDTH));
+        EditorGUILayout.LabelField(qqq.Priority.ToString());
         EditorGUILayout.Space();
         EditorGUILayout.EndVertical();
 
@@ -208,7 +196,7 @@ public class CodeTODOs : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        var taskLabelRect = EditorGUILayout.GetControlRect(GUILayout.Width(labels[0].Length * 10.0f), GUILayout.Height(taskHeight));
+        var taskLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(taskHeight));
         EditorGUI.LabelField(taskLabelRect, labels[0], EditorStyles.boldLabel);
         EditorGUILayout.EndHorizontal();
 
@@ -243,7 +231,6 @@ public class CodeTODOs : EditorWindow
             CodeTODOsHelper.CompleteQQQ(qqq);
         }
         EditorGUILayout.EndHorizontal();
-        EditorGUILayout.Space();
         EditorGUILayout.EndVertical();
     }
 
