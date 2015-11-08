@@ -47,6 +47,7 @@ public static class CodeTODOsHelper
             path.EndsWith("QQQ.cs") ||
             path.EndsWith("GamedevToolbelt.cs") ||
             path.EndsWith("CodeTODOsPrefs.cs") ||
+            path.EndsWith("CodeTODOsEdit.cs") ||
             path.EndsWith("QQQPriority.cs") ||
             path.EndsWith("CodeTODOsIO.cs") ||
             path.EndsWith("GUIConstants.cs") ||
