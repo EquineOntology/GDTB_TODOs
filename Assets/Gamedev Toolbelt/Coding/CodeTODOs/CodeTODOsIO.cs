@@ -187,5 +187,39 @@ public static class CodeTODOsIO
 
         return lineWithoutQQQ;
     }
+
+    // Update the task and priority of a QQQ.
+    public static void ChangeQQQ(QQQ qqq)
+    {
+        var tempFile = Path.GetTempFileName();
+
+        using(var reader = new StreamReader(qqq.Script))
+        using (var writer = new StreamWriter(tempFile))
+        {
+            string line;
+            int currentLineNumber = 0;
+
+            while ((line = reader.ReadLine()) != null)
+            {
+                // If the line is not the one we want to remove, write it to the temp file.
+                if (currentLineNumber != qqq.LineNumber)
+                {
+                    writer.WriteLine(line);
+                }
+                else
+                {
+                    // Remove the old QQQ and add the new one, then write the line to file.
+                    var lineWithoutQQQ = GetLineWithoutQQQ(line);
+                    var newLine = lineWithoutQQQ + " //" + CodeTODOsPrefs.TODOToken + qqq.Priority + " " + qqq.Task;
+                    writer.WriteLine(newLine);
+                }
+                currentLineNumber++;
+            }
+        }
+
+        // Overwrite the old file with the temp file.
+        File.Delete(qqq.Script);
+        File.Move(tempFile, qqq.Script);
+    }
 }
 #endif
