@@ -189,11 +189,11 @@ public static class CodeTODOsIO
     }
 
     // Update the task and priority of a QQQ.
-    public static void ChangeQQQ(QQQ qqq)
+    public static void ChangeQQQ(QQQ oldQQQ, QQQ newQQQ)
     {
         var tempFile = Path.GetTempFileName();
 
-        using(var reader = new StreamReader(qqq.Script))
+        using(var reader = new StreamReader(oldQQQ.Script))
         using (var writer = new StreamWriter(tempFile))
         {
             string line;
@@ -202,7 +202,7 @@ public static class CodeTODOsIO
             while ((line = reader.ReadLine()) != null)
             {
                 // If the line is not the one we want to remove, write it to the temp file.
-                if (currentLineNumber != qqq.LineNumber)
+                if (currentLineNumber != oldQQQ.LineNumber)
                 {
                     writer.WriteLine(line);
                 }
@@ -210,7 +210,7 @@ public static class CodeTODOsIO
                 {
                     // Remove the old QQQ and add the new one, then write the line to file.
                     var lineWithoutQQQ = GetLineWithoutQQQ(line);
-                    var newLine = lineWithoutQQQ + " //" + CodeTODOsPrefs.TODOToken + qqq.Priority + " " + qqq.Task;
+                    var newLine = lineWithoutQQQ + " //" + CodeTODOsPrefs.TODOToken + (int)newQQQ.Priority + " " + newQQQ.Task;
                     writer.WriteLine(newLine);
                 }
                 currentLineNumber++;
@@ -218,8 +218,8 @@ public static class CodeTODOsIO
         }
 
         // Overwrite the old file with the temp file.
-        File.Delete(qqq.Script);
-        File.Move(tempFile, qqq.Script);
+        File.Delete(oldQQQ.Script);
+        File.Move(tempFile, oldQQQ.Script);
     }
 }
 #endif
