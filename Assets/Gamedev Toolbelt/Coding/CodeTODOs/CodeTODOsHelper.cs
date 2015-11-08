@@ -47,6 +47,7 @@ public static class CodeTODOsHelper
             path.EndsWith("QQQ.cs") ||
             path.EndsWith("GamedevToolbelt.cs") ||
             path.EndsWith("CodeTODOsPrefs.cs") ||
+            path.EndsWith("CodeTODOsEdit.cs") ||
             path.EndsWith("QQQPriority.cs") ||
             path.EndsWith("CodeTODOsIO.cs") ||
             path.EndsWith("GUIConstants.cs") ||
@@ -280,6 +281,11 @@ public static class CodeTODOsHelper
     {
         var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(qqq.Script) as UnityEngine.TextAsset;
         AssetDatabase.OpenAsset(script.GetInstanceID(), (qqq.LineNumber + 1));
+    }
+
+    public static void UpdateTask(QQQ oldQQQ, QQQ newQQQ)
+    {
+        CodeTODOsIO.ChangeQQQ(oldQQQ, newQQQ);
     }
 }
 #endif

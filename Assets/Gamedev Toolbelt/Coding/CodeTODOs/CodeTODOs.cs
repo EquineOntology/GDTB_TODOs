@@ -9,7 +9,8 @@ public class CodeTODOs : EditorWindow
     // ============== Variables used in more than one method ==============
     // ====================================================================
     public static List<QQQ> QQQs = new List<QQQ>();
-    private GUISkin _GDTBSkin;    private string _skinPath;
+    private GUISkin _GDTBSkin;
+    private string _skinPath;
 
     // ====================================================================
     // =========================== Editor stuff ===========================
@@ -19,12 +20,13 @@ public class CodeTODOs : EditorWindow
     private const int POPUP_WIDTH = 60;
     private const int EDITOR_WINDOW_MINSIZE_X = 300;
     private const int EDITOR_WINDOW_MINSIZE_Y = 250;
+    private const int ICON_BUTTON_SIZE = 16;
 
     // ====================================================================
     // ======================= Class functionality ========================
     // ====================================================================
 
-    [MenuItem("Gamedev Toolbelt/CodeTODOs")]
+    [MenuItem("Window/CodeTODOs")]
     public static void Init()
     {
         // Get existing open window or if none, make a new one.
@@ -36,8 +38,6 @@ public class CodeTODOs : EditorWindow
 
     public void OnEnable()
     {
-        // If the path to the asset folder has been saved, get it (without having to go searching for it again).
-        // Otherwise, find out where it is.
         _GDTBSkin = Resources.Load(GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
 
         if (QQQs.Count == 0)
@@ -63,7 +63,7 @@ public class CodeTODOs : EditorWindow
     }
 
     // The horizontal and vertical space reserved for each character in a label.
-    private float _characterHeightCoefficient = 15.0f;
+    private float _characterHeightCoefficient = 16.0f;
     private Vector2 _scrollPosition = new Vector2(Screen.width - 5,Screen.height);
     private void DrawQQQs()
     {
@@ -80,6 +80,7 @@ public class CodeTODOs : EditorWindow
             EditorGUILayout.BeginHorizontal(EditorStyles.helpBox, GUILayout.Height(boxHeight));
             DrawPriority(QQQs[i]);
             DrawTaskAndScriptLabels(QQQs[i], taskHeight, scriptHeight);
+            DrawEditTaskButton(QQQs[i]);
             DrawCompleteTaskButton(QQQs[i]);
             EditorGUILayout.EndHorizontal();
         }
@@ -126,9 +127,8 @@ public class CodeTODOs : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.Space();
-        var propertyRect = EditorGUILayout.GetControlRect(GUILayout.Width(20));
-        propertyRect.width = 16;
-        propertyRect.height = 16;
+        var propertyRect = EditorGUILayout.GetControlRect(GUILayout.Width(ICON_BUTTON_SIZE), GUILayout.Height(ICON_BUTTON_SIZE));
+
         EditorGUI.DrawPreviewTexture(propertyRect, tex);
         EditorGUILayout.Space();
         EditorGUILayout.EndHorizontal();
@@ -153,9 +153,8 @@ public class CodeTODOs : EditorWindow
 
         EditorGUILayout.BeginVertical();
         EditorGUILayout.Space();
-        var propertyRect = EditorGUILayout.GetControlRect(GUILayout.Width(16));
-        propertyRect.width = 16;
-        propertyRect.height = 16;
+        var propertyRect = EditorGUILayout.GetControlRect(GUILayout.Width(ICON_BUTTON_SIZE), GUILayout.Height(ICON_BUTTON_SIZE));
+
         EditorGUI.DrawPreviewTexture(propertyRect, tex);
         EditorGUILayout.Space();
         EditorGUILayout.EndVertical();
@@ -191,18 +190,22 @@ public class CodeTODOs : EditorWindow
     private void DrawTaskAndScriptLabels(QQQ qqq, float taskHeight, float scriptHeight)
     {
         var labels = CodeTODOsHelper.FormatTaskAndScriptLabels(qqq);
+        var taskWidth = qqq.Task.Length * 9.0f;
+        var scriptWidth = qqq.Script.Length * 8.0f;
+
+        var labelWidth = taskWidth > scriptWidth ? taskWidth : scriptWidth;
 
         EditorGUILayout.BeginVertical();
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        var taskLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(taskHeight));
+        var taskLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(taskHeight), GUILayout.Width(labelWidth));
         EditorGUI.LabelField(taskLabelRect, labels[0], EditorStyles.boldLabel);
         EditorGUILayout.EndHorizontal();
 
         GUIStyle link = new GUIStyle(EditorStyles.label);
         link.normal.textColor = Color.blue;
-        var scriptLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(scriptHeight));
+        var scriptLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(scriptHeight), GUILayout.Width(labelWidth));
         EditorGUIUtility.AddCursorRect(scriptLabelRect, MouseCursor.Link);
         if (Event.current.type == EventType.MouseUp && scriptLabelRect.Contains(Event.current.mousePosition))
         {
@@ -213,25 +216,34 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndVertical();
     }
 
-    // Draw the "Complete task" button on the right of a QQQ.
+    // Draw the "Edit task" button.
+    private void DrawEditTaskButton(QQQ qqq)
+    {
+        var tex = Resources.Load(GUIConstants.FILE_QQQ_EDIT, typeof(Texture2D)) as Texture2D;
+        var buttonRect = EditorGUILayout.GetControlRect(GUILayout.Width(ICON_BUTTON_SIZE), GUILayout.Height(ICON_BUTTON_SIZE));
+
+        buttonRect.x += buttonRect.width + 4;
+        buttonRect.y += 1;
+        EditorGUI.DrawPreviewTexture(buttonRect, tex);
+        EditorGUIUtility.AddCursorRect(buttonRect, MouseCursor.Link);
+        if (Event.current.type == EventType.MouseUp && buttonRect.Contains(Event.current.mousePosition))
+        {
+            CodeTODOsEdit.Init(qqq);
+        }
+    }
+
+    // Draw the "Complete task" button.
     private void DrawCompleteTaskButton(QQQ qqq)
     {
         var tex = Resources.Load(GUIConstants.FILE_QQQ_DONE, typeof(Texture2D)) as Texture2D;
-        var content = new GUIContent(GUIConstants.TEXT_QQQ_DONE, tex);
-        var propertyRect = EditorGUILayout.GetControlRect(GUILayout.Width(20));
-        propertyRect.width = tex.width + GUIConstants.TEXT_QQQ_DONE.Length*5.5f;
-        propertyRect.height = tex.height;
-
-        EditorGUILayout.BeginVertical();
-
-        EditorGUILayout.BeginHorizontal();
-
-        if(GUI.Button(propertyRect, content))
+        var buttonRect = EditorGUILayout.GetControlRect(GUILayout.Width(ICON_BUTTON_SIZE), GUILayout.Height(ICON_BUTTON_SIZE));
+        buttonRect.y += buttonRect.height + 4;
+        EditorGUI.DrawPreviewTexture(buttonRect, tex);
+        EditorGUIUtility.AddCursorRect(buttonRect, MouseCursor.Link);
+        if (Event.current.type == EventType.MouseUp && buttonRect.Contains(Event.current.mousePosition))
         {
             CodeTODOsHelper.CompleteQQQ(qqq);
         }
-        EditorGUILayout.EndHorizontal();
-        EditorGUILayout.EndVertical();
     }
 
     // Draw the "Refresh list" button.
