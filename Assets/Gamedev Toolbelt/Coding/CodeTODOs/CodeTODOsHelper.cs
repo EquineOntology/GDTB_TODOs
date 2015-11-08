@@ -281,5 +281,10 @@ public static class CodeTODOsHelper
         var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(qqq.Script) as UnityEngine.TextAsset;
         AssetDatabase.OpenAsset(script.GetInstanceID(), (qqq.LineNumber + 1));
     }
+
+    public static void UpdateTask(QQQ qqq)
+    {
+        CodeTODOsIO.ChangeQQQ(qqq);
+    }
 }
 #endif
