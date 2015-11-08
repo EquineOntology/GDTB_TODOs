@@ -283,9 +283,9 @@ public static class CodeTODOsHelper
         AssetDatabase.OpenAsset(script.GetInstanceID(), (qqq.LineNumber + 1));
     }
 
-    public static void UpdateTask(QQQ qqq)
+    public static void UpdateTask(QQQ oldQQQ, QQQ newQQQ)
     {
-        CodeTODOsIO.ChangeQQQ(qqq);
+        CodeTODOsIO.ChangeQQQ(oldQQQ, newQQQ);
     }
 }
 #endif
