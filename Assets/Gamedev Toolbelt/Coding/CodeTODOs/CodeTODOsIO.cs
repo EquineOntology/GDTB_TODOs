@@ -210,7 +210,11 @@ public static class CodeTODOsIO
                 {
                     // Remove the old QQQ and add the new one, then write the line to file.
                     var lineWithoutQQQ = GetLineWithoutQQQ(line);
-                    var newLine = lineWithoutQQQ + " //" + CodeTODOsPrefs.TODOToken + (int)newQQQ.Priority + " " + newQQQ.Task;
+
+                    var slashes = "";
+                    slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //";
+
+                    var newLine = lineWithoutQQQ + slashes + CodeTODOsPrefs.TODOToken + (((int)newQQQ.Priority) + 1) + " " + newQQQ.Task;
                     writer.WriteLine(newLine);
                 }
                 currentLineNumber++;
