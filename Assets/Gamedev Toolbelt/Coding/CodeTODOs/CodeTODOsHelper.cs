@@ -36,27 +36,27 @@ public static class CodeTODOsHelper
     }
 
     // Find the QQQs in a single script.
-    public static List<QQQ> GetQQQsFromScript(string path)
+    public static List<QQQ> GetQQQsFromScript(string aPath)
     {
         var currentQQQs = new List<QQQ>();
 
         // Since the string "QQQ" is repeated many times in the files listed, its default value would give
         // a bunch of false positives in these files, so we exclude them.
-        if (path.EndsWith("CodeTODOs.cs") ||
-            path.EndsWith("CodeTODOsHelper.cs") ||
-            path.EndsWith("QQQ.cs") ||
-            path.EndsWith("GamedevToolbelt.cs") ||
-            path.EndsWith("CodeTODOsPrefs.cs") ||
-            path.EndsWith("CodeTODOsEdit.cs") ||
-            path.EndsWith("QQQPriority.cs") ||
-            path.EndsWith("CodeTODOsIO.cs") ||
-            path.EndsWith("GUIConstants.cs") ||
-            path.EndsWith("ScriptsPostProcessor.cs"))
+        if (aPath.EndsWith("CodeTODOs.cs") ||
+            aPath.EndsWith("CodeTODOsHelper.cs") ||
+            aPath.EndsWith("QQQ.cs") ||
+            aPath.EndsWith("GamedevToolbelt.cs") ||
+            aPath.EndsWith("CodeTODOsPrefs.cs") ||
+            aPath.EndsWith("CodeTODOsEdit.cs") ||
+            aPath.EndsWith("QQQPriority.cs") ||
+            aPath.EndsWith("CodeTODOsIO.cs") ||
+            aPath.EndsWith("GUIConstants.cs") ||
+            aPath.EndsWith("ScriptsPostProcessor.cs"))
         {
             return currentQQQs;
         }
 
-        var lines = File.ReadAllLines(path);
+        var lines = File.ReadAllLines(aPath);
 
         QQQ newQQQ;
         for (int i = 0; i < lines.Length; i++)
@@ -100,7 +100,7 @@ public static class CodeTODOsHelper
                 newQQQ.Task = tempString;
 
                 // Third, we save the source script.
-                newQQQ.Script = path;
+                newQQQ.Script = aPath;
 
                 // Lastly, we save the line number.
                 newQQQ.LineNumber = i;
@@ -112,9 +112,9 @@ public static class CodeTODOsHelper
     }
 
     // Add the QQQs in a script to the list in CodeTODOs.
-    public static void AddQQQs(string script)
+    public static void AddQQQs(string aScript)
     {
-        var qqqs = CodeTODOsHelper.GetQQQsFromScript(script);
+        var qqqs = CodeTODOsHelper.GetQQQsFromScript(aScript);
 
         for (int i = 0; i < qqqs.Count; i++)
         {
@@ -127,11 +127,11 @@ public static class CodeTODOsHelper
     }
 
     // Remove all references to the given script in CodeTODOs.QQQs.
-    public static void RemoveScript(string script)
+    public static void RemoveScript(string aScript)
     {
         for(int i = 0; i < CodeTODOs.QQQs.Count; i++)
         {
-            if(CodeTODOs.QQQs[i].Script == script)
+            if(CodeTODOs.QQQs[i].Script == aScript)
             {
                 CodeTODOs.QQQs.Remove(CodeTODOs.QQQs[i]);
                 i--;
@@ -141,40 +141,40 @@ public static class CodeTODOsHelper
     }
 
     // Change all references to a script in CodeTODOs.QQQs to another script (for when a script is moved).
-    public static void ChangeScriptOfQQQ(string fromPath, string toPath)
+    public static void ChangeScriptOfQQQ(string aPathTo, string aPathFrom)
     {
         for (int i = 0; i < CodeTODOs.QQQs.Count; i++)
         {
-            if (CodeTODOs.QQQs[i].Script == fromPath)
+            if (CodeTODOs.QQQs[i].Script == aPathTo)
             {
-                CodeTODOs.QQQs[i].Script = toPath;
+                CodeTODOs.QQQs[i].Script = aPathFrom;
                 //UnityEngine.Debug.Log("Moved QQQ");
             }
         }
     }
 
     // Get the last characters of a string.
-    public static string GetStringEnd (string completeString, int numberOfCharacters)
+    public static string GetStringEnd (string aCompleteString, int aNumberOfCharacters)
     {
-        if(numberOfCharacters >= completeString.Length)
+        if(aNumberOfCharacters >= aCompleteString.Length)
         {
-            return completeString;
+            return aCompleteString;
         }
-        var startIndex = completeString.Length - numberOfCharacters;
-        return completeString.Substring(startIndex);
+        var startIndex = aCompleteString.Length - aNumberOfCharacters;
+        return aCompleteString.Substring(startIndex);
     }
 
     // Insert \n (newline characters) in a string, based on the limit provided.
-    public static string DivideStringWithNewlines(string completeString, int numberOfCharacters)
+    public static string DivideStringWithNewlines(string aCompleteString, int aNumberOfCharacters)
     {
-        if(numberOfCharacters >= completeString.Length)
+        if(aNumberOfCharacters >= aCompleteString.Length)
         {
-            return completeString;
+            return aCompleteString;
         }
 
-        int newLines = completeString.Length / numberOfCharacters;
-        var index = numberOfCharacters;
-        string newString = completeString;
+        int newLines = aCompleteString.Length / aNumberOfCharacters;
+        var index = aNumberOfCharacters;
+        string newString = aCompleteString;
         for (int i = 0; i < newLines; i++)
         {
             var subStr1 = newString.Substring(0, index);
@@ -182,7 +182,7 @@ public static class CodeTODOsHelper
 
             newString = subStr1 + "\n" + subStr2;
 
-            index += 1 + numberOfCharacters; // \n counts as a single character.
+            index += 1 + aNumberOfCharacters; // \n counts as a single character.
 
         }
         return newString;
@@ -225,7 +225,7 @@ public static class CodeTODOsHelper
     }
 
     // Formats a label (a qqq script or task) based on preferences.
-    public static string[] FormatTaskAndScriptLabels(QQQ qqq)
+    public static string[] FormatTaskAndScriptLabels(QQQ aQQQ)
     {
         var formattedLabels = new string[2];
         var taskLabel = "";
@@ -236,22 +236,22 @@ public static class CodeTODOsHelper
             // The number of characters before a newline (for tasks) is reduced to account for the bold label style.
             if (taskLabel.Length < CodeTODOsPrefs.CharsBeforeNewline)
             {
-                taskLabel = qqq.Task;
+                taskLabel = aQQQ.Task;
             }
             else // Add the "..." before the label if it's longer than the CharsBeforeNewline option.
             {
-                taskLabel = "..." + CodeTODOsHelper.GetStringEnd(qqq.Task, CodeTODOsPrefs.CharsBeforeNewline - 11); //-11 is from a -8 (for the bold style) and -3 (for the 3 dots).
+                taskLabel = "..." + CodeTODOsHelper.GetStringEnd(aQQQ.Task, CodeTODOsPrefs.CharsBeforeNewline - 11); //-11 is from a -8 (for the bold style) and -3 (for the 3 dots).
             }
             formattedLabels[0] = taskLabel;
 
             // Script
             if (scriptLabel.Length < CodeTODOsPrefs.CharsBeforeNewline)
             {
-                scriptLabel = "Line " + (qqq.LineNumber + 1) + " in \"" + qqq.Script + "\"";
+                scriptLabel = "Line " + (aQQQ.LineNumber + 1) + " in \"" + aQQQ.Script + "\"";
             }
             else // Add the "..." before the script name if it's longer than the CharsBeforeNewline option.
             {
-                scriptLabel = "Line " + (qqq.LineNumber + 1) + " in \"..." + CodeTODOsHelper.GetStringEnd(qqq.Script, CodeTODOsPrefs.CharsBeforeNewline - 3) + "\"";
+                scriptLabel = "Line " + (aQQQ.LineNumber + 1) + " in \"..." + CodeTODOsHelper.GetStringEnd(aQQQ.Script, CodeTODOsPrefs.CharsBeforeNewline - 3) + "\"";
             }
             formattedLabels[1] = scriptLabel;
         }
@@ -259,33 +259,33 @@ public static class CodeTODOsHelper
         {
             // Task
             // The number of characters before a newline (for tasks) is reduced to account for the bold label style.
-            taskLabel = CodeTODOsHelper.DivideStringWithNewlines(qqq.Task, CodeTODOsPrefs.CharsBeforeNewline/* - 8*/);
+            taskLabel = CodeTODOsHelper.DivideStringWithNewlines(aQQQ.Task, CodeTODOsPrefs.CharsBeforeNewline/* - 8*/);
             formattedLabels[0] = taskLabel;
 
             // Script
-            scriptLabel = "Line " + (qqq.LineNumber + 1) + " in \"" + CodeTODOsHelper.DivideStringWithNewlines(qqq.Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
+            scriptLabel = "Line " + (aQQQ.LineNumber + 1) + " in \"" + CodeTODOsHelper.DivideStringWithNewlines(aQQQ.Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
             formattedLabels[1] = scriptLabel;
         }
         return formattedLabels;
    }
 
     // Remove a QQQ (both from the list and from the file in which it was written).
-    public static void CompleteQQQ(QQQ qqq)
+    public static void CompleteQQQ(QQQ aQQQ)
     {
-        CodeTODOsIO.RemoveLineFromFile(qqq.Script, qqq.LineNumber);
-        CodeTODOs.QQQs.Remove(qqq);
+        CodeTODOsIO.RemoveLineFromFile(aQQQ.Script, aQQQ.LineNumber);
+        CodeTODOs.QQQs.Remove(aQQQ);
     }
 
     // Open the script associated with the qqq in question.
-    public static void OpenScript(QQQ qqq)
+    public static void OpenScript(QQQ aQQQ)
     {
-        var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(qqq.Script) as UnityEngine.TextAsset;
-        AssetDatabase.OpenAsset(script.GetInstanceID(), (qqq.LineNumber + 1));
+        var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script) as UnityEngine.TextAsset;
+        AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
     }
 
-    public static void UpdateTask(QQQ oldQQQ, QQQ newQQQ)
+    public static void UpdateTask(QQQ anOldQQQ, QQQ aNewQQQ)
     {
-        CodeTODOsIO.ChangeQQQ(oldQQQ, newQQQ);
+        CodeTODOsIO.ChangeQQQ(anOldQQQ, aNewQQQ);
     }
 }
 #endif
