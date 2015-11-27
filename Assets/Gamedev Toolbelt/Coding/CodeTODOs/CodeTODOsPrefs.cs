@@ -4,6 +4,7 @@ using UnityEditor;
 
 public class CodeTODOsPrefs
 {
+
     // TODO token (QQQ)
     public const string PREFS_CODETODOS_TOKEN = "GDTB_CodeTODOs_TODOToken";
     private static string _todoToken = "QQQ";
@@ -11,6 +12,7 @@ public class CodeTODOsPrefs
     {
         get { return _todoToken; }
     }
+
 
     // Cutoff or newline
     public const string PREFS_CODETODOS_CUTOFF = "GDTB_CodeTODOs_Cutoff";
@@ -20,6 +22,7 @@ public class CodeTODOsPrefs
         get { return _cutoffSwitch; }
     }
 
+
     // Characters in QQQs before newline/cutoff
     public const string PREFS_CODETODOS_CHARS_BEFORE_NEWLINE = "GDTB_CodeTODOs_CharsBeforeNewline";
     private static int _charsBeforeNewline = 40;
@@ -27,6 +30,7 @@ public class CodeTODOsPrefs
     {
         get { return _charsBeforeNewline; }
     }
+
 
     // Priority displayed as text, icon, text + icon
     public const string PREFS_CODETODOS_PRIORITY_DISPLAY = "GDTB_CodeTODOs_PriorityDisplay";
@@ -69,29 +73,34 @@ public class CodeTODOsPrefs
         UpdatePriorityDisplay(_priorityDisplay);
     }
 
-    private static void UpdateQQQTemplate(string newToken)
+
+    private static void UpdateQQQTemplate(string aNewToken)
     {
-        EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, newToken);
+        EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, aNewToken);
         _todoToken = "QQQ";
     }
 
-    private static void UpdateCharsBeforeNewline(int newCharLimit)
+
+    private static void UpdateCharsBeforeNewline(int aNewCharLimit)
     {
-        EditorPrefs.SetInt(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE, newCharLimit);
+        EditorPrefs.SetInt(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE, aNewCharLimit);
         _charsBeforeNewline = 60;
     }
 
-    private static void UpdateCutoffSwitch(bool newSwitchValue)
+
+    private static void UpdateCutoffSwitch(bool aNewSwitchValue)
     {
-        EditorPrefs.SetBool(PREFS_CODETODOS_CUTOFF, newSwitchValue);
+        EditorPrefs.SetBool(PREFS_CODETODOS_CUTOFF, aNewSwitchValue);
         _cutoffSwitch = false;
     }
 
-    private static void UpdatePriorityDisplay(PriorityDisplayFormat display)
+
+    private static void UpdatePriorityDisplay(PriorityDisplayFormat aDisplayFormat)
     {
-        EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(display));
+        EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(aDisplayFormat));
         _priorityDisplay = PriorityDisplayFormat.ICON_ONLY;
     }
+
 
     private static void UpdateEditorPrefs()
     {
@@ -106,32 +115,6 @@ public class CodeTODOsPrefs
             _todoToken = EditorPrefs.GetString(PREFS_CODETODOS_TOKEN, "QQQ");
         }
 
-        // Chars before newline.
-        /*
-        if (!EditorPrefs.HasKey(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE))
-        {
-            EditorPrefs.SetInt(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE, 60);
-            _charsBeforeNewline = 60;
-        }
-        else
-        {
-            _charsBeforeNewline = EditorPrefs.GetInt(PREFS_CODETODOS_CHARS_BEFORE_NEWLINE, 60);
-        }
-
-
-        // Cutoff or newline.
-        if (!EditorPrefs.HasKey(PREFS_CODETODOS_CUTOFF))
-        {
-            EditorPrefs.SetBool(PREFS_CODETODOS_CUTOFF, false);
-            _cutoffSwitch = false;
-        }
-        else
-        {
-            _cutoffSwitch = EditorPrefs.GetBool(PREFS_CODETODOS_CUTOFF, false);
-        }
-        */
-
-
         // QQQ Priority display
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_PRIORITY_DISPLAY))
         {
@@ -144,6 +127,7 @@ public class CodeTODOsPrefs
         }
     }
 }
+
 
 public enum PriorityDisplayFormat
 {

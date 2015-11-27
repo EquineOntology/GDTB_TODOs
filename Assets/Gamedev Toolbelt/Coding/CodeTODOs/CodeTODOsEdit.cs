@@ -12,21 +12,23 @@ public class CodeTODOsEdit : EditorWindow
 
     private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
 
-    public static void Init(QQQ qqq)
+    public static void Init(QQQ aQQQ)
     {
         // Get existing open window or if none, make a new one.
         CodeTODOsEdit window = (CodeTODOsEdit)EditorWindow.GetWindow(typeof(CodeTODOsEdit));
         //window.minSize = new Vector2(EDITOR_WINDOW_MINSIZE_X, EDITOR_WINDOW_MINSIZE_Y);
         window.titleContent = new GUIContent(GUIConstants.TEXT_EDIT_WINDOW_TITLE);
-        _oldQQQ = qqq;
-        _newQQQ = new QQQ((int)qqq.Priority, qqq.Task, qqq.Script, qqq.LineNumber);
+        _oldQQQ = aQQQ;
+        _newQQQ = new QQQ((int)aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);
         window.Show();
     }
+
 
     public void OnEnable()
     {
         _GDTBSkin = Resources.Load(GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
     }
+
 
     private void OnGUI()
     {
@@ -36,13 +38,27 @@ public class CodeTODOsEdit : EditorWindow
         DrawButton();
     }
 
+
+    private bool _prioritySetOnce = false;
     // Draw the priority enum.
     private void DrawPriority()
     {
-        var priorityIndex = (int)_oldQQQ.Priority;
+        int priorityIndex;
+        if (!_prioritySetOnce)
+        {
+            priorityIndex = (int)_newQQQ.Priority;
+        }
+        else
+        {
+            priorityIndex = (int)_oldQQQ.Priority;
+            _prioritySetOnce = true;
+        }
         var popupRect = new Rect(10, 10, 60, 10);
-        _newQQQ.Priority = (QQQPriority)EditorGUI.Popup(popupRect, priorityIndex, _qqqPriorities);
+        priorityIndex = EditorGUI.Popup(popupRect, priorityIndex, _qqqPriorities);
+
+        _newQQQ.Priority = (QQQPriority)priorityIndex;
     }
+
 
     // Draw the textfield that enables the user to modify the QQQ's task.
     private void DrawTask()
@@ -61,6 +77,7 @@ public class CodeTODOsEdit : EditorWindow
         fieldRect.width = fieldRect.width - fieldRect.x - 10;
         _newQQQ.Task = EditorGUI.TextField(fieldRect, _newQQQ.Task);
     }
+
 
     // Draw "Save" button;
     private void DrawButton()

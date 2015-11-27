@@ -11,9 +11,10 @@ public static class CodeTODOsIO
         return path;
     }
 
+
     // Return the first instance of the given filename.
     // This is a non-recursive, breadth-first search algorithm.
-	private static string GetFirstInstanceOfFile(string fileName)
+	private static string GetFirstInstanceOfFile(string aFileName)
 	{
         var projectDirectoryPath = Directory.GetCurrentDirectory();
         var projectDirectoryInfo = new DirectoryInfo(projectDirectoryPath);
@@ -58,7 +59,7 @@ public static class CodeTODOsIO
             {
                 for (int i = 0; i < files.Length; i++)
                 {
-                    if (files[i].EndsWith(fileName))
+                    if (files[i].EndsWith(aFileName))
                     {
                         absolutePath = files[i];
                     }
@@ -70,9 +71,10 @@ public static class CodeTODOsIO
         return relativePath;
     }
 
+
     // Return the first instance of the given folder.
     // This is a non-recursive, breadth-first search algorithm.
-    private static string GetFirstInstanceOfFolder(string folderName)
+    private static string GetFirstInstanceOfFolder(string aFolderName)
 	{
         var projectDirectoryPath = Directory.GetCurrentDirectory();
         var projectDirectoryInfo = new DirectoryInfo(projectDirectoryPath);
@@ -117,7 +119,7 @@ public static class CodeTODOsIO
             {
                 for (int i = 0; i < folders.Length; i++)
                 {
-                    if (folders[i].EndsWith(folderName))
+                    if (folders[i].EndsWith(aFolderName))
                     {
                         absolutePath = folders[i];
                     }
@@ -129,12 +131,13 @@ public static class CodeTODOsIO
         return relativePath;
     }
 
+
     // Remove a single line from a text file.
-    public static void RemoveLineFromFile(string file, int lineNumber)
+    public static void RemoveLineFromFile(string aFile, int aLineNumber)
     {
         var tempFile = Path.GetTempFileName();
 
-        using(var reader = new StreamReader(file))
+        using(var reader = new StreamReader(aFile))
         using (var writer = new StreamWriter(tempFile))
         {
             string line;
@@ -143,7 +146,7 @@ public static class CodeTODOsIO
             while ((line = reader.ReadLine()) != null)
             {
                 // If the line is not the one we want to remove, write it to the temp file.
-                if (currentLineNumber != lineNumber)
+                if (currentLineNumber != aLineNumber)
                 {
                     writer.WriteLine(line);
                 }
@@ -160,18 +163,19 @@ public static class CodeTODOsIO
         }
 
         // Overwrite the old file with the temp file.
-        File.Delete(file);
-        File.Move(tempFile, file);
+        File.Delete(aFile);
+        File.Move(tempFile, aFile);
     }
+
 
     // Check for character before the QQQ to see if they are spaces or backslashes. If they are, remove them.
     // This is to remove the whole QQQ wihtout removing anything else of importance (including stuff in a comment BEFORE a QQQ).
-    private static string GetLineWithoutQQQ(string line)
+    private static string GetLineWithoutQQQ(string aLine)
     {
-        var qqqIndex = line.IndexOf(CodeTODOsPrefs.TODOToken);
+        var qqqIndex = aLine.IndexOf(CodeTODOsPrefs.TODOToken);
 
         int j = qqqIndex - 1;
-        while (j >= 0 && (line[j] == ' ' || line[j] == '/'))
+        while (j >= 0 && (aLine[j] == ' ' || aLine[j] == '/'))
         {
             if (j > 0)
             {
@@ -183,17 +187,18 @@ public static class CodeTODOsIO
                 return null;
             }
         }
-        var lineWithoutQQQ = line.Substring(0, line.Length - (line.Length - qqqIndex));
+        var lineWithoutQQQ = aLine.Substring(0, aLine.Length - (aLine.Length - qqqIndex));
 
         return lineWithoutQQQ;
     }
 
+
     // Update the task and priority of a QQQ.
-    public static void ChangeQQQ(QQQ oldQQQ, QQQ newQQQ)
+    public static void ChangeQQQ(QQQ anOldQQQ, QQQ aNewQQQ)
     {
         var tempFile = Path.GetTempFileName();
 
-        using(var reader = new StreamReader(oldQQQ.Script))
+        using(var reader = new StreamReader(anOldQQQ.Script))
         using (var writer = new StreamWriter(tempFile))
         {
             string line;
@@ -202,7 +207,7 @@ public static class CodeTODOsIO
             while ((line = reader.ReadLine()) != null)
             {
                 // If the line is not the one we want to remove, write it to the temp file.
-                if (currentLineNumber != oldQQQ.LineNumber)
+                if (currentLineNumber != anOldQQQ.LineNumber)
                 {
                     writer.WriteLine(line);
                 }
@@ -214,16 +219,15 @@ public static class CodeTODOsIO
                     var slashes = "";
                     slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //";
 
-                    var newLine = lineWithoutQQQ + slashes + CodeTODOsPrefs.TODOToken + (((int)newQQQ.Priority) + 1) + " " + newQQQ.Task;
+                    var newLine = lineWithoutQQQ + slashes + CodeTODOsPrefs.TODOToken + (((int)aNewQQQ.Priority) + 1) + " " + aNewQQQ.Task;
                     writer.WriteLine(newLine);
                 }
                 currentLineNumber++;
             }
         }
-
         // Overwrite the old file with the temp file.
-        File.Delete(oldQQQ.Script);
-        File.Move(tempFile, oldQQQ.Script);
+        File.Delete(anOldQQQ.Script);
+        File.Move(tempFile, anOldQQQ.Script);
     }
 }
 #endif

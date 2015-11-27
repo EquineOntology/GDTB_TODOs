@@ -6,7 +6,8 @@ public class QQQ: System.Object
     public string Script;
     public int LineNumber;
 
-    public QQQ(int aPriority, string aTask, string script, int lineNumber)
+
+    public QQQ(int aPriority, string aTask, string aScript, int aLineNumber)
     {
         switch(aPriority)
         {
@@ -24,9 +25,10 @@ public class QQQ: System.Object
                 break;
         }
         this.Task = aTask;
-        this.Script = script;
-        this.LineNumber = 0;
+        this.Script = aScript;
+        this.LineNumber = aLineNumber;
     }
+
 
     public QQQ(QQQPriority aPriority, string aTask, string aScript, int aLineNumber)
     {
@@ -36,6 +38,7 @@ public class QQQ: System.Object
         this.LineNumber = aLineNumber;
     }
 
+
     public QQQ(string aTask, string aScript)
     {
         this.Priority = QQQPriority.NORMAL;
@@ -43,6 +46,7 @@ public class QQQ: System.Object
         this.Script = aScript;
         this.LineNumber = 0;
     }
+
 
     public QQQ()
     {
@@ -52,5 +56,3 @@ public class QQQ: System.Object
         this.LineNumber = 0;
     }
 }
-
-

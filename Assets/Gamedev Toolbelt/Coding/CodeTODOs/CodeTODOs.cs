@@ -36,16 +36,17 @@ public class CodeTODOs : EditorWindow
         window.Show();
     }
 
+
     public void OnEnable()
     {
         _GDTBSkin = Resources.Load(GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
-
         if (QQQs.Count == 0)
         {
             CodeTODOsHelper.GetQQQsFromAllScripts();
             CodeTODOsHelper.ReorderQQQs();
         }
     }
+
 
     private void OnGUI()
     {
@@ -61,6 +62,7 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndVertical();
         EditorGUILayout.EndHorizontal();
     }
+
 
     // The horizontal and vertical space reserved for each character in a label.
     private float _characterHeightCoefficient = 16.0f;
@@ -87,37 +89,40 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndScrollView();
     }
 
+
 #region QQQPriorityMethods
     // This method was added to improve readability of inside OnGUI.
     // It simply selects which priority format to use based on the user preference.
-    private void DrawPriority(QQQ qqq)
+    private void DrawPriority(QQQ aQQQ)
     {
         if (CodeTODOsPrefs.QQQPriorityDisplay == PriorityDisplayFormat.TEXT_ONLY)
         {
-            DrawPriorityText(qqq);
+            DrawPriorityText(aQQQ);
         }
         else if (CodeTODOsPrefs.QQQPriorityDisplay == PriorityDisplayFormat.ICON_ONLY)
         {
-            DrawPriorityIcon(qqq);
+            DrawPriorityIcon(aQQQ);
         }
         else if (CodeTODOsPrefs.QQQPriorityDisplay == PriorityDisplayFormat.ICON_AND_TEXT)
         {
-            DrawPriorityIconAndText(qqq);
+            DrawPriorityIconAndText(aQQQ);
         }
     }
 
+
     // Draw priority for the "Text only" setting.
-    private void DrawPriorityText(QQQ qqq)
+    private void DrawPriorityText(QQQ aQQQ)
     {
         var priorityRect = EditorGUILayout.GetControlRect(GUILayout.Width(50));
-        EditorGUI.LabelField(priorityRect, qqq.Priority.ToString());
+        EditorGUI.LabelField(priorityRect, aQQQ.Priority.ToString());
     }
 
+
     // Draw priority for the "Icon and Text" setting.
-    private void DrawPriorityIconAndText(QQQ qqq)
+    private void DrawPriorityIconAndText(QQQ aQQQ)
     {
-        var priorityIndex = System.Convert.ToInt16(qqq.Priority);
-        Texture2D tex = GetQQQPriorityTexture(priorityIndex);
+        //var priorityIndex = System.Convert.ToInt16(qqq.Priority);
+        Texture2D tex = GetQQQPriorityTexture((int)aQQQ.Priority);
 
         EditorGUILayout.BeginHorizontal(GUILayout.Width(16));
         EditorGUILayout.Space();
@@ -134,7 +139,7 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField(qqq.Priority.ToString());
+        EditorGUILayout.LabelField(aQQQ.Priority.ToString());
         EditorGUILayout.Space();
         EditorGUILayout.EndVertical();
 
@@ -142,11 +147,12 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+
     // Draw priority for the "Icon only" setting.
-    private void DrawPriorityIcon(QQQ qqq)
+    private void DrawPriorityIcon(QQQ aQQQ)
     {
-        var priorityIndex = System.Convert.ToInt16(qqq.Priority);
-        Texture2D tex = GetQQQPriorityTexture(priorityIndex);
+        //var priorityIndex = System.Convert.ToInt16(qqq.Priority);
+        Texture2D tex = GetQQQPriorityTexture((int)aQQQ.Priority);
 
         EditorGUILayout.BeginHorizontal(GUILayout.Width(24));
         EditorGUILayout.Space();
@@ -163,11 +169,12 @@ public class CodeTODOs : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+
     // Get the correct texture for a priority.
-    private Texture2D GetQQQPriorityTexture(int priority)
+    private Texture2D GetQQQPriorityTexture(int aPriority)
     {
         Texture2D tex;
-        switch(priority)
+        switch(aPriority)
         {
             case 0:
                 tex = Resources.Load(GUIConstants.FILE_QQQ_URGENT, typeof(Texture2D)) as Texture2D;
@@ -186,12 +193,13 @@ public class CodeTODOs : EditorWindow
     }
 #endregion
 
+
     // Draws the "Task" and "Script" texts for QQQs.
-    private void DrawTaskAndScriptLabels(QQQ qqq, float taskHeight, float scriptHeight)
+    private void DrawTaskAndScriptLabels(QQQ aQQQ, float aTaskHeight, float aScriptHeight)
     {
-        var labels = CodeTODOsHelper.FormatTaskAndScriptLabels(qqq);
-        var taskWidth = qqq.Task.Length * 9.0f;
-        var scriptWidth = qqq.Script.Length * 8.0f;
+        var labels = CodeTODOsHelper.FormatTaskAndScriptLabels(aQQQ);
+        var taskWidth = aQQQ.Task.Length * 9.0f;
+        var scriptWidth = aQQQ.Script.Length * 8.0f;
 
         var labelWidth = taskWidth > scriptWidth ? taskWidth : scriptWidth;
 
@@ -199,25 +207,26 @@ public class CodeTODOs : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        var taskLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(taskHeight), GUILayout.Width(labelWidth));
+        var taskLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(aTaskHeight), GUILayout.Width(labelWidth));
         EditorGUI.LabelField(taskLabelRect, labels[0], EditorStyles.boldLabel);
         EditorGUILayout.EndHorizontal();
 
         GUIStyle link = new GUIStyle(EditorStyles.label);
         link.normal.textColor = Color.blue;
-        var scriptLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(scriptHeight), GUILayout.Width(labelWidth));
+        var scriptLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(aScriptHeight), GUILayout.Width(labelWidth));
         EditorGUIUtility.AddCursorRect(scriptLabelRect, MouseCursor.Link);
         if (Event.current.type == EventType.MouseUp && scriptLabelRect.Contains(Event.current.mousePosition))
         {
-            CodeTODOsHelper.OpenScript(qqq);
+            CodeTODOsHelper.OpenScript(aQQQ);
         }
         EditorGUI.LabelField(scriptLabelRect, labels[1], link);
 
         EditorGUILayout.EndVertical();
     }
 
+
     // Draw the "Edit task" button.
-    private void DrawEditTaskButton(QQQ qqq)
+    private void DrawEditTaskButton(QQQ aQQQ)
     {
         var tex = Resources.Load(GUIConstants.FILE_QQQ_EDIT, typeof(Texture2D)) as Texture2D;
         var buttonRect = EditorGUILayout.GetControlRect(GUILayout.Width(ICON_BUTTON_SIZE), GUILayout.Height(ICON_BUTTON_SIZE));
@@ -228,12 +237,13 @@ public class CodeTODOs : EditorWindow
         EditorGUIUtility.AddCursorRect(buttonRect, MouseCursor.Link);
         if (Event.current.type == EventType.MouseUp && buttonRect.Contains(Event.current.mousePosition))
         {
-            CodeTODOsEdit.Init(qqq);
+            CodeTODOsEdit.Init(aQQQ);
         }
     }
 
+
     // Draw the "Complete task" button.
-    private void DrawCompleteTaskButton(QQQ qqq)
+    private void DrawCompleteTaskButton(QQQ aQQQ)
     {
         var tex = Resources.Load(GUIConstants.FILE_QQQ_DONE, typeof(Texture2D)) as Texture2D;
         var buttonRect = EditorGUILayout.GetControlRect(GUILayout.Width(ICON_BUTTON_SIZE), GUILayout.Height(ICON_BUTTON_SIZE));
@@ -242,9 +252,10 @@ public class CodeTODOs : EditorWindow
         EditorGUIUtility.AddCursorRect(buttonRect, MouseCursor.Link);
         if (Event.current.type == EventType.MouseUp && buttonRect.Contains(Event.current.mousePosition))
         {
-            CodeTODOsHelper.CompleteQQQ(qqq);
+            CodeTODOsHelper.CompleteQQQ(aQQQ);
         }
     }
+
 
     // Draw the "Refresh list" button.
     private void DrawListButton()
