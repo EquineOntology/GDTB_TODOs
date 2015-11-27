@@ -1,6 +1,6 @@
 ﻿public enum QQQPriority
 {
-    URGENT,
-    NORMAL,
-    MINOR
+    URGENT = 1,
+    NORMAL = 2,
+    MINOR = 3
 }
