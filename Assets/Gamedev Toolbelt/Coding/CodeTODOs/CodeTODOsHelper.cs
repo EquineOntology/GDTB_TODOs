@@ -22,6 +22,7 @@ public static class CodeTODOsHelper
         return allScripts;
     }
 
+
     // Find all QQQs in all scripts.
     public static void GetQQQsFromAllScripts()
     {
@@ -34,6 +35,7 @@ public static class CodeTODOsHelper
         }
         CodeTODOs.QQQs = qqqs;
     }
+
 
     // Find the QQQs in a single script.
     public static List<QQQ> GetQQQsFromScript(string aPath)
@@ -111,6 +113,7 @@ public static class CodeTODOsHelper
         return currentQQQs;
     }
 
+
     // Add the QQQs in a script to the list in CodeTODOs.
     public static void AddQQQs(string aScript)
     {
@@ -126,6 +129,7 @@ public static class CodeTODOsHelper
         }
     }
 
+
     // Remove all references to the given script in CodeTODOs.QQQs.
     public static void RemoveScript(string aScript)
     {
@@ -140,6 +144,7 @@ public static class CodeTODOsHelper
         }
     }
 
+
     // Change all references to a script in CodeTODOs.QQQs to another script (for when a script is moved).
     public static void ChangeScriptOfQQQ(string aPathTo, string aPathFrom)
     {
@@ -153,6 +158,7 @@ public static class CodeTODOsHelper
         }
     }
 
+
     // Get the last characters of a string.
     public static string GetStringEnd (string aCompleteString, int aNumberOfCharacters)
     {
@@ -163,6 +169,7 @@ public static class CodeTODOsHelper
         var startIndex = aCompleteString.Length - aNumberOfCharacters;
         return aCompleteString.Substring(startIndex);
     }
+
 
     // Insert \n (newline characters) in a string, based on the limit provided.
     public static string DivideStringWithNewlines(string aCompleteString, int aNumberOfCharacters)
@@ -187,6 +194,7 @@ public static class CodeTODOsHelper
         }
         return newString;
     }
+
 
     // Reorder the given QQQ list based on the urgency of tasks.
     public static void ReorderQQQs()
@@ -223,6 +231,7 @@ public static class CodeTODOsHelper
 
         CodeTODOs.QQQs = orderedQQQs;
     }
+
 
     // Formats a label (a qqq script or task) based on preferences.
     public static string[] FormatTaskAndScriptLabels(QQQ aQQQ)
@@ -269,6 +278,7 @@ public static class CodeTODOsHelper
         return formattedLabels;
    }
 
+
     // Remove a QQQ (both from the list and from the file in which it was written).
     public static void CompleteQQQ(QQQ aQQQ)
     {
@@ -276,12 +286,14 @@ public static class CodeTODOsHelper
         CodeTODOs.QQQs.Remove(aQQQ);
     }
 
+
     // Open the script associated with the qqq in question.
     public static void OpenScript(QQQ aQQQ)
     {
         var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script) as UnityEngine.TextAsset;
         AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
     }
+
 
     public static void UpdateTask(QQQ anOldQQQ, QQQ aNewQQQ)
     {
