@@ -6,9 +6,9 @@ public class QQQ: System.Object
     public string Script;
     public int LineNumber;
 
-    public QQQ(int priority, string task, string script, int lineNumber)
+    public QQQ(int aPriority, string aTask, string script, int lineNumber)
     {
-        switch(priority)
+        switch(aPriority)
         {
             case 1:
                 this.Priority = QQQPriority.URGENT;
@@ -23,16 +23,24 @@ public class QQQ: System.Object
                 this.Priority = QQQPriority.NORMAL;
                 break;
         }
-        this.Task = task;
+        this.Task = aTask;
         this.Script = script;
         this.LineNumber = 0;
     }
 
-    public QQQ(string task, string script)
+    public QQQ(QQQPriority aPriority, string aTask, string aScript, int aLineNumber)
+    {
+        this.Priority = aPriority;
+        this.Task = aTask;
+        this.Script = aScript;
+        this.LineNumber = aLineNumber;
+    }
+
+    public QQQ(string aTask, string aScript)
     {
         this.Priority = QQQPriority.NORMAL;
-        this.Task = task;
-        this.Script = script;
+        this.Task = aTask;
+        this.Script = aScript;
         this.LineNumber = 0;
     }
 
