@@ -234,7 +234,7 @@ public static class CodeTODOsHelper
 
 
     // Formats a label (a qqq script or task) based on preferences.
-    public static string[] FormatTaskAndScriptLabels(QQQ aQQQ)
+    public static string[] FormatTaskAndScriptLabels(QQQ aQQQ, UnityEngine.Rect aRect)
     {
         var formattedLabels = new string[2];
         var taskLabel = "";
