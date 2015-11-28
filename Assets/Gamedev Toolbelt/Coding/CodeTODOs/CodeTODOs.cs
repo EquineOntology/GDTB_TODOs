@@ -197,9 +197,12 @@ public class CodeTODOs : EditorWindow
     // Draws the "Task" and "Script" texts for QQQs.
     private void DrawTaskAndScriptLabels(QQQ aQQQ, float aTaskHeight, float aScriptHeight)
     {
-        var labels = CodeTODOsHelper.FormatTaskAndScriptLabels(aQQQ);
-        var taskWidth = aQQQ.Task.Length * 9.0f;
-        var scriptWidth = aQQQ.Script.Length * 8.0f;
+        var labels = CodeTODOsHelper.FormatTaskAndScriptLabels(aQQQ, EditorGUILayout.GetControlRect());
+        var taskWidth = aQQQ.Task.Length * GUIConstants.BOLD_CHAR_WIDTH;
+        // To calculate the actual size of a script, we multiply the sum of the script characters,
+        //the "fixed" ones (Line XXX in ""), and the the characters in lineNumber for the max width of a character in pixels.
+        var scriptWidth = (aQQQ.Script.Length + 11 + aQQQ.LineNumber.ToString().Length) * GUIConstants.NORMAL_CHAR_WIDTH;
+        //Debug.Log(aQQQ.Script.Length);
 
         var labelWidth = taskWidth > scriptWidth ? taskWidth : scriptWidth;
 
