@@ -12,4 +12,8 @@
     public const string TEXT_EDIT_WINDOW_TITLE = "Edit task";
 
     public const string FILE_GUISKIN = "GUI/GDTBSkin";
+
+    public const int SCRIPT_MAX_WIDTH = 300;
+    public const float NORMAL_CHAR_WIDTH = 7.0f;
+    public const float BOLD_CHAR_WIDTH = 9.0f;
 }
