@@ -133,9 +133,9 @@ public static class CodeTODOsHelper
     // Remove all references to the given script in CodeTODOs.QQQs.
     public static void RemoveScript(string aScript)
     {
-        for(int i = 0; i < CodeTODOs.QQQs.Count; i++)
+        for (int i = 0; i < CodeTODOs.QQQs.Count; i++)
         {
-            if(CodeTODOs.QQQs[i].Script == aScript)
+            if (CodeTODOs.QQQs[i].Script == aScript)
             {
                 CodeTODOs.QQQs.Remove(CodeTODOs.QQQs[i]);
                 i--;
@@ -160,9 +160,9 @@ public static class CodeTODOsHelper
 
 
     // Get the last characters of a string.
-    public static string GetStringEnd (string aCompleteString, int aNumberOfCharacters)
+    public static string GetStringEnd(string aCompleteString, int aNumberOfCharacters)
     {
-        if(aNumberOfCharacters >= aCompleteString.Length)
+        if (aNumberOfCharacters >= aCompleteString.Length)
         {
             return aCompleteString;
         }
@@ -171,29 +171,7 @@ public static class CodeTODOsHelper
     }
 
 
-    // Insert \n (newline characters) in a string, based on the limit provided.
-    public static string DivideStringWithNewlines(string aCompleteString, int aNumberOfCharacters)
-    {
-        if(aNumberOfCharacters >= aCompleteString.Length)
-        {
-            return aCompleteString;
-        }
 
-        int newLines = aCompleteString.Length / aNumberOfCharacters;
-        var index = aNumberOfCharacters;
-        string newString = aCompleteString;
-        for (int i = 0; i < newLines; i++)
-        {
-            var subStr1 = newString.Substring(0, index);
-            var subStr2 = newString.Substring(index);
-
-            newString = subStr1 + "\n" + subStr2;
-
-            index += 1 + aNumberOfCharacters; // \n counts as a single character.
-
-        }
-        return newString;
-    }
 
 
     // Reorder the given QQQ list based on the urgency of tasks.
@@ -203,27 +181,27 @@ public static class CodeTODOsHelper
         var orderedQQQs = new List<QQQ>();
 
         // First add urgent tasks.
-        for(int i = 0; i < originalQQQs.Count; i++)
+        for (int i = 0; i < originalQQQs.Count; i++)
         {
-            if(originalQQQs[i].Priority == QQQPriority.URGENT)
+            if (originalQQQs[i].Priority == QQQPriority.URGENT)
             {
                 orderedQQQs.Add(originalQQQs[i]);
             }
         }
 
         // Then normal ones.
-        for(int i = 0; i < originalQQQs.Count; i++)
+        for (int i = 0; i < originalQQQs.Count; i++)
         {
-            if(originalQQQs[i].Priority == QQQPriority.NORMAL)
+            if (originalQQQs[i].Priority == QQQPriority.NORMAL)
             {
                 orderedQQQs.Add(originalQQQs[i]);
             }
         }
 
         // Then minor ones.
-        for(int i = 0; i < originalQQQs.Count; i++)
+        for (int i = 0; i < originalQQQs.Count; i++)
         {
-            if(originalQQQs[i].Priority == QQQPriority.MINOR)
+            if (originalQQQs[i].Priority == QQQPriority.MINOR)
             {
                 orderedQQQs.Add(originalQQQs[i]);
             }
@@ -234,49 +212,38 @@ public static class CodeTODOsHelper
 
 
     // Formats a label (a qqq script or task) based on preferences.
-    public static string[] FormatTaskAndScriptLabels(QQQ aQQQ, UnityEngine.Rect aRect)
+    public static string[] FormatTaskAndScriptLabels(QQQ aQQQ, float aWidth)
     {
         var formattedLabels = new string[2];
-        var taskLabel = "";
-        var scriptLabel = "";
-        if (CodeTODOsPrefs.CutoffSwitch == true)
-        {
-            // Task
-            // The number of characters before a newline (for tasks) is reduced to account for the bold label style.
-            if (taskLabel.Length < CodeTODOsPrefs.CharsBeforeNewline)
-            {
-                taskLabel = aQQQ.Task;
-            }
-            else // Add the "..." before the label if it's longer than the CharsBeforeNewline option.
-            {
-                taskLabel = "..." + CodeTODOsHelper.GetStringEnd(aQQQ.Task, CodeTODOsPrefs.CharsBeforeNewline - 11); //-11 is from a -8 (for the bold style) and -3 (for the 3 dots).
-            }
-            formattedLabels[0] = taskLabel;
 
-            // Script
-            if (scriptLabel.Length < CodeTODOsPrefs.CharsBeforeNewline)
-            {
-                scriptLabel = "Line " + (aQQQ.LineNumber + 1) + " in \"" + aQQQ.Script + "\"";
-            }
-            else // Add the "..." before the script name if it's longer than the CharsBeforeNewline option.
-            {
-                scriptLabel = "Line " + (aQQQ.LineNumber + 1) + " in \"..." + CodeTODOsHelper.GetStringEnd(aQQQ.Script, CodeTODOsPrefs.CharsBeforeNewline - 3) + "\"";
-            }
-            formattedLabels[1] = scriptLabel;
+        var rectWidth = aWidth;
+        var taskWidth = GetWidthOfString(aQQQ.Task, true);
+
+        // If the task is larger than the rect, we divide it in newlines.
+        if (taskWidth >= rectWidth)
+        {
+            var formattedTask = DivideStringWithNewlines(aQQQ.Task, (int)(rectWidth / GUIConstants.BOLD_CHAR_WIDTH));
+            formattedLabels[0] = formattedTask;
         }
         else
         {
-            // Task
-            // The number of characters before a newline (for tasks) is reduced to account for the bold label style.
-            taskLabel = CodeTODOsHelper.DivideStringWithNewlines(aQQQ.Task, CodeTODOsPrefs.CharsBeforeNewline/* - 8*/);
-            formattedLabels[0] = taskLabel;
-
-            // Script
-            scriptLabel = "Line " + (aQQQ.LineNumber + 1) + " in \"" + CodeTODOsHelper.DivideStringWithNewlines(aQQQ.Script, CodeTODOsPrefs.CharsBeforeNewline) + "\"";
-            formattedLabels[1] = scriptLabel;
+            formattedLabels[0] = aQQQ.Task;
         }
+
+        // Calculate the width of the whole script.
+        var scriptWidth = GetWidthOfString(aQQQ.Script);
+        var additionalCharactersWidth = ("Line ".Length + (aQQQ.LineNumber + 1).ToString().Length + " in \"\"".Length) * GUIConstants.NORMAL_CHAR_WIDTH;
+        var totalScriptWidth = scriptWidth + additionalCharactersWidth;
+
+        var formattedScript = aQQQ.Script;
+        if (totalScriptWidth >= rectWidth)
+        {
+            formattedScript = CutStringAtWidth(aQQQ.Script, (int)aWidth);
+        }
+        formattedLabels[1] = "Line " + (aQQQ.LineNumber + 1) + " in \"" + formattedScript + "\"";
+
         return formattedLabels;
-   }
+    }
 
 
     // Remove a QQQ (both from the list and from the file in which it was written).
@@ -298,6 +265,66 @@ public static class CodeTODOsHelper
     public static void UpdateTask(QQQ anOldQQQ, QQQ aNewQQQ)
     {
         CodeTODOsIO.ChangeQQQ(anOldQQQ, aNewQQQ);
+    }
+
+
+    // Return the width of a string based on its length and style.
+    private static float GetWidthOfString(string aString, bool isBold = false)
+    {
+        if (isBold)
+        {
+            return aString.Length * GUIConstants.BOLD_CHAR_WIDTH;
+        }
+        return aString.Length * GUIConstants.NORMAL_CHAR_WIDTH;
+    }
+
+
+    // Insert \n (newline characters) in a string, based on the limit provided.
+    public static string DivideStringWithNewlines(string aCompleteString, int aNumberOfCharacters)
+    {
+        if (aNumberOfCharacters >= aCompleteString.Length)
+        {
+            return aCompleteString;
+        }
+
+        var newLines = aNumberOfCharacters != 0 ? aCompleteString.Length / aNumberOfCharacters : aCompleteString.Length;
+        var index = aNumberOfCharacters;
+        var newString = aCompleteString;
+        for (int i = 0; i < newLines; i++)
+        {
+            var subStr1 = newString.Substring(0, index);
+            var subStr2 = newString.Substring(index);
+
+            newString = subStr1 + "\n" + subStr2;
+
+            index += 1 + aNumberOfCharacters; // \n counts as a single character.
+        }
+        return newString;
+    }
+
+
+    // Cut the length of a string and insert "..." at its beginning.
+    private static string CutStringAtWidth(string aString, int aMaxWidth, bool isBold = false)
+    {
+        var stringWidth = aString.Length * (isBold ? GUIConstants.BOLD_CHAR_WIDTH : GUIConstants.NORMAL_CHAR_WIDTH);
+        var surplusWidth = aMaxWidth - stringWidth;
+        var surplusCharacters = surplusWidth / (isBold ? GUIConstants.BOLD_CHAR_WIDTH : GUIConstants.NORMAL_CHAR_WIDTH);
+
+        int cutoffIndex = UnityEngine.Mathf.Clamp(surplusCharacters + 3, 0, aString.Length - 1); // +3 because of the "..." we'll be adding.
+        //UnityEngine.Debug.Log("String: " + aString + " , Cutoff: " + cutoffIndex);
+        return "..." + aString.Substring(cutoffIndex);
+    }
+
+    public static float CalculateHeightOfString(string aString, float aMaxWidth, bool isBold = false)
+    {
+        //UnityEngine.Debug.Log("string: " + aString);
+        var stringWidth = aString.Length * (isBold ? GUIConstants.BOLD_CHAR_WIDTH : GUIConstants.NORMAL_CHAR_WIDTH);
+        //UnityEngine.Debug.Log("width: " + stringWidth);
+        var lines = UnityEngine.Mathf.Clamp((int)(stringWidth / aMaxWidth), 1, 300);
+        //UnityEngine.Debug.Log("lines: " + lines);
+        var height =  lines * (GUIConstants.CHAR_HEIGHT * GUIConstants.VERTICAL_SPACING); // Times 1.2 to take line spacing into account.
+        //UnityEngine.Debug.Log("height: " + height);
+        return height;
     }
 }
 #endif
