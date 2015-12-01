@@ -14,6 +14,9 @@
     public const string FILE_GUISKIN = "GUI/GDTBSkin";
 
     public const int SCRIPT_MAX_WIDTH = 300;
-    public const float NORMAL_CHAR_WIDTH = 7.0f;
-    public const float BOLD_CHAR_WIDTH = 9.0f;
+    public const int NORMAL_CHAR_WIDTH = 7;
+    public const int BOLD_CHAR_WIDTH = 9;
+    public const int CHAR_HEIGHT = 11;
+    public const float VERTICAL_SPACING = 1.5f;
+
 }
