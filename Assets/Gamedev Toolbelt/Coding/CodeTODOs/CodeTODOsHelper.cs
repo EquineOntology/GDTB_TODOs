@@ -322,7 +322,7 @@ public static class CodeTODOsHelper
         //UnityEngine.Debug.Log("width: " + stringWidth);
         var lines = UnityEngine.Mathf.Clamp((int)(stringWidth / aMaxWidth), 1, 300);
         //UnityEngine.Debug.Log("lines: " + lines);
-        var height =  lines * (GUIConstants.CHAR_HEIGHT * GUIConstants.VERTICAL_SPACING); // Times 1.2 to take line spacing into account.
+        var height =  lines * (GUIConstants.LINE_HEIGHT);
         //UnityEngine.Debug.Log("height: " + height);
         return height;
     }
