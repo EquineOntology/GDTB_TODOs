@@ -5,47 +5,43 @@ using System.Collections.Generic;
 
 public class CodeTODOs : EditorWindow
 {
-    // ====================================================================
-    // ============== Variables used in more than one method ==============
-    // ====================================================================
     public static List<QQQ> QQQs = new List<QQQ>();
     private GUISkin _GDTBSkin;
-    private string _skinPath;
+    private GUIStyle _labelStyle;
 
-    // ====================================================================
-    // =========================== Editor stuff ===========================
-    // ====================================================================
+    // ========================= Editor layouting =========================
     private const int BUTTON_WIDTH = 150;
-    private const int BOX_WIDTH = 400;
-    private const int POPUP_WIDTH = 60;
     private const int ICON_SIZE = 16;
 
-    private int _unit, _qqqWidth;
+    private int _unit, _qqqWidth, _priorityWidth, _editAndDoneWidth;
+    private int _helpBoxOffset = 5;
 
-    // ====================================================================
+    private int _priorityLabelWidth;
+
     // ======================= Class functionality ========================
-    // ====================================================================
-
-    [MenuItem("Window/CodeTODOs")]
+    [MenuItem("Window/CodeTODOs %q")]
     public static void Init()
     {
         // Get existing open window or if none, make a new one.
         CodeTODOs window = (CodeTODOs)EditorWindow.GetWindow(typeof(CodeTODOs));
         window.titleContent = new GUIContent(GUIConstants.TEXT_WINDOW_TITLE);
+
         window.UpdateLayoutingSizes(window.position.width);
+        window._priorityLabelWidth = (int)window._labelStyle.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
+
+        if (QQQs.Count == 0)
+        {
+            CodeTODOsHelper.GetQQQsFromAllScripts();
+            CodeTODOsHelper.ReorderQQQs();
+        }
+
         window.Show();
     }
 
 
     public void OnEnable()
     {
-        UpdateLayoutingSizes(position.width);
         LoadSkin();
-        if (QQQs.Count == 0)
-        {
-            CodeTODOsHelper.GetQQQsFromAllScripts();
-            CodeTODOsHelper.ReorderQQQs();
-        }
     }
 
 
@@ -53,8 +49,7 @@ public class CodeTODOs : EditorWindow
     {
         UpdateLayoutingSizes(position.width);
         GUI.skin = _GDTBSkin;
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(5);
+
         EditorGUILayout.BeginVertical();
         GUILayout.Space(10);
         DrawQQQs();
@@ -62,22 +57,38 @@ public class CodeTODOs : EditorWindow
         DrawListButton();
         GUILayout.Space(10);
         EditorGUILayout.EndVertical();
-        EditorGUILayout.EndHorizontal();
     }
 
 
     /// Draw the list of QQQs.
-    private Vector2 _scrollPosition = new Vector2(Screen.width - (Screen.width/28), Screen.height);
+    private Vector2 _scrollPosition = new Vector2(Screen.width - 5, Screen.height);
+    private Rect _qqqRect, _priorityRect, _rightButtonsRect;
     private void DrawQQQs()
     {
         _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, _GDTBSkin.scrollView);
+        var heightIndex = _helpBoxOffset;
         for (int i = 0; i < QQQs.Count; i++)
         {
-            EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
-            DrawPriority(QQQs[i]);
-            DrawTaskAndScriptLabels(QQQs[i]);
-            DrawEditAndCompleteButtons(QQQs[i]);
-            EditorGUILayout.EndHorizontal();
+            var helpBoxHeight = CalculateNumberOfLines(QQQs[i].Task, _qqqWidth) * GUIConstants.LINE_HEIGHT + GUIConstants.LINE_HEIGHT;
+            helpBoxHeight = helpBoxHeight < ICON_SIZE * 2 ? ICON_SIZE * 2.5f : helpBoxHeight; // Minimum vertical size is ICON_SIZE * 2.5f.
+
+            _qqqRect = new Rect(_priorityWidth, heightIndex, _qqqWidth, helpBoxHeight);
+            //EditorGUI.DrawRect(_qqqRect, Color.green);
+            _priorityRect = new Rect(0, _qqqRect.y, _priorityWidth, helpBoxHeight);
+            //EditorGUI.DrawRect(_priorityRect, Color.red);
+            _rightButtonsRect = new Rect(_priorityWidth + _qqqWidth, _qqqRect.y, _editAndDoneWidth, helpBoxHeight);
+            //EditorGUI.DrawRect(_rightButtonsRect, Color.blue);
+
+            var _helpBoxRect = _priorityRect;
+            _helpBoxRect.width = position.width - Mathf.Clamp(_unit * 2, ICON_SIZE, (ICON_SIZE * 2) + _helpBoxOffset);
+            _helpBoxRect.x += 3;
+            DrawHelpBox(_helpBoxRect);
+
+            DrawPriority(_priorityRect, QQQs[i]);
+            DrawTaskAndScriptLabels(_qqqRect, QQQs[i]);
+            DrawEditAndCompleteButtons(_rightButtonsRect, QQQs[i]);
+
+            heightIndex += (int)helpBoxHeight + _helpBoxOffset;
         }
         EditorGUILayout.EndScrollView();
     }
@@ -85,30 +96,40 @@ public class CodeTODOs : EditorWindow
 
     #region QQQPriorityMethods
     /// Select which priority format to use based on the user preference.
-    private void DrawPriority(QQQ aQQQ)
+    private void DrawPriority(Rect aRect, QQQ aQQQ)
     {
         if (CodeTODOsPrefs.QQQPriorityDisplay == PriorityDisplayFormat.TEXT_ONLY)
         {
-            DrawPriorityText(aQQQ);
+            DrawPriorityText(aRect, aQQQ);
         }
         else if (CodeTODOsPrefs.QQQPriorityDisplay == PriorityDisplayFormat.ICON_ONLY)
         {
-            DrawPriorityIcon(aQQQ);
+            DrawPriorityIcon(aRect, aQQQ);
         }
         else if (CodeTODOsPrefs.QQQPriorityDisplay == PriorityDisplayFormat.ICON_AND_TEXT)
         {
-            DrawPriorityIconAndText(aQQQ);
+            DrawPriorityIconAndText(aRect, aQQQ);
         }
     }
 
 
     /// Draw priority for the "Icon only" setting.
-    private void DrawPriorityIcon(QQQ aQQQ)
+    private void DrawPriorityIcon(Rect aRect, QQQ aQQQ)
     {
         // Prepare the rectangle for layouting. The layout is "space-icon-space".
-        var priorityRect = EditorGUILayout.GetControlRect();
-        var newY = priorityRect.y + (int)(priorityRect.height/2); // Center vertically.
-        var newX = priorityRect.x + Mathf.Clamp(_unit/2, 1, ICON_SIZE); // Increase horizontal margin, but only to ICON_SIZE.
+        var priorityRect = aRect;
+        var newY = 0;
+        var newX = 0;
+        if (aRect.width > ICON_SIZE + (_helpBoxOffset * 2))
+        {
+            newX = (int)priorityRect.x + ICON_SIZE / 2 + _helpBoxOffset;
+            newY = (int)priorityRect.y + ICON_SIZE / 2 + _helpBoxOffset;
+        }
+        else
+        {
+            newX = (int)priorityRect.x + ICON_SIZE / 2;
+            newY = (int)priorityRect.y + ICON_SIZE / 2;
+        }
 
         priorityRect.width = ICON_SIZE;
         priorityRect.height = ICON_SIZE;
@@ -117,63 +138,53 @@ public class CodeTODOs : EditorWindow
         Texture2D tex = GetQQQPriorityTexture((int)aQQQ.Priority);
         EditorGUI.DrawPreviewTexture(priorityRect, tex);
 
-        //EditorGUI.DrawRect(priorityRect, Color.green);
+        //EditorGUI.DrawPreviewTexture(priorityRect, EditorGUIUtility.whiteTexture);
     }
 
 
     /// Draw priority for the "Text only" setting.
-    int _priorityLabelWidth = "URGENT".Length * GUIConstants.NORMAL_CHAR_WIDTH;
-    private void DrawPriorityText(QQQ aQQQ)
+    private void DrawPriorityText(Rect aRect, QQQ aQQQ)
     {
-        // Prepare the rectangle for layouting.
-        var priorityRect = EditorGUILayout.GetControlRect();
-        priorityRect.width = Mathf.Clamp((_unit * 2) + ICON_SIZE, 1, (ICON_SIZE * 2) + _priorityLabelWidth);
-        var newY = priorityRect.y + (int)(priorityRect.height/2);
+        var priorityRect = aRect;
+        priorityRect.height -= (ICON_SIZE / 2 + _helpBoxOffset);
 
-        // Only increase margin when the rectangle gets bigger than the label itself.
-        var newX = priorityRect.x;
-        if (_priorityLabelWidth < priorityRect.width)
-        {
-            newX = newX + Mathf.Clamp(_unit / 2, 1, ICON_SIZE);
-        }
+        var newX = (int)priorityRect.x + _helpBoxOffset;
+        var newY = (int)priorityRect.y + _helpBoxOffset;
         priorityRect.position = new Vector2(newX, newY);
 
-        //EditorGUI.DrawRect(priorityRect, Color.green);
-
+        //EditorGUI.DrawPreviewTexture(priorityRect, EditorGUIUtility.whiteTexture);
         EditorGUI.LabelField(priorityRect, aQQQ.Priority.ToString());
     }
 
 
     /// Draw priority for the "Icon and Text" setting.
-    private void DrawPriorityIconAndText(QQQ aQQQ)
+    private void DrawPriorityIconAndText(Rect aRect, QQQ aQQQ)
     {
-        var priorityRect = EditorGUILayout.GetControlRect();
-        priorityRect.width = Mathf.Clamp((_unit * 2) + ICON_SIZE, 1, (ICON_SIZE * 2) + _priorityLabelWidth);
+        //EditorGUI.DrawPreviewTexture(aRect, EditorGUIUtility.whiteTexture);
 
         // Draw the Icon.
-        var iconRect = priorityRect;
-        var newYIcon = iconRect.y + (int)(iconRect.height / 5); // Center at 1/4th vertically.
-        var newXIcon = iconRect.x + Mathf.Clamp(_unit, 1, ICON_SIZE + (int)(_priorityLabelWidth / 2));
-
+        var iconRect = aRect;
         iconRect.width = ICON_SIZE;
         iconRect.height = ICON_SIZE;
-        iconRect.position = new Vector2(newXIcon, newYIcon);
+
+        var iconNewY = iconRect.y + _helpBoxOffset;
+        var iconNewX = iconRect.x + Mathf.Clamp(_unit, 1, ICON_SIZE + (int)(_priorityLabelWidth / 2));
+        iconRect.position = new Vector2(iconNewX, iconNewY);
 
         Texture2D tex = GetQQQPriorityTexture((int)aQQQ.Priority);
         EditorGUI.DrawPreviewTexture(iconRect, tex);
+        //EditorGUI.DrawPreviewTexture(iconRect, EditorGUIUtility.whiteTexture);
 
-        // Draw the text.
-        var labelRect = priorityRect;
+        // Draw the label.
+        var labelRect = aRect;
         labelRect.width = Mathf.Clamp((_unit * 2) + ICON_SIZE, 1, (ICON_SIZE * 2) + _priorityLabelWidth);
-        var newYLabel = newYIcon + ICON_SIZE + (int)(labelRect.height / 4);
-        var newXLabel = labelRect.x;
 
-        if (_priorityLabelWidth < labelRect.width)
-        {
-            newXLabel = newXLabel + Mathf.Clamp(_unit / 2, 1, ICON_SIZE);
-        }
-        labelRect.position = new Vector2(newXLabel, newYLabel);
+        var labelNewX = labelRect.x + _helpBoxOffset;
+        var labelNewY = (int)(iconRect.y + iconRect.height);
+        labelRect.position = new Vector2(labelNewX, labelNewY);
+
         EditorGUI.LabelField(labelRect, aQQQ.Priority.ToString());
+        //EditorGUI.DrawPreviewTexture(labelRect, EditorGUIUtility.whiteTexture);
     }
 
 
@@ -200,51 +211,62 @@ public class CodeTODOs : EditorWindow
 
 
     /// Draws the "Task" and "Script" texts for QQQs.
-    private void DrawTaskAndScriptLabels(QQQ aQQQ)//, float aTaskHeight, float aScriptHeight)
+    private void DrawTaskAndScriptLabels(Rect aRect, QQQ aQQQ)
     {
-        var windowWidth = EditorWindow.GetWindow<CodeTODOs>().position.width;
-        var labels = CodeTODOsHelper.FormatTaskAndScriptLabels(aQQQ, windowWidth / 2);
-        var taskHeight = CodeTODOsHelper.CalculateHeightOfString(aQQQ.Task, windowWidth, true);
-        //Debug.Log(taskHeight);
+        var labelsRect = aRect;// EditorGUILayout.GetControlRect(GUILayout.Width(_qqqWidth));
+        labelsRect.x = _priorityWidth;
+        var labels = CodeTODOsHelper.FormatTaskAndScriptLabels(aQQQ, _qqqWidth);
 
+        // Task.
         var taskWidth = aQQQ.Task.Length * GUIConstants.BOLD_CHAR_WIDTH;
-        // To calculate the actual size of a script, we multiply the sum of the script characters,
-        //the "fixed" ones (Line XXX in ""), and the the characters in lineNumber for the max width of a character in pixels.
-        var scriptWidth = (aQQQ.Script.Length + 11 + aQQQ.LineNumber.ToString().Length) * GUIConstants.NORMAL_CHAR_WIDTH;
-        //Debug.Log(aQQQ.Script.Length);
+        var charsInLine = _qqqWidth / GUIConstants.BOLD_CHAR_WIDTH;
+        var taskHeight = (aQQQ.Task.Length / charsInLine) * GUIConstants.LINE_HEIGHT;
 
-        var labelWidth = taskWidth > scriptWidth ? taskWidth : scriptWidth;
+        var taskRect = labelsRect;
+        taskRect.height = taskHeight;
 
-        EditorGUILayout.BeginVertical();
+        EditorGUI.LabelField(taskRect, labels[0], EditorStyles.boldLabel);
 
-        var taskLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(taskHeight), GUILayout.Width(labelWidth));
-        EditorGUI.LabelField(taskLabelRect, labels[0], EditorStyles.boldLabel);
+        //EditorGUI.DrawPreviewTexture(taskRect, EditorGUIUtility.whiteTexture);
 
-        GUIStyle link = new GUIStyle(EditorStyles.label);
+        // Script.
+        var scriptRect = taskRect;
+        scriptRect.height = GUIConstants.LINE_HEIGHT;
+        scriptRect.y = scriptRect.y + taskRect.height + 5;
+
+        GUIStyle link = new GUIStyle(EditorStyles.label); // "Blue link" style
         link.normal.textColor = Color.blue;
 
         // Open editor on click.
-        var scriptLabelRect = EditorGUILayout.GetControlRect(GUILayout.Height(GUIConstants.CHAR_HEIGHT * GUIConstants.VERTICAL_SPACING), GUILayout.Width(labelWidth));
-        EditorGUIUtility.AddCursorRect(scriptLabelRect, MouseCursor.Link);
-        if (Event.current.type == EventType.MouseUp && scriptLabelRect.Contains(Event.current.mousePosition))
+        EditorGUIUtility.AddCursorRect(scriptRect, MouseCursor.Link);
+        if (Event.current.type == EventType.MouseUp && scriptRect.Contains(Event.current.mousePosition))
         {
             CodeTODOsHelper.OpenScript(aQQQ);
         }
-        EditorGUI.LabelField(scriptLabelRect, labels[1], link);
+        EditorGUI.LabelField(scriptRect, labels[1], link);
 
-        EditorGUILayout.EndVertical();
+        var helpBoxRect = labelsRect;
+        helpBoxRect.height = taskRect.height + 5 + scriptRect.height;
+        helpBoxRect.width = _qqqWidth + _priorityWidth + _editAndDoneWidth;
+    }
+
+
+    /// Draw the "Help box" style rectangle that separates the QQQs visually.
+    private void DrawHelpBox(Rect aRect)
+    {
+        EditorGUI.LabelField(aRect, "", EditorStyles.helpBox);
     }
 
 
     /// Draw the "Edit" and "Complete" buttons.
-    private void DrawEditAndCompleteButtons(QQQ aQQQ)
+    private void DrawEditAndCompleteButtons(Rect aRect, QQQ aQQQ)
     {
         var maxRectWidth = Mathf.Clamp((_unit * 2) + ICON_SIZE, 1, ICON_SIZE * 3);
         var buttonsRect = EditorGUILayout.GetControlRect(GUILayout.Width(maxRectWidth));
-        //EditorGUI.DrawRect(buttonsRect, Color.red);
+        //EditorGUI.DrawPreviewTexture(buttonsRect, EditorGUIUtility.whiteTexture);
 
         // "Edit" button.
-        var editRect = buttonsRect;
+        var editRect = aRect;
         editRect.x = position.width - ICON_SIZE - Mathf.Clamp(_unit, 1, ICON_SIZE);
         editRect.y += 1;
         editRect.width = ICON_SIZE;
@@ -295,8 +317,10 @@ public class CodeTODOs : EditorWindow
     /// Update sizes used in layouting based on the window size.
     private void UpdateLayoutingSizes(float aWidth)
     {
-        _unit = (int)(aWidth / 28) == 0? 1 : (int)(aWidth/28); // If the unit would be 0, set it to 1.
-        _qqqWidth = (int)aWidth - (_unit * 5) - (ICON_SIZE * 2); // Size of this is "everything else", i.e. whatever is left after the other elements.
+        _unit = (int)(aWidth / 28) == 0 ? 1 : (int)(aWidth / 28); // If the unit would be 0, set it to 1.
+        _priorityWidth = Mathf.Clamp((_unit * 2) + ICON_SIZE, 1, (ICON_SIZE * 2) + _priorityLabelWidth);
+        _editAndDoneWidth = Mathf.Clamp((_unit * 2) + ICON_SIZE + 5, 1, (ICON_SIZE * 3) + 5);
+        _qqqWidth = (int)aWidth - _priorityWidth - _editAndDoneWidth; // Size of this is "everything else", i.e. whatever is left after the other elements.
     }
 
 
@@ -304,6 +328,15 @@ public class CodeTODOs : EditorWindow
     private void LoadSkin()
     {
         _GDTBSkin = Resources.Load(GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+        _labelStyle = _GDTBSkin.GetStyle("label");
+    }
+
+
+    /// Calculate how many lines a task will fill given a max width.
+    private int CalculateNumberOfLines(string aString, int aMaxWidth)
+    {
+        var charactersInLine = aMaxWidth / GUIConstants.BOLD_CHAR_WIDTH;
+        return aString.Length / charactersInLine;
     }
 }
 #endif
