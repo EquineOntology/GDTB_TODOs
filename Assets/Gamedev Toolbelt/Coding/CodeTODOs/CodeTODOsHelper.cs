@@ -6,7 +6,7 @@ using UnityEngine;
 
 public static class CodeTODOsHelper
 {
-    /// Find all files ending with .cs or .js.
+    ///2 Find all files ending with .cs or .js.
     public static List<string> FindAllScripts()
     {
         var allAssets = AssetDatabase.GetAllAssetPaths();
@@ -14,6 +14,21 @@ public static class CodeTODOsHelper
 
         foreach (var path in allAssets)
         {
+            // Whatever the token, we don't want to include these files in the
+            // a bunch of false positives in these files, so we exclude them.
+            if(path.EndsWith("CodeTODOs.cs") ||
+                path.EndsWith("CodeTODOsHelper.cs") ||
+                path.EndsWith("CodeTODOsPrefs.cs") ||
+                path.EndsWith("CodeTODOsEdit.cs") ||
+                path.EndsWith("CodeTODOsIO.cs") ||
+                path.EndsWith("QQQ.cs") ||
+                path.EndsWith("QQQPriority.cs") ||
+                path.EndsWith("GUIConstants.cs") ||
+                path.EndsWith("ScriptsPostProcessor.cs"))
+            {
+                continue;
+            }
+            
             if (path.EndsWith(".cs") || path.EndsWith(".js"))
             {
                 allScripts.Add(path);
@@ -31,7 +46,7 @@ public static class CodeTODOsHelper
 
         for (int i = 0; i < allScripts.Count; i++)
         {
-            qqqs.AddRange(GetQQQsFromScript(allScripts[i]));
+                qqqs.AddRange(GetQQQsFromScript(allScripts[i]));
         }
         CodeTODOs.QQQs = qqqs;
     }
@@ -41,21 +56,6 @@ public static class CodeTODOsHelper
     public static List<QQQ> GetQQQsFromScript(string aPath)
     {
         var currentQQQs = new List<QQQ>();
-
-        // Since the string "QQQ" is repeated many times in the files listed, its default value would give
-        // a bunch of false positives in these files, so we exclude them.
-        if (aPath.EndsWith("CodeTODOs.cs") ||
-            aPath.EndsWith("CodeTODOsHelper.cs") ||
-            aPath.EndsWith("CodeTODOsPrefs.cs") ||
-            aPath.EndsWith("CodeTODOsEdit.cs") ||
-            aPath.EndsWith("CodeTODOsIO.cs") ||
-            aPath.EndsWith("QQQ.cs") ||
-            aPath.EndsWith("QQQPriority.cs") ||
-            aPath.EndsWith("GUIConstants.cs") ||
-            aPath.EndsWith("ScriptsPostProcessor.cs"))
-        {
-            return currentQQQs;
-        }
 
         var lines = File.ReadAllLines(aPath);
 
