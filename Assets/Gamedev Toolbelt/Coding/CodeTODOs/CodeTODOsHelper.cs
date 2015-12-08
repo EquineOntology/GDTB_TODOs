@@ -28,7 +28,7 @@ public static class CodeTODOsHelper
             {
                 continue;
             }
-            
+
             if (path.EndsWith(".cs") || path.EndsWith(".js"))
             {
                 allScripts.Add(path);
@@ -220,6 +220,10 @@ public static class CodeTODOsHelper
         if (scriptWidth >= aWidth)
         {
             formattedScript = CutStringAtWidth(aQQQ.Script, (int)aWidth, aStyle);
+            formattedScript = "Line " + (aQQQ.LineNumber + 1) + " in \"" + formattedScript + "\"";
+        }
+        else
+        {
             formattedScript = "Line " + (aQQQ.LineNumber + 1) + " in \"" + formattedScript + "\"";
         }
 

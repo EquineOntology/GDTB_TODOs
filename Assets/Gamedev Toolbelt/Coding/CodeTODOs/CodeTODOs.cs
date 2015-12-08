@@ -219,7 +219,7 @@ public class CodeTODOs : EditorWindow
         scriptRect.y += (taskRect.height + 5);
         scriptRect.height = GUIConstants.LINE_HEIGHT;
 
-        var scriptLabel = CodeTODOsHelper.FormatScriptLabel(aQQQ, scriptRect.x, _scriptStyle);
+        var scriptLabel = CodeTODOsHelper.FormatScriptLabel(aQQQ, scriptRect.width, _scriptStyle);
         var scriptContent = new GUIContent(scriptLabel);
         scriptRect.width = _scriptStyle.CalcSize(scriptContent).x;
         EditorGUI.LabelField(scriptRect, scriptLabel, _scriptStyle);
@@ -281,7 +281,7 @@ public class CodeTODOs : EditorWindow
     /// Draw the "Refresh" button.
     private void DrawRefreshButton()
     {
-        var buttonRect = new Rect((position.width / 2) - (IconSize * 2), position.height - (IconSize * 1.5f), IconSize * 4,
+        var buttonRect = new Rect((position.width / 2) - (IconSize * 2), position.height - (IconSize * 2), IconSize * 4,
             IconSize * 1.5f);
         if (GUI.Button(buttonRect, GUIConstants.TEXT_REFRESH_LIST))
         {
