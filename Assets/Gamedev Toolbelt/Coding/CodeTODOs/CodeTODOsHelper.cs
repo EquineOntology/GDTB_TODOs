@@ -2,11 +2,11 @@
 using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 public static class CodeTODOsHelper
 {
-
-    // Find all files ending with .cs or .js.
+    /// Find all files ending with .cs or .js.
     public static List<string> FindAllScripts()
     {
         var allAssets = AssetDatabase.GetAllAssetPaths();
@@ -23,7 +23,7 @@ public static class CodeTODOsHelper
     }
 
 
-    // Find all QQQs in all scripts.
+    /// Find all QQQs in all scripts.
     public static void GetQQQsFromAllScripts()
     {
         var allScripts = FindAllScripts();
@@ -37,7 +37,7 @@ public static class CodeTODOsHelper
     }
 
 
-    // Find the QQQs in a single script.
+    /// Find the QQQs in a single script.
     public static List<QQQ> GetQQQsFromScript(string aPath)
     {
         var currentQQQs = new List<QQQ>();
@@ -46,12 +46,11 @@ public static class CodeTODOsHelper
         // a bunch of false positives in these files, so we exclude them.
         if (aPath.EndsWith("CodeTODOs.cs") ||
             aPath.EndsWith("CodeTODOsHelper.cs") ||
-            aPath.EndsWith("QQQ.cs") ||
-            aPath.EndsWith("GamedevToolbelt.cs") ||
             aPath.EndsWith("CodeTODOsPrefs.cs") ||
             aPath.EndsWith("CodeTODOsEdit.cs") ||
-            aPath.EndsWith("QQQPriority.cs") ||
             aPath.EndsWith("CodeTODOsIO.cs") ||
+            aPath.EndsWith("QQQ.cs") ||
+            aPath.EndsWith("QQQPriority.cs") ||
             aPath.EndsWith("GUIConstants.cs") ||
             aPath.EndsWith("ScriptsPostProcessor.cs"))
         {
@@ -114,7 +113,7 @@ public static class CodeTODOsHelper
     }
 
 
-    // Add the QQQs in a script to the list in CodeTODOs.
+    /// Add the QQQs in a script to the list in CodeTODOs.
     public static void AddQQQs(string aScript)
     {
         var qqqs = CodeTODOsHelper.GetQQQsFromScript(aScript);
@@ -123,14 +122,14 @@ public static class CodeTODOsHelper
         {
             if (!CodeTODOs.QQQs.Contains(qqqs[i]))
             {
-                //UnityEngine.Debug.Log("Added QQQ");
+                //Debug.Log("Added QQQ");
                 CodeTODOs.QQQs.Add(qqqs[i]);
             }
         }
     }
 
 
-    // Remove all references to the given script in CodeTODOs.QQQs.
+    /// Remove all references to the given script in CodeTODOs.QQQs.
     public static void RemoveScript(string aScript)
     {
         for (int i = 0; i < CodeTODOs.QQQs.Count; i++)
@@ -139,13 +138,13 @@ public static class CodeTODOsHelper
             {
                 CodeTODOs.QQQs.Remove(CodeTODOs.QQQs[i]);
                 i--;
-                //UnityEngine.Debug.Log("Removed QQQ");
+                //Debug.Log("Removed QQQ");
             }
         }
     }
 
 
-    // Change all references to a script in CodeTODOs.QQQs to another script (for when a script is moved).
+    /// Change all references to a script in CodeTODOs.QQQs to another script (for when a script is moved).
     public static void ChangeScriptOfQQQ(string aPathTo, string aPathFrom)
     {
         for (int i = 0; i < CodeTODOs.QQQs.Count; i++)
@@ -153,13 +152,13 @@ public static class CodeTODOsHelper
             if (CodeTODOs.QQQs[i].Script == aPathTo)
             {
                 CodeTODOs.QQQs[i].Script = aPathFrom;
-                //UnityEngine.Debug.Log("Moved QQQ");
+                //Debug.Log("Moved QQQ");
             }
         }
     }
 
 
-    // Get the last characters of a string.
+    /// Get the last characters of a string.
     public static string GetStringEnd(string aCompleteString, int aNumberOfCharacters)
     {
         if (aNumberOfCharacters >= aCompleteString.Length)
@@ -171,10 +170,7 @@ public static class CodeTODOsHelper
     }
 
 
-
-
-
-    // Reorder the given QQQ list based on the urgency of tasks.
+    /// Reorder the given QQQ list based on the urgency of tasks.
     public static void ReorderQQQs()
     {
         var originalQQQs = CodeTODOs.QQQs;
@@ -211,42 +207,40 @@ public static class CodeTODOsHelper
     }
 
 
-    // Formats a label (a qqq script or task) based on preferences.
-    public static string[] FormatTaskAndScriptLabels(QQQ aQQQ, float aWidth)
+    /// Format a QQQ's script.
+    public static string FormatScriptLabel(QQQ aQQQ, float aWidth, GUIStyle aStyle)
     {
-        var formattedLabels = new string[2];
+        var scriptContent = new GUIContent(aQQQ.Script);
+        var scriptWidth = aStyle.CalcSize(scriptContent).x;
 
-        var rectWidth = aWidth;
-        var taskWidth = GetWidthOfString(aQQQ.Task, true);
-
-        // If the task is larger than the rect, we divide it in newlines.
-        if (taskWidth >= rectWidth)
-        {
-            var formattedTask = DivideStringWithNewlines(aQQQ.Task, (int)(rectWidth / GUIConstants.BOLD_CHAR_WIDTH));
-            formattedLabels[0] = formattedTask;
-        }
-        else
-        {
-            formattedLabels[0] = aQQQ.Task;
-        }
-
-        // Calculate the width of the whole script.
-        var scriptWidth = GetWidthOfString(aQQQ.Script);
-        var additionalCharactersWidth = ("Line ".Length + (aQQQ.LineNumber + 1).ToString().Length + " in \"\"".Length) * GUIConstants.NORMAL_CHAR_WIDTH;
+        var additionalCharactersWidth = aStyle.CalcSize(new GUIContent("Line " + (aQQQ.LineNumber + 1).ToString() + " in \"\"")).x;
         var totalScriptWidth = scriptWidth + additionalCharactersWidth;
 
         var formattedScript = aQQQ.Script;
-        if (totalScriptWidth >= rectWidth)
+        if (scriptWidth >= aWidth)
         {
-            formattedScript = CutStringAtWidth(aQQQ.Script, (int)aWidth);
+            formattedScript = CutStringAtWidth(aQQQ.Script, (int)aWidth, aStyle);
+            formattedScript = "Line " + (aQQQ.LineNumber + 1) + " in \"" + formattedScript + "\"";
         }
-        formattedLabels[1] = "Line " + (aQQQ.LineNumber + 1) + " in \"" + formattedScript + "\"";
 
-        return formattedLabels;
+        return formattedScript;
     }
 
 
-    // Remove a QQQ (both from the list and from the file in which it was written).
+    /// Cut the length of a string and insert "..." at its beginning.
+    private static string CutStringAtWidth(string aString, int aWidth, GUIStyle aStyle)
+    {
+        var stringWidth = aStyle.CalcSize(new GUIContent(aString)).x;
+        var surplusWidth = aWidth - stringWidth;
+        var surplusCharacters = surplusWidth / GUIConstants.NORMAL_CHAR_WIDTH;
+
+        int cutoffIndex = (int)(Mathf.Clamp(surplusCharacters + 3, 0, aString.Length - 1)); // +3 because of the "..." we'll be adding.
+        //Debug.Log("String: " + aString + " , Cutoff: " + cutoffIndex);
+        return "..." + aString.Substring(cutoffIndex);
+    }
+
+
+    /// Remove a QQQ (both from the list and from the file in which it was written).
     public static void CompleteQQQ(QQQ aQQQ)
     {
         CodeTODOsIO.RemoveLineFromFile(aQQQ.Script, aQQQ.LineNumber);
@@ -254,7 +248,7 @@ public static class CodeTODOsHelper
     }
 
 
-    // Open the script associated with the qqq in question.
+    /// Open the script associated with the qqq in question.
     public static void OpenScript(QQQ aQQQ)
     {
         var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script) as UnityEngine.TextAsset;
@@ -265,66 +259,6 @@ public static class CodeTODOsHelper
     public static void UpdateTask(QQQ anOldQQQ, QQQ aNewQQQ)
     {
         CodeTODOsIO.ChangeQQQ(anOldQQQ, aNewQQQ);
-    }
-
-
-    // Return the width of a string based on its length and style.
-    private static float GetWidthOfString(string aString, bool isBold = false)
-    {
-        if (isBold)
-        {
-            return aString.Length * GUIConstants.BOLD_CHAR_WIDTH;
-        }
-        return aString.Length * GUIConstants.NORMAL_CHAR_WIDTH;
-    }
-
-
-    // Insert \n (newline characters) in a string, based on the limit provided.
-    public static string DivideStringWithNewlines(string aCompleteString, int aNumberOfCharacters)
-    {
-        if (aNumberOfCharacters >= aCompleteString.Length)
-        {
-            return aCompleteString;
-        }
-
-        var newLines = aNumberOfCharacters != 0 ? aCompleteString.Length / aNumberOfCharacters : aCompleteString.Length;
-        var index = aNumberOfCharacters;
-        var newString = aCompleteString;
-        for (int i = 0; i < newLines; i++)
-        {
-            var subStr1 = newString.Substring(0, index);
-            var subStr2 = newString.Substring(index);
-
-            newString = subStr1 + "\n" + subStr2;
-
-            index += 1 + aNumberOfCharacters; // \n counts as a single character.
-        }
-        return newString;
-    }
-
-
-    // Cut the length of a string and insert "..." at its beginning.
-    private static string CutStringAtWidth(string aString, int aMaxWidth, bool isBold = false)
-    {
-        var stringWidth = aString.Length * (isBold ? GUIConstants.BOLD_CHAR_WIDTH : GUIConstants.NORMAL_CHAR_WIDTH);
-        var surplusWidth = aMaxWidth - stringWidth;
-        var surplusCharacters = surplusWidth / (isBold ? GUIConstants.BOLD_CHAR_WIDTH : GUIConstants.NORMAL_CHAR_WIDTH);
-
-        int cutoffIndex = UnityEngine.Mathf.Clamp(surplusCharacters + 3, 0, aString.Length - 1); // +3 because of the "..." we'll be adding.
-        //UnityEngine.Debug.Log("String: " + aString + " , Cutoff: " + cutoffIndex);
-        return "..." + aString.Substring(cutoffIndex);
-    }
-
-    public static float CalculateHeightOfString(string aString, float aMaxWidth, bool isBold = false)
-    {
-        //UnityEngine.Debug.Log("string: " + aString);
-        var stringWidth = aString.Length * (isBold ? GUIConstants.BOLD_CHAR_WIDTH : GUIConstants.NORMAL_CHAR_WIDTH);
-        //UnityEngine.Debug.Log("width: " + stringWidth);
-        var lines = UnityEngine.Mathf.Clamp((int)(stringWidth / aMaxWidth), 1, 300);
-        //UnityEngine.Debug.Log("lines: " + lines);
-        var height =  lines * (GUIConstants.LINE_HEIGHT);
-        //UnityEngine.Debug.Log("height: " + height);
-        return height;
     }
 }
 #endif
