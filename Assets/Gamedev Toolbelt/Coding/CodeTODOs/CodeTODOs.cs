@@ -12,7 +12,8 @@ public class CodeTODOs : EditorWindow
     // ========================= Editor layouting =========================
     private const int IconSize = 16;
 
-    private int _unit, _qqqWidth, _priorityWidth, _editAndDoneWidth;
+    private int _unit, _priorityWidth, _editAndDoneWidth;
+    private float _qqqWidth;
     private int _helpBoxOffset = 5;
 
     private int _priorityLabelWidth;
@@ -77,7 +78,7 @@ public class CodeTODOs : EditorWindow
 
             var helpBoxRect = _priorityRect;
             helpBoxRect.height = helpBoxHeight;
-            helpBoxRect.width = position.width - (_helpBoxOffset * 2);
+            helpBoxRect.width = position.width - (_helpBoxOffset * 2) - IconSize;
             helpBoxRect.x += _helpBoxOffset;
 
             heightIndex += (int)helpBoxHeight + _helpBoxOffset;
@@ -230,8 +231,6 @@ public class CodeTODOs : EditorWindow
         {
             CodeTODOsHelper.OpenScript(aQQQ);
         }
-        aRect.height = taskRect.height + 5 + scriptRect.height;
-        aRect.width = _qqqWidth + _priorityWidth + _editAndDoneWidth;
     }
 
 
@@ -247,7 +246,7 @@ public class CodeTODOs : EditorWindow
     {
         // "Edit" button.
         var editRect = aRect;
-        editRect.x = position.width - IconSize - (int)(_helpBoxOffset * 1.5f);
+        editRect.x = position.width - (IconSize * 2) - (_helpBoxOffset * 2);
         editRect.y += 3;
         editRect.width = IconSize;
         editRect.height = IconSize;
@@ -295,17 +294,26 @@ public class CodeTODOs : EditorWindow
     /// Update sizes used in layouting based on the window size.
     private void UpdateLayoutingSizes()
     {
-        var width = position.width;
+        var width = position.width - IconSize;
 
-        _scrollRect = new Rect(_helpBoxOffset, _helpBoxOffset, position.width - (_helpBoxOffset * 2), position.height - IconSize * 3);
+        _scrollRect = new Rect(_helpBoxOffset, _helpBoxOffset, width - (_helpBoxOffset * 2), position.height - IconSize * 3);
 
         _scrollViewRect = _scrollRect;
 
         _unit = (int)(width / 28) == 0 ? 1 : (int)(width / 28); // If the unit would be 0, set it to 1.
 
-        _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, 1, (IconSize * 2) + _priorityLabelWidth);
-        _editAndDoneWidth = Mathf.Clamp((_unit * 2) + IconSize + 5, 1, (IconSize * 3) + 5);
-        _qqqWidth = (int)width - _priorityWidth - _editAndDoneWidth; // Size of this is "everything else", i.e. whatever is left after the other elements.
+        // Priority rect width has different size based on preferences.
+        if (CodeTODOsPrefs.QQQPriorityDisplay.ToString() == "ICON_ONLY")
+        {
+            _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize + _helpBoxOffset) * 2);
+        }
+        else
+        {
+            _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize * 2) + _priorityLabelWidth);
+        }
+
+        _editAndDoneWidth = (IconSize * 2) + 5;
+        _qqqWidth = (width - _priorityWidth - _editAndDoneWidth); // Size of this is "everything else", i.e. whatever is left after the other elements.
     }
 
 
@@ -322,26 +330,6 @@ public class CodeTODOs : EditorWindow
         _priorityStyle = _gdtbSkin.GetStyle("label");
         _taskStyle = _gdtbSkin.GetStyle("task");
         _scriptStyle = _gdtbSkin.GetStyle("script");
-    }
-
-
-    /// Calculate how many lines a task will fill given a max width.
-    private int CalculateNumberOfLines(string aString, int aMaxWidth)
-    {
-        var charactersInLine = aMaxWidth / GUIConstants.BOLD_CHAR_WIDTH;
-        return aString.Length / charactersInLine;
-    }
-
-
-    private int CalculateScrollViewHeight()
-    {
-        float totalHeight = _helpBoxOffset;
-        for (var i = 0; i < QQQs.Count; i++)
-        {
-            totalHeight += CalculateNumberOfLines(QQQs[i].Task, _qqqWidth) * GUIConstants.LINE_HEIGHT + GUIConstants.LINE_HEIGHT;
-            totalHeight += _helpBoxOffset;
-        }
-        return (int)totalHeight;
     }
 }
 #endif
