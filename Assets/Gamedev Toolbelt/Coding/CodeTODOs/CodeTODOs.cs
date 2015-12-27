@@ -12,8 +12,7 @@ public class CodeTODOs : EditorWindow
     // ========================= Editor layouting =========================
     private const int IconSize = 16;
 
-    private int _unit, _priorityWidth, _editAndDoneWidth;
-    private float _qqqWidth;
+    private int _unit, _priorityWidth, _qqqWidth, _editAndDoneWidth;
     private int _helpBoxOffset = 5;
 
     private int _priorityLabelWidth;
@@ -69,12 +68,12 @@ public class CodeTODOs : EditorWindow
             var taskContent = new GUIContent(QQQs[i].Task);
             var taskHeight = _taskStyle.CalcHeight(taskContent, _qqqWidth);
 
-            var helpBoxHeight = taskHeight + GUIConstants.LINE_HEIGHT;
-            helpBoxHeight = helpBoxHeight < IconSize * 2.5f ? IconSize * 2.5f : helpBoxHeight; // Minimum vertical size is ICON_SIZE * 2.5f.
+            var helpBoxHeight = taskHeight + GUIConstants.LINE_HEIGHT + 5;
+            helpBoxHeight = helpBoxHeight < IconSize * 2.5f ? IconSize * 2.5f : helpBoxHeight;
 
             _qqqRect = new Rect(_priorityWidth, heightIndex, _qqqWidth, helpBoxHeight);
             _priorityRect = new Rect(0, _qqqRect.y, _priorityWidth, helpBoxHeight);
-            _rightButtonsRect = new Rect(_priorityWidth + _qqqWidth, _qqqRect.y, _editAndDoneWidth, helpBoxHeight);
+            _rightButtonsRect = new Rect(_priorityWidth + _qqqWidth + (_helpBoxOffset * 2), _qqqRect.y, _editAndDoneWidth, helpBoxHeight);
 
             var helpBoxRect = _priorityRect;
             helpBoxRect.height = helpBoxHeight;
@@ -313,7 +312,7 @@ public class CodeTODOs : EditorWindow
         }
 
         _editAndDoneWidth = (IconSize * 2) + 5;
-        _qqqWidth = (width - _priorityWidth - _editAndDoneWidth); // Size of this is "everything else", i.e. whatever is left after the other elements.
+        _qqqWidth = (int)width - _priorityWidth - _editAndDoneWidth - (_helpBoxOffset * 2);
     }
 
 
