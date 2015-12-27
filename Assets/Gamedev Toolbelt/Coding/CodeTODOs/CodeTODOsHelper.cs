@@ -9,10 +9,10 @@ public static class CodeTODOsHelper
     ///2 Find all files ending with .cs or .js.
     public static List<string> FindAllScripts()
     {
-        var allAssets = AssetDatabase.GetAllAssetPaths();
+        var assetsPaths = AssetDatabase.GetAllAssetPaths();
         var allScripts = new List<string>();
 
-        foreach (var path in allAssets)
+        foreach (var path in assetsPaths)
         {
             // Whatever the token, we don't want to include these files in the
             // a bunch of false positives in these files, so we exclude them.
@@ -28,8 +28,7 @@ public static class CodeTODOsHelper
             {
                 continue;
             }
-
-            if (path.EndsWith(".cs") || path.EndsWith(".js"))
+            else if (path.EndsWith(".cs") || path.EndsWith(".js"))
             {
                 allScripts.Add(path);
             }
@@ -97,7 +96,7 @@ public static class CodeTODOsHelper
                 }
                 var tempString = lines[i].Substring(index);
                 tempString = tempString.Substring(CodeTODOsPrefs.TODOToken.Length);
-                tempString.Trim();
+                tempString = tempString.Trim();
                 newQQQ.Task = tempString;
 
                 // Third, we save the source script.
