@@ -20,6 +20,7 @@ public static class CodeTODOsHelper
                 path.EndsWith("CodeTODOsHelper.cs") ||
                 path.EndsWith("CodeTODOsPrefs.cs") ||
                 path.EndsWith("CodeTODOsEdit.cs") ||
+                path.EndsWith("CodeTODOsAdd.cs") ||
                 path.EndsWith("CodeTODOsIO.cs") ||
                 path.EndsWith("QQQ.cs") ||
                 path.EndsWith("QQQPriority.cs") ||
