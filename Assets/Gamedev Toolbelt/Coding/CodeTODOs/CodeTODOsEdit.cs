@@ -83,10 +83,14 @@ public class CodeTODOsEdit : EditorWindow
     private void DrawButton()
     {
         var buttonRect = new Rect((Screen.width / 2) - 25, 40, 50, 20);
-        if(GUI.Button(buttonRect, "Save"))
+        if (GUI.Button(buttonRect, "Save"))
         {
-            CodeTODOsHelper.UpdateTask(_oldQQQ, _newQQQ);
-            EditorWindow.GetWindow(typeof(CodeTODOsEdit)).Close();
+            // Confirmation dialog.
+            if(EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Do not save"))
+            {
+                CodeTODOsHelper.UpdateTask(_oldQQQ, _newQQQ);
+                EditorWindow.GetWindow(typeof(CodeTODOsEdit)).Close();
+            }
         }
     }
 }
