@@ -16,7 +16,7 @@ public static class CodeTODOsHelper
         {
             // Whatever the token, we don't want to include these files in the
             // a bunch of false positives in these files, so we exclude them.
-            if(path.EndsWith("CodeTODOs.cs") ||
+            if (path.EndsWith("CodeTODOs.cs") ||
                 path.EndsWith("CodeTODOsHelper.cs") ||
                 path.EndsWith("CodeTODOsPrefs.cs") ||
                 path.EndsWith("CodeTODOsEdit.cs") ||
@@ -46,7 +46,7 @@ public static class CodeTODOsHelper
 
         for (int i = 0; i < allScripts.Count; i++)
         {
-                qqqs.AddRange(GetQQQsFromScript(allScripts[i]));
+            qqqs.AddRange(GetQQQsFromScript(allScripts[i]));
         }
         CodeTODOs.QQQs = qqqs;
     }
@@ -122,7 +122,6 @@ public static class CodeTODOsHelper
         {
             if (!CodeTODOs.QQQs.Contains(qqqs[i]))
             {
-                //Debug.Log("Added QQQ");
                 CodeTODOs.QQQs.Add(qqqs[i]);
             }
         }
@@ -138,7 +137,6 @@ public static class CodeTODOsHelper
             {
                 CodeTODOs.QQQs.Remove(CodeTODOs.QQQs[i]);
                 i--;
-                //Debug.Log("Removed QQQ");
             }
         }
     }
@@ -152,7 +150,6 @@ public static class CodeTODOsHelper
             if (CodeTODOs.QQQs[i].Script == aPathTo)
             {
                 CodeTODOs.QQQs[i].Script = aPathFrom;
-                //Debug.Log("Moved QQQ");
             }
         }
     }
@@ -239,7 +236,6 @@ public static class CodeTODOsHelper
         var surplusCharacters = surplusWidth / GUIConstants.NORMAL_CHAR_WIDTH;
 
         int cutoffIndex = (int)(Mathf.Clamp(surplusCharacters + 3, 0, aString.Length - 1)); // +3 because of the "..." we'll be adding.
-        //Debug.Log("String: " + aString + " , Cutoff: " + cutoffIndex);
         return "..." + aString.Substring(cutoffIndex);
     }
 
