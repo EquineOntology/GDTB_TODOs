@@ -13,7 +13,6 @@
     public const string FILE_GUISKIN = "GUI/GDTBSkin";
 
     public const int NORMAL_CHAR_WIDTH = 7;
-    public const int BOLD_CHAR_WIDTH = 9;
     public const int CHAR_HEIGHT = 11;
     public const float VERTICAL_SPACING = 1.5f;
     public const float LINE_HEIGHT = CHAR_HEIGHT * VERTICAL_SPACING;
