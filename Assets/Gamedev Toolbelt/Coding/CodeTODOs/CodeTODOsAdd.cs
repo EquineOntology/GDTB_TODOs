@@ -1,0 +1,105 @@
+﻿#if UNITY_EDITOR
+using UnityEngine;
+using UnityEditor;
+
+public class CodeTODOsAdd : EditorWindow
+{
+    private GUISkin _GDTBSkin;
+
+    private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
+
+    private string _task;
+    private MonoScript _script;
+    private int _priority = 1;
+    private int _lineNumber = 0;
+
+    [MenuItem("Window/CodeTODOsAdd %w")]
+    public static void Init()
+    {
+        CodeTODOsAdd window = (CodeTODOsAdd)EditorWindow.GetWindow(typeof(CodeTODOsAdd));
+        window.ShowUtility();
+    }
+
+    public void OnEnable()
+    {
+        _GDTBSkin = Resources.Load(GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+        _script = new MonoScript();
+    }
+
+    public void OnGUI()
+    {
+        DrawScriptPicker();
+        DrawTaskField();
+        DrawPriorityPopup();
+        DrawLineField();
+        DrawButton();
+    }
+
+
+    /// Draw script picker.
+    private void DrawScriptPicker()
+    {
+        var labelRect = new Rect(10, 10, 100, 16);
+        EditorGUI.LabelField(labelRect, "Pick a script:", EditorStyles.boldLabel);
+
+        var pickerRect = new Rect(10, 28, Mathf.Clamp(position.width - 20, 80, 500), 16);
+        _script = (MonoScript)EditorGUI.ObjectField(pickerRect, _script, typeof(MonoScript), false);
+        // HOW TO GET COMPLETE PATH?
+    }
+
+
+    /// Draw Task input field.
+    private void DrawTaskField()
+    {
+        var labelRect = new Rect(10, 53, 100, 16);
+        EditorGUI.LabelField(labelRect, "Write a task:", EditorStyles.boldLabel);
+
+        var taskRect = new Rect(10, 71, Mathf.Clamp(position.width - 20, 80, 500), 32);
+        _task = EditorGUI.TextField(taskRect, "");
+    }
+
+
+    /// Draw priority popup.
+    private void DrawPriorityPopup()
+    {
+        var labelRect = new Rect(10, 112, 150, 16);
+        EditorGUI.LabelField(labelRect, "Choose a priority:", EditorStyles.boldLabel);
+
+        var priorityRect = new Rect(10, 130, 70, 16);
+        _priority = EditorGUI.Popup(priorityRect, _priority - 1, _qqqPriorities) + 1;
+    }
+
+
+    /// Draw line number field.
+    private void DrawLineField()
+    {
+        var labelRect = new Rect(10, 155, 150, 32);
+        EditorGUI.LabelField(labelRect, "Choose the line number:", EditorStyles.boldLabel);
+
+        var lineRect = new Rect(10, 176, Mathf.Clamp(position.width - 20, 80, 500), 16);
+        _lineNumber = EditorGUI.IntField(lineRect, _lineNumber);
+
+        if(_lineNumber < 0)
+        {
+            _lineNumber = 0;
+        }
+    }
+
+
+    /// Draw "Add task" button.
+    private void DrawButton()
+    {
+        var buttonRect = new Rect((Screen.width / 2) - 37, 210, 74, 20);
+        if (GUI.Button(buttonRect, "Add task"))
+        {
+            // Confirmation dialog.
+            if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Don't add task"))
+            {
+                var newQQQ = new QQQ(_priority, _task, _script.name, _lineNumber);
+                CodeTODOsHelper.AddTask(newQQQ);
+                EditorWindow.GetWindow(typeof(CodeTODOsAdd)).Close();
+            }
+        }
+    }
+}
+#endif
