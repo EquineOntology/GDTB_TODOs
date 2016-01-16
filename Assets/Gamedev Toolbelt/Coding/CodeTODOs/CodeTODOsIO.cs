@@ -4,7 +4,7 @@ using System.IO;
 
 public static class CodeTODOsIO
 {
-    // Return the path to the extension's folder.
+    /// Return the path to the extension's folder.
     public static string GetGDTBPath()
     {
         var path = GetFirstInstanceOfFolder("Gamedev Toolbelt");
@@ -12,8 +12,8 @@ public static class CodeTODOsIO
     }
 
 
-    // Return the first instance of the given filename.
-    // This is a non-recursive, breadth-first search algorithm.
+    /// Return the first instance of the given filename.
+    /// This is a non-recursive, breadth-first search algorithm.
 	private static string GetFirstInstanceOfFile(string aFileName)
 	{
         var projectDirectoryPath = Directory.GetCurrentDirectory();
@@ -67,13 +67,12 @@ public static class CodeTODOsIO
             }
         }
         var relativePath = absolutePath.Remove(0, projectDirectoryPath.Length + 1);
-        //Debug.Log(relativePath);
         return relativePath;
     }
 
 
-    // Return the first instance of the given folder.
-    // This is a non-recursive, breadth-first search algorithm.
+    /// Return the first instance of the given folder.
+    /// This is a non-recursive, breadth-first search algorithm.
     private static string GetFirstInstanceOfFolder(string aFolderName)
 	{
         var projectDirectoryPath = Directory.GetCurrentDirectory();
@@ -132,7 +131,7 @@ public static class CodeTODOsIO
     }
 
 
-    // Remove a single line from a text file.
+    /// Remove a single line from a text file.
     public static void RemoveLineFromFile(string aFile, int aLineNumber)
     {
         var tempFile = Path.GetTempFileName();
@@ -168,8 +167,8 @@ public static class CodeTODOsIO
     }
 
 
-    // Check for character before the QQQ to see if they are spaces or backslashes. If they are, remove them.
-    // This is to remove the whole QQQ wihtout removing anything else of importance (including stuff in a comment BEFORE a QQQ).
+    /// Check for character before the QQQ to see if they are spaces or backslashes. If they are, remove them.
+    /// This is to remove the whole QQQ wihtout removing anything else of importance (including stuff in a comment BEFORE a QQQ).
     private static string GetLineWithoutQQQ(string aLine)
     {
         var qqqIndex = aLine.IndexOf(CodeTODOsPrefs.TODOToken);
@@ -193,7 +192,7 @@ public static class CodeTODOsIO
     }
 
 
-    // Update the task and priority of a QQQ.
+    /// Update the task and priority of a QQQ.
     public static void ChangeQQQ(QQQ anOldQQQ, QQQ aNewQQQ)
     {
         var tempFile = Path.GetTempFileName();
@@ -228,6 +227,33 @@ public static class CodeTODOsIO
         // Overwrite the old file with the temp file.
         File.Delete(anOldQQQ.Script);
         File.Move(tempFile, anOldQQQ.Script);
+    }
+
+
+    /// Add a QQQ to a script.
+    public static void AddQQQ(QQQ aQQQ)
+    {
+        var tempFile = Path.GetTempFileName();
+
+        using(var reader = new StreamReader(aQQQ.Script))
+        using (var writer = new StreamWriter(tempFile))
+        {
+            string line;
+            int currentLineNumber = 0;
+
+            // Add the new QQQ as the first line in the file.
+            var newQQQ = "//QQQ" + (int)aQQQ.Priority + " " + aQQQ.Task;
+            writer.WriteLine(newQQQ);
+
+            while ((line = reader.ReadLine()) != null)
+            {
+                writer.WriteLine(line);
+                currentLineNumber++;
+            }
+        }
+        // Overwrite the old file with the temp file.
+        File.Delete(aQQQ.Script);
+        File.Move(tempFile, aQQQ.Script);
     }
 }
 #endif
