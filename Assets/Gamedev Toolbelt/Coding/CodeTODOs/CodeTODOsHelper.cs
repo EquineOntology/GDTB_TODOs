@@ -6,7 +6,7 @@ using UnityEngine;
 
 public static class CodeTODOsHelper
 {
-    ///2 Find all files ending with .cs or .js.
+    /// Find all files ending with .cs or .js.
     public static List<string> FindAllScripts()
     {
         var assetsPaths = AssetDatabase.GetAllAssetPaths();
@@ -256,9 +256,17 @@ public static class CodeTODOsHelper
     }
 
 
+    /// Change the task of a QQQ.
     public static void UpdateTask(QQQ anOldQQQ, QQQ aNewQQQ)
     {
         CodeTODOsIO.ChangeQQQ(anOldQQQ, aNewQQQ);
+    }
+
+
+    /// Create a new QQQ at the beginning of a script.
+    public static void AddTask(QQQ aQQQ)
+    {
+        CodeTODOsIO.AddQQQ(aQQQ);
     }
 }
 #endif

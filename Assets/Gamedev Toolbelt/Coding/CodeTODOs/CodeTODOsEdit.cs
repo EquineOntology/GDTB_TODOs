@@ -5,7 +5,6 @@ using UnityEditor;
 public class CodeTODOsEdit : EditorWindow
 {
     private GUISkin _GDTBSkin;
-    private string _skinPath;
 
     private static QQQ _oldQQQ;
     private static QQQ _newQQQ;
@@ -40,7 +39,7 @@ public class CodeTODOsEdit : EditorWindow
 
 
     private bool _prioritySetOnce = false;
-    // Draw the priority enum.
+    /// Draw the priority enum.
     private void DrawPriority()
     {
         int priorityIndex;
@@ -60,7 +59,7 @@ public class CodeTODOsEdit : EditorWindow
     }
 
 
-    // Draw the textfield that enables the user to modify the QQQ's task.
+    /// Draw the textfield that enables the user to modify the QQQ's task.
     private void DrawTask()
     {
         // The "Task:" label.
@@ -79,7 +78,7 @@ public class CodeTODOsEdit : EditorWindow
     }
 
 
-    // Draw "Save" button;
+    /// Draw "Save" button;
     private void DrawButton()
     {
         var buttonRect = new Rect((Screen.width / 2) - 25, 40, 50, 20);
