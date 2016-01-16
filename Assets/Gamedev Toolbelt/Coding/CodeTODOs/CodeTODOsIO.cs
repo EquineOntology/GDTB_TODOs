@@ -241,12 +241,14 @@ public static class CodeTODOsIO
             string line;
             int currentLineNumber = 0;
 
-            // Add the new QQQ as the first line in the file.
-            var newQQQ = "//QQQ" + (int)aQQQ.Priority + " " + aQQQ.Task;
-            writer.WriteLine(newQQQ);
-
             while ((line = reader.ReadLine()) != null)
             {
+                // Add the new QQQ as the first line in the file.
+                if (currentLineNumber == aQQQ.LineNumber)
+                {
+                    var newQQQ = "//QQQ" + (int)aQQQ.Priority + " " + aQQQ.Task;
+                    writer.WriteLine(newQQQ);
+                }
                 writer.WriteLine(line);
                 currentLineNumber++;
             }

@@ -264,9 +264,10 @@ public static class CodeTODOsHelper
 
 
     /// Create a new QQQ at the beginning of a script.
-    public static void AddTask(QQQ aQQQ)
+    public static void AddQQQ(QQQ aQQQ)
     {
         CodeTODOsIO.AddQQQ(aQQQ);
+        CodeTODOs.QQQs.Add(aQQQ);
     }
 }
 #endif

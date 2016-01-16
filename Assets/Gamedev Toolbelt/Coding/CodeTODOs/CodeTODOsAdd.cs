@@ -55,7 +55,7 @@ public class CodeTODOsAdd : EditorWindow
         EditorGUI.LabelField(labelRect, "Write a task:", EditorStyles.boldLabel);
 
         var taskRect = new Rect(10, 71, Mathf.Clamp(position.width - 20, 80, 500), 32);
-        _task = EditorGUI.TextField(taskRect, "");
+        _task = EditorGUI.TextField(taskRect, _task);
     }
 
 
@@ -73,13 +73,13 @@ public class CodeTODOsAdd : EditorWindow
     /// Draw line number field.
     private void DrawLineField()
     {
-        var labelRect = new Rect(10, 155, 150, 32);
+        var labelRect = new Rect(10, 155, 200, 32);
         EditorGUI.LabelField(labelRect, "Choose the line number:", EditorStyles.boldLabel);
 
         var lineRect = new Rect(10, 176, Mathf.Clamp(position.width - 20, 80, 500), 16);
         _lineNumber = EditorGUI.IntField(lineRect, _lineNumber);
 
-        if(_lineNumber < 0)
+        if (_lineNumber < 0)
         {
             _lineNumber = 0;
         }
@@ -92,12 +92,22 @@ public class CodeTODOsAdd : EditorWindow
         var buttonRect = new Rect((Screen.width / 2) - 37, 210, 74, 20);
         if (GUI.Button(buttonRect, "Add task"))
         {
-            // Confirmation dialog.
-            if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Don't add task"))
+            if (_script.name == "")
             {
-                var newQQQ = new QQQ(_priority, _task, _script.name, _lineNumber);
-                CodeTODOsHelper.AddTask(newQQQ);
-                EditorWindow.GetWindow(typeof(CodeTODOsAdd)).Close();
+                EditorUtility.DisplayDialog("No script selected", "Please select a script.", "Ok");
+            }
+            else if (_task == "")
+            {
+                EditorUtility.DisplayDialog("No task to add", "Please create a task.", "Ok");
+            }
+            else
+            {
+                if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Don't add task"))
+                {
+                    var newQQQ = new QQQ(_priority, _task, _script.name, _lineNumber);
+                    CodeTODOsHelper.AddQQQ(newQQQ);
+                    EditorWindow.GetWindow(typeof(CodeTODOsAdd)).Close();
+                }
             }
         }
     }
