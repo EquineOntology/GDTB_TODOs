@@ -251,13 +251,10 @@ public class CodeTODOs : EditorWindow
         editRect.y += 3;
         editRect.width = IconSize;
         editRect.height = IconSize;
+        var editButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_EDIT, typeof(Texture2D)) as Texture2D, "Edit this task");
 
-        var editTex = Resources.Load(GUIConstants.FILE_QQQ_EDIT, typeof(Texture2D)) as Texture2D;
-        EditorGUI.DrawPreviewTexture(editRect, editTex);
-
-        // Open Edit window on Click.
-        EditorGUIUtility.AddCursorRect(editRect, MouseCursor.Link);
-        if (Event.current.type == EventType.MouseUp && editRect.Contains(Event.current.mousePosition))
+        // Open edit window on click.
+        if(GUI.Button(editRect, editButton))
         {
             CodeTODOsEdit.Init(aQQQ);
         }
@@ -265,13 +262,10 @@ public class CodeTODOs : EditorWindow
         // "Complete" button.
         var completeRect = editRect;
         completeRect.y = editRect.y + editRect.height + 2;
-
-        var completeTex = Resources.Load(GUIConstants.FILE_QQQ_DONE, typeof(Texture2D)) as Texture2D;
-        EditorGUI.DrawPreviewTexture(completeRect, completeTex);
+        var completeButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_DONE, typeof(Texture2D)) as Texture2D, "Complete this task");
 
         // Complete QQQ on click.
-        EditorGUIUtility.AddCursorRect(completeRect, MouseCursor.Link);
-        if (Event.current.type == EventType.MouseUp && completeRect.Contains(Event.current.mousePosition))
+        if(GUI.Button(completeRect, completeButton))
         {
             CodeTODOsHelper.CompleteQQQ(aQQQ);
         }
@@ -283,12 +277,10 @@ public class CodeTODOs : EditorWindow
     {
         // "Refresh" button.
         var refreshRect = new Rect((position.width / 2) - (IconSize * 0.5f), position.height - (IconSize * 1.5f), IconSize, IconSize);
-        var refreshTex = Resources.Load(GUIConstants.FILE_QQQ_REFRESH, typeof(Texture2D)) as Texture2D;
-        EditorGUI.DrawPreviewTexture(refreshRect, refreshTex);
+        var refreshButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_REFRESH, typeof(Texture2D)) as Texture2D, "Refresh list of tasks");
 
         // Refresh on click.
-        EditorGUIUtility.AddCursorRect(refreshRect, MouseCursor.Link);
-        if (Event.current.type == EventType.MouseUp && refreshRect.Contains(Event.current.mousePosition))
+        if(GUI.Button(refreshRect, refreshButton))
         {
             QQQs.Clear();
             CodeTODOsHelper.GetQQQsFromAllScripts();
@@ -302,12 +294,10 @@ public class CodeTODOs : EditorWindow
     {
         // "Add" button.
         var addRect = new Rect((position.width / 2) - (IconSize * 1.5f) - _helpBoxOffset, position.height - (IconSize * 1.5f), IconSize, IconSize);
-        var addTex = Resources.Load(GUIConstants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D;
-        EditorGUI.DrawPreviewTexture(addRect, addTex);
+        var addButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D, "Add a new task");
 
         // Add QQQ on click.
-        EditorGUIUtility.AddCursorRect(addRect, MouseCursor.Link);
-        if (Event.current.type == EventType.MouseUp && addRect.Contains(Event.current.mousePosition))
+        if (GUI.Button(addRect, addButton))
         {
             CodeTODOsAdd.Init();
         }
@@ -319,12 +309,10 @@ public class CodeTODOs : EditorWindow
     {
         // "Settings" button.
         var settingsRect = new Rect((position.width / 2) + (IconSize * 0.5f) + _helpBoxOffset, position.height - (IconSize * 1.5f), IconSize, IconSize);
-        var settingsTex = Resources.Load(GUIConstants.FILE_SETTINGS, typeof(Texture2D)) as Texture2D;
-        EditorGUI.DrawPreviewTexture(settingsRect, settingsTex);
+        var settingsButton = new GUIContent(Resources.Load(GUIConstants.FILE_SETTINGS, typeof(Texture2D)) as Texture2D, "Open settings window");
 
         // Open settings on click.
-        EditorGUIUtility.AddCursorRect(settingsRect, MouseCursor.Link);
-        if (Event.current.type == EventType.MouseUp && settingsRect.Contains(Event.current.mousePosition))
+        if (GUI.Button(settingsRect, settingsButton))
         {
             // Unfortunately EditorApplication.ExecuteMenuItem(...) doesn't work, so we have to rely on a bit of reflection.
             var asm = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
