@@ -10,7 +10,7 @@ public class CodeTODOsAdd : EditorWindow
 
     private string _task;
     private MonoScript _script;
-    private int _priority = 1;
+    private int _priority = 2;
     private int _lineNumber = 0;
 
     [MenuItem("Window/CodeTODOsAdd %w")]
@@ -44,7 +44,6 @@ public class CodeTODOsAdd : EditorWindow
 
         var pickerRect = new Rect(10, 28, Mathf.Clamp(position.width - 20, 80, 500), 16);
         _script = (MonoScript)EditorGUI.ObjectField(pickerRect, _script, typeof(MonoScript), false);
-        // HOW TO GET COMPLETE PATH?
     }
 
 
@@ -104,7 +103,8 @@ public class CodeTODOsAdd : EditorWindow
             {
                 if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Don't add task"))
                 {
-                    var newQQQ = new QQQ(_priority, _task, _script.name, _lineNumber);
+                    var path = AssetDatabase.GetAssetPath(_script);
+                    var newQQQ = new QQQ(_priority, _task, path, _lineNumber);
                     CodeTODOsHelper.AddQQQ(newQQQ);
                     EditorWindow.GetWindow(typeof(CodeTODOsAdd)).Close();
                 }
