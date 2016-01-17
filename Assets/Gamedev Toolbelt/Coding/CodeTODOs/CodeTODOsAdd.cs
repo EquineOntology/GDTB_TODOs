@@ -13,7 +13,7 @@ public class CodeTODOsAdd : EditorWindow
     private int _priority = 2;
     private int _lineNumber = 0;
 
-    [MenuItem("Window/CodeTODOsAdd %w")]
+
     public static void Init()
     {
         CodeTODOsAdd window = (CodeTODOsAdd)EditorWindow.GetWindow(typeof(CodeTODOsAdd));
