@@ -7,8 +7,8 @@
     public const string FILE_QQQ_EDIT = "GUI/qqq_EDIT";
     public const string FILE_QQQ_ADD = "GUI/qqq_ADD";
     public const string FILE_SETTINGS = "GUI/qqq_SETTINGS";
+    public const string FILE_QQQ_REFRESH = "GUI/qqq_REFRESH";
 
-    public const string TEXT_REFRESH_LIST = "Refresh";
     public const string TEXT_WINDOW_TITLE = "CodeTODOs";
     public const string TEXT_EDIT_WINDOW_TITLE = "Edit task";
 

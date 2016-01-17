@@ -283,7 +283,12 @@ public class CodeTODOs : EditorWindow
     {
         // "Refresh" button.
         var refreshRect = new Rect((position.width / 2) - (IconSize * 0.5f), position.height - (IconSize * 1.5f), IconSize, IconSize);
-        if (GUI.Button(refreshRect, GUIConstants.TEXT_REFRESH_LIST))
+        var refreshTex = Resources.Load(GUIConstants.FILE_QQQ_REFRESH, typeof(Texture2D)) as Texture2D;
+        EditorGUI.DrawPreviewTexture(refreshRect, refreshTex);
+
+        // Refresh on click.
+        EditorGUIUtility.AddCursorRect(refreshRect, MouseCursor.Link);
+        if (Event.current.type == EventType.MouseUp && refreshRect.Contains(Event.current.mousePosition))
         {
             QQQs.Clear();
             CodeTODOsHelper.GetQQQsFromAllScripts();
@@ -297,7 +302,6 @@ public class CodeTODOs : EditorWindow
     {
         // "Add" button.
         var addRect = new Rect((position.width / 2) - (IconSize * 1.5f) - _helpBoxOffset, position.height - (IconSize * 1.5f), IconSize, IconSize);
-
         var addTex = Resources.Load(GUIConstants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D;
         EditorGUI.DrawPreviewTexture(addRect, addTex);
 
@@ -307,7 +311,6 @@ public class CodeTODOs : EditorWindow
         {
             CodeTODOsAdd.Init();
         }
-
     }
 
 
@@ -315,8 +318,7 @@ public class CodeTODOs : EditorWindow
     private void DrawSettingsButton()
     {
         // "Settings" button.
-        var settingsRect = new Rect((position.width / 2) + (IconSize * 1.5f) + _helpBoxOffset, position.height - (IconSize * 1.5f), IconSize, IconSize);
-
+        var settingsRect = new Rect((position.width / 2) + (IconSize * 0.5f) + _helpBoxOffset, position.height - (IconSize * 1.5f), IconSize, IconSize);
         var settingsTex = Resources.Load(GUIConstants.FILE_SETTINGS, typeof(Texture2D)) as Texture2D;
         EditorGUI.DrawPreviewTexture(settingsRect, settingsTex);
 
