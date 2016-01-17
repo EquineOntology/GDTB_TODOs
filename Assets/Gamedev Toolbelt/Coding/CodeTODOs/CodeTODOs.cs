@@ -54,7 +54,9 @@ public class CodeTODOs : EditorWindow
 
         DrawQQQs();
 
-        DrawRefreshAndAddButtons();
+        DrawAddButton();
+        DrawRefreshButton();
+        DrawSettingsButton();
     }
 
 
@@ -277,21 +279,24 @@ public class CodeTODOs : EditorWindow
 
 
     /// Draw the "Refresh" button.
-    private void DrawRefreshAndAddButtons()
+    private void DrawRefreshButton()
     {
         // "Refresh" button.
-        var refreshRect = new Rect((position.width / 2) - (IconSize * 2), position.height - (IconSize * 2), IconSize * 4,
-            IconSize * 1.5f);
+        var refreshRect = new Rect((position.width / 2) - (IconSize * 0.5f), position.height - (IconSize * 1.5f), IconSize, IconSize);
         if (GUI.Button(refreshRect, GUIConstants.TEXT_REFRESH_LIST))
         {
             QQQs.Clear();
             CodeTODOsHelper.GetQQQsFromAllScripts();
             CodeTODOsHelper.ReorderQQQs();
         }
+    }
 
+
+    /// Draw the "Add" button.
+    private void DrawAddButton()
+    {
         // "Add" button.
-        var addRect = new Rect(refreshRect.x, refreshRect.y, IconSize, IconSize);
-        addRect.x -= (refreshRect.width + _helpBoxOffset);
+        var addRect = new Rect((position.width / 2) - (IconSize * 1.5f) - _helpBoxOffset, position.height - (IconSize * 1.5f), IconSize, IconSize);
 
         var addTex = Resources.Load(GUIConstants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D;
         EditorGUI.DrawPreviewTexture(addRect, addTex);
@@ -301,6 +306,29 @@ public class CodeTODOs : EditorWindow
         if (Event.current.type == EventType.MouseUp && addRect.Contains(Event.current.mousePosition))
         {
             CodeTODOsAdd.Init();
+        }
+
+    }
+
+
+    /// Draw the "Settings" button.
+    private void DrawSettingsButton()
+    {
+        // "Settings" button.
+        var settingsRect = new Rect((position.width / 2) + (IconSize * 1.5f) + _helpBoxOffset, position.height - (IconSize * 1.5f), IconSize, IconSize);
+
+        var settingsTex = Resources.Load(GUIConstants.FILE_SETTINGS, typeof(Texture2D)) as Texture2D;
+        EditorGUI.DrawPreviewTexture(settingsRect, settingsTex);
+
+        // Open settings on click.
+        EditorGUIUtility.AddCursorRect(settingsRect, MouseCursor.Link);
+        if (Event.current.type == EventType.MouseUp && settingsRect.Contains(Event.current.mousePosition))
+        {
+            // Unfortunately EditorApplication.ExecuteMenuItem(...) doesn't work, so we have to rely on a bit of reflection.
+            var asm = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
+            var T = asm.GetType("UnityEditor.PreferencesWindow");
+            var M = T.GetMethod("ShowPreferencesWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            M.Invoke(null, null);
         }
     }
 
