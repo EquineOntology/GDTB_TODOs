@@ -54,7 +54,7 @@ public class CodeTODOs : EditorWindow
 
         DrawQQQs();
 
-        DrawRefreshButton();
+        DrawRefreshAndAddButtons();
     }
 
 
@@ -277,15 +277,30 @@ public class CodeTODOs : EditorWindow
 
 
     /// Draw the "Refresh" button.
-    private void DrawRefreshButton()
+    private void DrawRefreshAndAddButtons()
     {
-        var buttonRect = new Rect((position.width / 2) - (IconSize * 2), position.height - (IconSize * 2), IconSize * 4,
+        // "Refresh" button.
+        var refreshRect = new Rect((position.width / 2) - (IconSize * 2), position.height - (IconSize * 2), IconSize * 4,
             IconSize * 1.5f);
-        if (GUI.Button(buttonRect, GUIConstants.TEXT_REFRESH_LIST))
+        if (GUI.Button(refreshRect, GUIConstants.TEXT_REFRESH_LIST))
         {
             QQQs.Clear();
             CodeTODOsHelper.GetQQQsFromAllScripts();
             CodeTODOsHelper.ReorderQQQs();
+        }
+
+        // "Add" button.
+        var addRect = new Rect(refreshRect.x, refreshRect.y, IconSize, IconSize);
+        addRect.x -= (refreshRect.width + _helpBoxOffset);
+
+        var addTex = Resources.Load(GUIConstants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D;
+        EditorGUI.DrawPreviewTexture(addRect, addTex);
+
+        // Add QQQ on click.
+        EditorGUIUtility.AddCursorRect(addRect, MouseCursor.Link);
+        if (Event.current.type == EventType.MouseUp && addRect.Contains(Event.current.mousePosition))
+        {
+            CodeTODOsAdd.Init();
         }
     }
 
