@@ -53,7 +53,7 @@ public class CodeTODOsEdit : EditorWindow
             _prioritySetOnce = true;
         }
         var popupRect = new Rect(10, 10, 60, 10);
-        priorityIndex = EditorGUI.Popup(popupRect, priorityIndex, _qqqPriorities);
+        priorityIndex = EditorGUI.Popup(popupRect, priorityIndex - 1, _qqqPriorities) + 1;
 
         _newQQQ.Priority = (QQQPriority)priorityIndex;
     }

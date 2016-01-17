@@ -197,7 +197,7 @@ public static class CodeTODOsIO
     {
         var tempFile = Path.GetTempFileName();
 
-        using(var reader = new StreamReader(anOldQQQ.Script))
+        using (var reader = new StreamReader(anOldQQQ.Script))
         using (var writer = new StreamWriter(tempFile))
         {
             string line;
@@ -216,9 +216,9 @@ public static class CodeTODOsIO
                     var lineWithoutQQQ = GetLineWithoutQQQ(line);
 
                     var slashes = "";
-                    slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //";
+                    slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //"; // If the line isn't empty we want a space before the comment.
 
-                    var newLine = lineWithoutQQQ + slashes + CodeTODOsPrefs.TODOToken + (((int)aNewQQQ.Priority) + 1) + " " + aNewQQQ.Task;
+                    var newLine = lineWithoutQQQ + slashes + CodeTODOsPrefs.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
                     writer.WriteLine(newLine);
                 }
                 currentLineNumber++;
