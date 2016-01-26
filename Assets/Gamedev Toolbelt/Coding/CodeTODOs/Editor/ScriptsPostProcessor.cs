@@ -9,30 +9,51 @@ public class ScriptsPostProcessor : AssetPostprocessor
     private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
         // Remove QQQs from deleted files.
-        foreach(var asset in deletedAssets)
+        foreach (var asset in deletedAssets)
         {
-            if(asset.EndsWith(".cs") || asset.EndsWith(".js"))
+            if (asset.EndsWith(".cs") || asset.EndsWith(".js"))
             {
                 CodeTODOsHelper.RemoveScript(asset);
             }
         }
 
-        var importedAssetsCopy = new List<string>();
-        importedAssetsCopy.AddRange(importedAssets);
+
         // Change the script reference for QQQs when a script is moved.
-        for(int i = 0; i < movedAssets.Length; i++)
+        for (int i = 0; i < movedAssets.Length; i++)
         {
-            if(movedAssets[i].EndsWith(".cs") || movedAssets[i].EndsWith(".js"))
+            if (movedAssets[i].EndsWith(".cs") || movedAssets[i].EndsWith(".js"))
             {
+                //UnityEngine.Debug.Log("moved: " + movedAssets[i]);
                 CodeTODOsHelper.ChangeScriptOfQQQ(movedFromAssetPaths[i], movedAssets[i]);
             }
         }
 
-        // Add QQQs from a script if it was added or reimported (i.e. modified), but don't create duplicates.
+
+        var excludedScripts = CodeTODOsIO.GetExcludedScripts();
+        var importedAssetsCopy = new List<string>();
+
+        foreach (var asset in importedAssets)
+        {
+            var shouldBeExcluded = false;
+            foreach (var exclusion in excludedScripts)
+            {
+                if (asset.Contains(exclusion))
+                {
+                    shouldBeExcluded = true;
+                }
+            }
+            if (shouldBeExcluded == false)
+            {
+                importedAssetsCopy.Add(asset);
+            }
+        }
+
+        // Add QQQs from a script if it was added or reimported (i.e. modified).
         foreach(var asset in importedAssetsCopy)
         {
             if(asset.EndsWith(".cs") || asset.EndsWith(".js"))
             {
+                //UnityEngine.Debug.Log("imported " + asset);
                 CodeTODOsHelper.AddQQQs(asset);
             }
         }

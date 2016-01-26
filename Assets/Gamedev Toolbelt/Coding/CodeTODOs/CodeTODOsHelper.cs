@@ -6,30 +6,33 @@ using UnityEngine;
 
 public static class CodeTODOsHelper
 {
-    /// Find all files ending with .cs or .js.
+    /// Find all files ending with .cs or .js (exclude those in exclude.txt).
     public static List<string> FindAllScripts()
     {
         var assetsPaths = AssetDatabase.GetAllAssetPaths();
-        var allScripts = new List<string>();
 
+        var excludedScripts = CodeTODOsIO.GetExcludedScripts();
+        var allScripts = new List<string>();
         foreach (var path in assetsPaths)
         {
-            // Whatever the token, we don't want to include these files in the
-            // a bunch of false positives in these files, so we exclude them.
-            if (path.EndsWith("CodeTODOs.cs") ||
-                path.EndsWith("CodeTODOsHelper.cs") ||
-                path.EndsWith("CodeTODOsPrefs.cs") ||
-                path.EndsWith("CodeTODOsEdit.cs") ||
-                path.EndsWith("CodeTODOsAdd.cs") ||
-                path.EndsWith("CodeTODOsIO.cs") ||
-                path.EndsWith("QQQ.cs") ||
-                path.EndsWith("QQQPriority.cs") ||
-                path.EndsWith("GUIConstants.cs") ||
-                path.EndsWith("ScriptsPostProcessor.cs"))
+            // There are some files we don't want to include.
+            var shouldBeExcluded = false;
+            foreach (var exclusion in excludedScripts)
             {
-                continue;
+                if (path.EndsWith(".cs") || path.EndsWith(".js"))
+                {
+                    if (path.Contains(exclusion)) // This works for both files and directories.
+                    {
+                        shouldBeExcluded = true;
+                    }
+                }
+                else
+                {
+                    shouldBeExcluded = true;
+                }
             }
-            else if (path.EndsWith(".cs") || path.EndsWith(".js"))
+
+            if (shouldBeExcluded == false)
             {
                 allScripts.Add(path);
             }
@@ -56,7 +59,6 @@ public static class CodeTODOsHelper
     public static List<QQQ> GetQQQsFromScript(string aPath)
     {
         var currentQQQs = new List<QQQ>();
-
         var lines = File.ReadAllLines(aPath);
 
         QQQ newQQQ;
