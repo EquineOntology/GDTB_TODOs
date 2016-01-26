@@ -89,6 +89,7 @@ public class CodeTODOsAdd : EditorWindow
     private void DrawButton()
     {
         var buttonRect = new Rect((Screen.width / 2) - 37, 210, 74, 20);
+
         if (GUI.Button(buttonRect, "Add task"))
         {
             if (_script.name == "")

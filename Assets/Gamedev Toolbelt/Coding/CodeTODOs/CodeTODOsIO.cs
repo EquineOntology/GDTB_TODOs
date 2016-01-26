@@ -136,29 +136,27 @@ public static class CodeTODOsIO
     {
         var tempFile = Path.GetTempFileName();
 
-        using(var reader = new StreamReader(aFile))
-        using (var writer = new StreamWriter(tempFile))
-        {
-            string line;
-            int currentLineNumber = 0;
+        var reader = new StreamReader(aFile);
+        var writer = new StreamWriter(tempFile);
+        var line = "";
+        var currentLineNumber = 0;
 
-            while ((line = reader.ReadLine()) != null)
+        while ((line = reader.ReadLine()) != null)
+        {
+            // If the line is not the one we want to remove, write it to the temp file.
+            if (currentLineNumber != aLineNumber)
             {
-                // If the line is not the one we want to remove, write it to the temp file.
-                if (currentLineNumber != aLineNumber)
-                {
-                    writer.WriteLine(line);
-                }
-                else
-                {
-                    var lineWithoutQQQ = GetLineWithoutQQQ(line);
-                    if (!System.String.IsNullOrEmpty(lineWithoutQQQ))
-                    {
-                        writer.WriteLine(lineWithoutQQQ);
-                    }
-                }
-                currentLineNumber++;
+                writer.WriteLine(line);
             }
+            else
+            {
+                var lineWithoutQQQ = GetLineWithoutQQQ(line);
+                if (!System.String.IsNullOrEmpty(lineWithoutQQQ))
+                {
+                    writer.WriteLine(lineWithoutQQQ);
+                }
+            }
+            currentLineNumber++;
         }
 
         // Overwrite the old file with the temp file.
@@ -197,33 +195,36 @@ public static class CodeTODOsIO
     {
         var tempFile = Path.GetTempFileName();
 
-        using (var reader = new StreamReader(anOldQQQ.Script))
-        using (var writer = new StreamWriter(tempFile))
+        var reader = new StreamReader(anOldQQQ.Script);
+        var writer = new StreamWriter(tempFile);
+        var line = "";
+        var currentLineNumber = 0;
+
+        while ((line = reader.ReadLine()) != null)
         {
-            string line;
-            int currentLineNumber = 0;
-
-            while ((line = reader.ReadLine()) != null)
+            // If the line is not the one we want to remove, write it to the temp file.
+            if (currentLineNumber != anOldQQQ.LineNumber)
             {
-                // If the line is not the one we want to remove, write it to the temp file.
-                if (currentLineNumber != anOldQQQ.LineNumber)
-                {
-                    writer.WriteLine(line);
-                }
-                else
-                {
-                    // Remove the old QQQ and add the new one, then write the line to file.
-                    var lineWithoutQQQ = GetLineWithoutQQQ(line);
-
-                    var slashes = "";
-                    slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //"; // If the line isn't empty we want a space before the comment.
-
-                    var newLine = lineWithoutQQQ + slashes + CodeTODOsPrefs.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
-                    writer.WriteLine(newLine);
-                }
-                currentLineNumber++;
+                writer.WriteLine(line);
             }
+            else
+            {
+                // Remove the old QQQ and add the new one, then write the line to file.
+                var lineWithoutQQQ = GetLineWithoutQQQ(line);
+
+                var slashes = "";
+                slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //"; // If the line isn't empty we want a space before the comment.
+
+                var newLine = lineWithoutQQQ + slashes + CodeTODOsPrefs.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
+                writer.WriteLine(newLine);
+            }
+            currentLineNumber++;
         }
+
+        // Close streams
+        reader.Close();
+        writer.Close();
+
         // Overwrite the old file with the temp file.
         File.Delete(anOldQQQ.Script);
         File.Move(tempFile, anOldQQQ.Script);
@@ -235,27 +236,66 @@ public static class CodeTODOsIO
     {
         var tempFile = Path.GetTempFileName();
 
-        using(var reader = new StreamReader(aQQQ.Script))
-        using (var writer = new StreamWriter(tempFile))
-        {
-            string line;
-            int currentLineNumber = 0;
+        var reader = new StreamReader(aQQQ.Script);
+        var writer = new StreamWriter(tempFile);
+        var line = "";
+        var currentLineNumber = 0;
 
-            while ((line = reader.ReadLine()) != null)
+        while ((line = reader.ReadLine()) != null)
+        {
+            // Add the new QQQ as the first line in the file.
+            if (currentLineNumber == aQQQ.LineNumber)
             {
-                // Add the new QQQ as the first line in the file.
-                if (currentLineNumber == aQQQ.LineNumber)
-                {
-                    var newQQQ = "//QQQ" + (int)aQQQ.Priority + " " + aQQQ.Task;
-                    writer.WriteLine(newQQQ);
-                }
-                writer.WriteLine(line);
-                currentLineNumber++;
+                var newQQQ = "//QQQ" + (int)aQQQ.Priority + " " + aQQQ.Task;
+                writer.WriteLine(newQQQ);
             }
+            writer.WriteLine(line);
+            currentLineNumber++;
         }
+
+        // Close streams
+        reader.Close();
+        writer.Close();
+
         // Overwrite the old file with the temp file.
         File.Delete(aQQQ.Script);
         File.Move(tempFile, aQQQ.Script);
+    }
+
+
+    /// Populate a list with the files (and folders) in the "exclude.txt" doc.
+    public static List<string> GetExcludedScripts()
+    {
+        // Find the document.
+        var assetsPaths = UnityEditor.AssetDatabase.GetAllAssetPaths();
+        var excludeDoc = "";
+        foreach( var path in assetsPaths)
+        {
+            if(path.EndsWith("CodeTODOs/exclude.txt"))
+            {
+                excludeDoc = path;
+                break;
+            }
+        }
+
+        // Parse the document for exclusions.
+        var excludedScripts = new List<string>();
+        var reader = new StreamReader(excludeDoc);
+        string line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            if (line.StartsWith("#") || System.String.IsNullOrEmpty(line) || line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
+            {
+                continue;
+            }
+            else
+            {
+                excludedScripts.Add(line);
+            }
+        }
+        reader.Close();
+
+        return excludedScripts;
     }
 }
 #endif
