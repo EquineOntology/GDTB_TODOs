@@ -207,18 +207,18 @@ public static class CodeTODOsHelper
 
 
     /// Format a QQQ's script.
-    public static string FormatScriptLabel(QQQ aQQQ, float aWidth, GUIStyle aStyle)
+    public static string CreateScriptLabel(QQQ aQQQ, float aWidth, GUIStyle aStyle)
     {
         var scriptContent = new GUIContent(aQQQ.Script);
         var scriptWidth = aStyle.CalcSize(scriptContent).x;
 
         var additionalCharactersWidth = aStyle.CalcSize(new GUIContent("Line " + (aQQQ.LineNumber + 1).ToString() + " in \"\"")).x;
-        var totalScriptWidth = scriptWidth + additionalCharactersWidth;
 
         var formattedScript = aQQQ.Script;
-        if (scriptWidth >= aWidth)
+        var permittedWidth = aWidth - additionalCharactersWidth;
+        if (scriptWidth > permittedWidth)
         {
-            formattedScript = CutStringAtWidth(aQQQ.Script, (int)aWidth, aStyle);
+            formattedScript = ReduceScriptPath(aQQQ, permittedWidth, aStyle);
             formattedScript = "Line " + (aQQQ.LineNumber + 1) + " in \"" + formattedScript + "\"";
         }
         else
@@ -230,15 +230,15 @@ public static class CodeTODOsHelper
     }
 
 
-    /// Cut the length of a string and insert "..." at its beginning.
-    private static string CutStringAtWidth(string aString, int aWidth, GUIStyle aStyle)
+    /// If the script path is wider than its rect, cut it and insert "..."
+    private static string ReduceScriptPath(QQQ aQQQ, float aWidth, GUIStyle aStyle)
     {
-        var stringWidth = aStyle.CalcSize(new GUIContent(aString)).x;
-        var surplusWidth = aWidth - stringWidth;
-        var surplusCharacters = surplusWidth / GUIConstants.NORMAL_CHAR_WIDTH;
+        var stringWidth = aStyle.CalcSize(new GUIContent(aQQQ.Script)).x;
+        var surplusWidth = stringWidth - aWidth;
+        var surplusCharacters = (int)Mathf.Ceil(surplusWidth / GUIConstants.NORMAL_CHAR_WIDTH);
 
-        int cutoffIndex = (int)(Mathf.Clamp(surplusCharacters + 3, 0, aString.Length - 1)); // +3 because of the "..." we'll be adding.
-        return "..." + aString.Substring(cutoffIndex);
+        int cutoffIndex = Mathf.Clamp(surplusCharacters + 4, 0, aQQQ.Script.Length - 1); // +4 because of the "..." we'll be adding.
+        return "..." + aQQQ.Script.Substring(cutoffIndex);
     }
 
 

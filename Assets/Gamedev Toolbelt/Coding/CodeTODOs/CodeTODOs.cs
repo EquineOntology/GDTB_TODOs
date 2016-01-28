@@ -221,9 +221,9 @@ public class CodeTODOs : EditorWindow
         scriptRect.y += (taskRect.height + 5);
         scriptRect.height = GUIConstants.LINE_HEIGHT;
 
-        var scriptLabel = CodeTODOsHelper.FormatScriptLabel(aQQQ, scriptRect.width, _scriptStyle);
+        //var scriptLabel = aQQQ.Script;
+        var scriptLabel = CodeTODOsHelper.CreateScriptLabel(aQQQ, scriptRect.width, _scriptStyle);
         var scriptContent = new GUIContent(scriptLabel);
-        scriptRect.width = _scriptStyle.CalcSize(scriptContent).x;
         EditorGUI.LabelField(scriptRect, scriptLabel, _scriptStyle);
 
         // Open editor on click.
