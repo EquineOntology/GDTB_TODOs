@@ -23,11 +23,10 @@ public class CodeTODOsPrefs
     }
     private static string[] _displayFormatsString = { "Text only", "Icon only", "Icon and Text" };
 
-
     [PreferenceItem("Code TODOs")]
     public static void PreferencesGUI()
     {
-        UpdateEditorPrefs();
+        RefreshPrefs();
         EditorGUILayout.BeginVertical();
         _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
 
@@ -36,7 +35,7 @@ public class CodeTODOsPrefs
         if (GUI.changed)
         {
             UpdatePreferences();
-            UpdateEditorPrefs();
+            RefreshPrefs();
         }
     }
 
@@ -61,9 +60,10 @@ public class CodeTODOsPrefs
     }
 
 
-    private static void UpdateEditorPrefs()
+    /// If preferences have keys already saved in EditorPrefs, get them. Otherwise, set them.
+    public static void RefreshPrefs()
     {
-        /// TODO token.
+        // TODO token.
         if (!EditorPrefs.HasKey(PREFS_CODETODOS_TOKEN))
         {
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, "QQQ");

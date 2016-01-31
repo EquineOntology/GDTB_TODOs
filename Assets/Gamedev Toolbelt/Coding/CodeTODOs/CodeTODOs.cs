@@ -17,6 +17,7 @@ public class CodeTODOs : EditorWindow
 
     private int _priorityLabelWidth;
 
+    private float _heightIndex = 0;
     private Vector2 _scrollPosition = new Vector2(Screen.width - 5, Screen.height);
     private Rect _scrollRect, _scrollViewRect, _qqqRect, _priorityRect, _rightButtonsRect;
 
@@ -27,6 +28,8 @@ public class CodeTODOs : EditorWindow
         // Get existing open window or if none, make a new one.
         var window = (CodeTODOs)EditorWindow.GetWindow(typeof(CodeTODOs));
         window.titleContent = new GUIContent(GUIConstants.TEXT_WINDOW_TITLE);
+
+        CodeTODOsPrefs.RefreshPrefs();
 
         window.UpdateLayoutingSizes();
         window._priorityLabelWidth = (int)window._priorityStyle.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
@@ -63,8 +66,10 @@ public class CodeTODOs : EditorWindow
     /// Draw the list of QQQs.
     private void DrawQQQs()
     {
+        _scrollViewRect.height = _heightIndex;
+        _scrollRect.width += IconSize + 2;
         _scrollPosition = GUI.BeginScrollView(_scrollRect, _scrollPosition, _scrollViewRect);
-        var heightIndex = _helpBoxOffset;
+        _heightIndex = _helpBoxOffset;
         for (var i = 0; i < QQQs.Count; i++)
         {
             var taskContent = new GUIContent(QQQs[i].Task);
@@ -73,7 +78,7 @@ public class CodeTODOs : EditorWindow
             var helpBoxHeight = taskHeight + GUIConstants.LINE_HEIGHT + 5;
             helpBoxHeight = helpBoxHeight < IconSize * 2.5f ? IconSize * 2.5f : helpBoxHeight;
 
-            _qqqRect = new Rect(_priorityWidth, heightIndex, _qqqWidth, helpBoxHeight);
+            _qqqRect = new Rect(_priorityWidth, _heightIndex, _qqqWidth, helpBoxHeight);
             _priorityRect = new Rect(0, _qqqRect.y, _priorityWidth, helpBoxHeight);
             _rightButtonsRect = new Rect(_priorityWidth + _qqqWidth + (_helpBoxOffset * 2), _qqqRect.y, _editAndDoneWidth, helpBoxHeight);
 
@@ -82,8 +87,8 @@ public class CodeTODOs : EditorWindow
             helpBoxRect.width = position.width - (_helpBoxOffset * 2) - IconSize;
             helpBoxRect.x += _helpBoxOffset;
 
-            heightIndex += (int)helpBoxHeight + _helpBoxOffset;
-            _scrollViewRect.height = heightIndex;
+            _heightIndex += (int)helpBoxHeight + _helpBoxOffset;
+            _scrollViewRect.height = _heightIndex;
 
             DrawHelpBox(helpBoxRect);
             DrawPriority(_priorityRect, QQQs[i]);
@@ -145,6 +150,7 @@ public class CodeTODOs : EditorWindow
     private void DrawPriorityText(Rect aRect, QQQ aQQQ)
     {
         var priorityRect = aRect;
+        priorityRect.width -= _helpBoxOffset;
         priorityRect.height -= (IconSize / 2 + _helpBoxOffset);
 
         var newX = (int)priorityRect.x + _helpBoxOffset;
@@ -172,7 +178,7 @@ public class CodeTODOs : EditorWindow
 
         // Draw the label.
         var labelRect = aRect;
-        labelRect.width = Mathf.Clamp((_unit * 2) + IconSize, 1, (IconSize * 2) + _priorityLabelWidth);
+        labelRect.width -= _helpBoxOffset;
 
         var labelNewX = labelRect.x + _helpBoxOffset;
         var labelNewY = (int)(iconRect.y + iconRect.height);
@@ -223,7 +229,6 @@ public class CodeTODOs : EditorWindow
 
         //var scriptLabel = aQQQ.Script;
         var scriptLabel = CodeTODOsHelper.CreateScriptLabel(aQQQ, scriptRect.width, _scriptStyle);
-        var scriptContent = new GUIContent(scriptLabel);
         EditorGUI.LabelField(scriptRect, scriptLabel, _scriptStyle);
 
         // Open editor on click.
@@ -328,7 +333,7 @@ public class CodeTODOs : EditorWindow
     {
         var width = position.width - IconSize;
 
-        _scrollRect = new Rect(_helpBoxOffset, _helpBoxOffset, width - (_helpBoxOffset * 2), position.height - IconSize * 3);
+        _scrollRect = new Rect(_helpBoxOffset, _helpBoxOffset, width - (_helpBoxOffset * 2), position.height - IconSize * 2.5f);
 
         _scrollViewRect = _scrollRect;
 
