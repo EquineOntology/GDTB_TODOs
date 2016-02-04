@@ -266,17 +266,7 @@ public static class CodeTODOsIO
     /// Populate a list with the files (and folders) in the "exclude.txt" doc.
     public static List<string> GetExcludedScripts()
     {
-        // Find the document.
-        var assetsPaths = UnityEditor.AssetDatabase.GetAllAssetPaths();
-        var excludeDoc = "";
-        foreach( var path in assetsPaths)
-        {
-            if(path.EndsWith("CodeTODOs/exclude.txt"))
-            {
-                excludeDoc = path;
-                break;
-            }
-        }
+        var excludeDoc = GetFilePath("CodeTODOs/exclude.txt");
 
         // Parse the document for exclusions.
         var excludedScripts = new List<string>();
@@ -297,5 +287,75 @@ public static class CodeTODOsIO
 
         return excludedScripts;
     }
+
+
+    /// Get the path of a file based on the ending provided.
+    private static string GetFilePath(string aPathEnd)
+    {
+        var assetsPaths = UnityEditor.AssetDatabase.GetAllAssetPaths();
+        var filePath = "";
+        foreach( var path in assetsPaths)
+        {
+            if(path.EndsWith(aPathEnd))
+            {
+                filePath = path;
+                break;
+            }
+        }
+        return filePath;
+    }
+
+
+    /// Load the QQQs saved in qqqs.bak.
+    public static List<QQQ> LoadStoredQQQs()
+    {
+        var excludeDoc = GetFilePath("CodeTODOs/qqqs.bak");
+
+        // Parse the document for exclusions.
+        var backedQQQs = new List<QQQ>();
+        var reader = new StreamReader(excludeDoc);
+        string line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            if (line.StartsWith("#") || System.String.IsNullOrEmpty(line) || line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
+            {
+                continue;
+            }
+            else
+            {
+                backedQQQs.Add(ParseQQQ(line));
+            }
+        }
+        reader.Close();
+
+        return backedQQQs;
+    }
+
+
+    /// Parse a line in qqqs.bak.
+    private static QQQ ParseQQQ(string aString)
+    {
+        var parts = aString.Split('|');
+
+        // Make sure that priority is assigned.
+        short priority;
+        if(System.Int16.TryParse(parts[0], out priority) == false)
+        {
+            priority = 2;
+        }
+
+        // Make sure that line number is assigned.
+        int lineNumber;
+        if(System.Int32.TryParse(parts[0], out lineNumber) == false)
+        {
+            lineNumber = 0;
+        }
+
+        var qqq = new QQQ(System.Int16.Parse(parts[0]), parts[1], parts[2], System.Int32.Parse(parts[3]));
+        return qqq;
+    }
+
+
+
 }
 #endif

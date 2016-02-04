@@ -34,10 +34,14 @@ public class CodeTODOs : EditorWindow
         window.UpdateLayoutingSizes();
         window._priorityLabelWidth = (int)window._priorityStyle.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
 
-        if (QQQs.Count == 0)
+        if (QQQs.Count == 0 && CodeTODOsPrefs.AutoRefresh)
         {
             CodeTODOsHelper.GetQQQsFromAllScripts();
             CodeTODOsHelper.ReorderQQQs();
+        }
+        else if (CodeTODOsPrefs.AutoRefresh == false)
+        {
+            QQQs.AddRange(CodeTODOsIO.LoadStoredQQQs());
         }
         window.Show();
     }
