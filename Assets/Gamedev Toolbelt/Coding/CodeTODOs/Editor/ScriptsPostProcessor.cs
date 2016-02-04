@@ -8,6 +8,10 @@ public class ScriptsPostProcessor : AssetPostprocessor
 {
     private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
+        if (CodeTODOsPrefs.AutoRefresh == false)
+        {
+            return;
+        }
         // Remove QQQs from deleted files.
         foreach (var asset in deletedAssets)
         {
@@ -23,7 +27,6 @@ public class ScriptsPostProcessor : AssetPostprocessor
         {
             if (movedAssets[i].EndsWith(".cs") || movedAssets[i].EndsWith(".js"))
             {
-                //UnityEngine.Debug.Log("moved: " + movedAssets[i]);
                 CodeTODOsHelper.ChangeScriptOfQQQ(movedFromAssetPaths[i], movedAssets[i]);
             }
         }
@@ -49,11 +52,10 @@ public class ScriptsPostProcessor : AssetPostprocessor
         }
 
         // Add QQQs from a script if it was added or reimported (i.e. modified).
-        foreach(var asset in importedAssetsCopy)
+        foreach (var asset in importedAssetsCopy)
         {
-            if(asset.EndsWith(".cs") || asset.EndsWith(".js"))
+            if (asset.EndsWith(".cs") || asset.EndsWith(".js"))
             {
-                //UnityEngine.Debug.Log("imported " + asset);
                 CodeTODOsHelper.AddQQQs(asset);
             }
         }
