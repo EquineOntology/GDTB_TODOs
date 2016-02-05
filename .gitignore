@@ -23,4 +23,8 @@
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
+
+# Manually added
 /.project
+/Assets/VSCode
+/Assets/VSCode.meta
