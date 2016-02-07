@@ -328,12 +328,13 @@ public static class CodeTODOsIO
     {
         var backedQQQs = new List<QQQ>();
 
-        var qqqsFile = GetFilePath("CodeTODOs/bak.gdtb");
-        if (!string.IsNullOrEmpty(qqqsFile))
+        var bakFile = GetFirstInstanceOfFolder("CodeTODOs") + "/bak.gdtb";
+
+        if (File.Exists(bakFile))
         {
             // Parse the document for exclusions.
             string line;
-            var reader = new StreamReader(qqqsFile);
+            var reader = new StreamReader(bakFile);
             try
             {
                 while ((line = reader.ReadLine()) != null)
@@ -370,6 +371,9 @@ public static class CodeTODOsIO
             priority = 2;
         }
 
+        // Restore any pipe sign in the task.
+        var task = parts[1].Replace("(U+007C)", "|");
+
         // Make sure that line number is assigned.
         int lineNumber;
         if (Int32.TryParse(parts[3], out lineNumber) == false)
@@ -377,7 +381,7 @@ public static class CodeTODOsIO
             lineNumber = 0;
         }
 
-        var qqq = new QQQ(priority, parts[1], parts[2], lineNumber);
+        var qqq = new QQQ(priority, task, parts[2], lineNumber);
         return qqq;
     }
 
@@ -385,14 +389,8 @@ public static class CodeTODOsIO
     /// Write QQQs in memory to the backup file.
     public static void WriteQQQsToFile()
     {
-        var bakFile = GetFilePath("bak.gdtb");
         var tempFile = Path.GetTempFileName();
-
-        if (string.IsNullOrEmpty(bakFile))
-        {
-            var codeTodosFolder = GetFirstInstanceOfFolder("CodeTODOs");
-            bakFile = codeTodosFolder + "/bak.gdtb";
-        }
+        var bakFile = GetFirstInstanceOfFolder("CodeTODOs") + "/bak.gdtb";
 
         var writer = new StreamWriter(tempFile, false);
         try
@@ -400,7 +398,8 @@ public static class CodeTODOsIO
             foreach (var qqq in CodeTODOs.QQQs)
             {
                 var priority = CodeTODOsHelper.PriorityToInt(qqq.Priority);
-                var line = priority + "|" + qqq.Task + "|" + qqq.Script + "|" + qqq.LineNumber;
+                var task = qqq.Task.Replace("|", "(U+007C)"); // Replace pipes so that the parser doesn't get confused on reimport.
+                var line = priority + "|" + task + "|" + qqq.Script + "|" + qqq.LineNumber;
                 writer.WriteLine(line);
             }
             writer.Close();
