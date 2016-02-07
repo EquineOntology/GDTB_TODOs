@@ -13,6 +13,8 @@ public class CodeTODOsAdd : EditorWindow
     private int _priority = 2;
     private int _lineNumber = 0;
 
+    private GUISkin _defaultSkin;
+
 
     public static void Init()
     {
@@ -22,6 +24,7 @@ public class CodeTODOsAdd : EditorWindow
 
     public void OnEnable()
     {
+        _defaultSkin = GUI.skin;
         _GDTBSkin = Resources.Load(GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
         _script = new MonoScript();
     }
@@ -88,6 +91,8 @@ public class CodeTODOsAdd : EditorWindow
     /// Draw "Add task" button.
     private void DrawButton()
     {
+        GUI.skin = _GDTBSkin;
+
         var buttonRect = new Rect((Screen.width / 2) - 37, 210, 74, 20);
 
         if (GUI.Button(buttonRect, "Add task"))
@@ -111,6 +116,7 @@ public class CodeTODOsAdd : EditorWindow
                 }
             }
         }
+        GUI.skin = _defaultSkin;
     }
 }
 #endif

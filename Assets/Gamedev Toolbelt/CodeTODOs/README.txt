@@ -20,13 +20,14 @@ Enough from me, let's get to the interesting stuff!
   └┴┘┴ ┴┴ ┴ ┴   ┴└─┘  └─┘└─┘─┴┘└─┘ ╩ ╚═╝═╩╝╚═╝└─┘ o
      WHAT IS CODETODOS?
 
-CodeTODOs is a small extension for Unity which collects any task you in your code, to
-help you keep track of what you still need to do, where, and the priority of this task.
+CodeTODOs is a small extension for Unity which collects any task you in your code and
+displays them in Unity, to help you keep track of what you still need to do, where,
+and the priority each task.
 
 Every programmer is familiar with shortcuts, hacks, "throw NotImplementedException"
-and so on. With CodeTODOs, you can simply file the task with a brief description, and
-get back to it when it's time without fear of forgetting exactly what you were doing,
-or of leaving the hack untouched altogether!
+and so on. With CodeTODOs, you can simply add a small code to a comment in which you
+describe the task, and get back to it when it's time without fear of forgetting what
+you were doing, or of leaving the hack untouched altogether!
 
 
   ╦ ╦╔═╗╦ ╦  ┌┬┐┌─┐┌─┐┌─┐  ┬┌┬┐  ┬ ┬┌─┐┬─┐┬┌─┌─┐

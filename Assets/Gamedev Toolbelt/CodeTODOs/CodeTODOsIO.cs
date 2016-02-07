@@ -349,7 +349,7 @@ public static class CodeTODOsIO
                 }
                 reader.Close();
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 reader.Dispose();
             }
