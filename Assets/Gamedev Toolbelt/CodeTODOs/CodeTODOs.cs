@@ -277,7 +277,11 @@ public class CodeTODOs : EditorWindow
         // Complete QQQ on click.
         if (GUI.Button(completeRect, completeButton))
         {
-            CodeTODOsHelper.CompleteQQQ(aQQQ);
+            // Confirmation dialog.
+            if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
+            {
+                CodeTODOsHelper.CompleteQQQ(aQQQ);
+            }
         }
     }
 
