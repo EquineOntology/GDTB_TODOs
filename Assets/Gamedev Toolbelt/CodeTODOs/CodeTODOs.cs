@@ -41,6 +41,7 @@ public class CodeTODOs : EditorWindow
         }
         else if (CodeTODOsPrefs.AutoRefresh == false)
         {
+            QQQs.Clear();
             QQQs.AddRange(CodeTODOsIO.LoadStoredQQQs());
         }
         window.Show();
@@ -263,7 +264,7 @@ public class CodeTODOs : EditorWindow
         var editButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_EDIT, typeof(Texture2D)) as Texture2D, "Edit this task");
 
         // Open edit window on click.
-        if(GUI.Button(editRect, editButton))
+        if (GUI.Button(editRect, editButton))
         {
             CodeTODOsEdit.Init(aQQQ);
         }
@@ -274,7 +275,7 @@ public class CodeTODOs : EditorWindow
         var completeButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_DONE, typeof(Texture2D)) as Texture2D, "Complete this task");
 
         // Complete QQQ on click.
-        if(GUI.Button(completeRect, completeButton))
+        if (GUI.Button(completeRect, completeButton))
         {
             CodeTODOsHelper.CompleteQQQ(aQQQ);
         }
@@ -289,7 +290,7 @@ public class CodeTODOs : EditorWindow
         var refreshButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_REFRESH, typeof(Texture2D)) as Texture2D, "Refresh list of tasks");
 
         // Refresh on click.
-        if(GUI.Button(refreshRect, refreshButton))
+        if (GUI.Button(refreshRect, refreshButton))
         {
             QQQs.Clear();
             CodeTODOsHelper.GetQQQsFromAllScripts();
@@ -371,6 +372,16 @@ public class CodeTODOs : EditorWindow
         _priorityStyle = _gdtbSkin.GetStyle("label");
         _taskStyle = _gdtbSkin.GetStyle("task");
         _scriptStyle = _gdtbSkin.GetStyle("script");
+    }
+
+
+    /// Called when the window is closed.
+    private void OnDestroy()
+    {
+        if (CodeTODOsPrefs.AutoRefresh == false)
+        {
+            CodeTODOsIO.WriteQQQsToFile();
+        }
     }
 }
 #endif

@@ -1,6 +1,7 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 public static class CodeTODOsIO
 {
@@ -15,12 +16,12 @@ public static class CodeTODOsIO
     /// Return the first instance of the given filename.
     /// This is a non-recursive, breadth-first search algorithm.
 	private static string GetFirstInstanceOfFile(string aFileName)
-	{
+    {
         var projectDirectoryPath = Directory.GetCurrentDirectory();
         var projectDirectoryInfo = new DirectoryInfo(projectDirectoryPath);
         var listOfAssetsDirs = projectDirectoryInfo.GetDirectories("Assets");
         var assetsDir = "";
-        foreach(var dir in listOfAssetsDirs)
+        foreach (var dir in listOfAssetsDirs)
         {
             if (dir.FullName.EndsWith("\\Assets"))
             {
@@ -42,19 +43,15 @@ public static class CodeTODOsIO
                     q.Enqueue(subDir);
                 }
             }
-            catch (System.Exception /*ex*/)
-            {
-                //Debug.LogError(ex);
-            }
+            catch (Exception) { }
+
             string[] files = null;
             try
             {
                 files = Directory.GetFiles(path);
             }
-            catch (System.Exception /*ex*/)
-            {
-                //Debug.LogError(ex);
-            }
+            catch (Exception) { }
+
             if (files != null)
             {
                 for (int i = 0; i < files.Length; i++)
@@ -74,12 +71,12 @@ public static class CodeTODOsIO
     /// Return the first instance of the given folder.
     /// This is a non-recursive, breadth-first search algorithm.
     private static string GetFirstInstanceOfFolder(string aFolderName)
-	{
+    {
         var projectDirectoryPath = Directory.GetCurrentDirectory();
         var projectDirectoryInfo = new DirectoryInfo(projectDirectoryPath);
         var listOfAssetsDirs = projectDirectoryInfo.GetDirectories("Assets");
         var assetsDir = "";
-        foreach(var dir in listOfAssetsDirs)
+        foreach (var dir in listOfAssetsDirs)
         {
             if (dir.FullName.EndsWith("\\Assets"))
             {
@@ -101,19 +98,15 @@ public static class CodeTODOsIO
                     q.Enqueue(subDir);
                 }
             }
-            catch (System.Exception /*ex*/)
-            {
-                //Debug.LogError(ex);
-            }
+            catch (Exception){}
+
             string[] folders = null;
             try
             {
                 folders = Directory.GetDirectories(path);
             }
-            catch (System.Exception /*ex*/)
-            {
-                //Debug.LogError(ex);
-            }
+            catch (Exception){}
+
             if (folders != null)
             {
                 for (int i = 0; i < folders.Length; i++)
@@ -126,7 +119,6 @@ public static class CodeTODOsIO
             }
         }
         var relativePath = absolutePath.Remove(0, projectDirectoryPath.Length + 1);
-        //Debug.Log(relativePath);
         return relativePath;
     }
 
@@ -135,28 +127,38 @@ public static class CodeTODOsIO
     public static void RemoveLineFromFile(string aFile, int aLineNumber)
     {
         var tempFile = Path.GetTempFileName();
-
-        var reader = new StreamReader(aFile);
-        var writer = new StreamWriter(tempFile);
         var line = "";
         var currentLineNumber = 0;
 
-        while ((line = reader.ReadLine()) != null)
+        var reader = new StreamReader(aFile);
+        var writer = new StreamWriter(tempFile);
+
+        try
         {
-            // If the line is not the one we want to remove, write it to the temp file.
-            if (currentLineNumber != aLineNumber)
+            while ((line = reader.ReadLine()) != null)
             {
-                writer.WriteLine(line);
-            }
-            else
-            {
-                var lineWithoutQQQ = GetLineWithoutQQQ(line);
-                if (!System.String.IsNullOrEmpty(lineWithoutQQQ))
+                // If the line is not the one we want to remove, write it to the temp file.
+                if (currentLineNumber != aLineNumber)
                 {
-                    writer.WriteLine(lineWithoutQQQ);
+                    writer.WriteLine(line);
                 }
+                else
+                {
+                    var lineWithoutQQQ = GetLineWithoutQQQ(line);
+                    if (!String.IsNullOrEmpty(lineWithoutQQQ))
+                    {
+                        writer.WriteLine(lineWithoutQQQ);
+                    }
+                }
+                currentLineNumber++;
             }
-            currentLineNumber++;
+            reader.Close();
+            writer.Close();
+        }
+        catch (Exception)
+        {
+            reader.Dispose();
+            writer.Dispose();
         }
 
         // Overwrite the old file with the temp file.
@@ -194,37 +196,41 @@ public static class CodeTODOsIO
     public static void ChangeQQQ(QQQ anOldQQQ, QQQ aNewQQQ)
     {
         var tempFile = Path.GetTempFileName();
-
-        var reader = new StreamReader(anOldQQQ.Script);
-        var writer = new StreamWriter(tempFile);
         var line = "";
         var currentLineNumber = 0;
 
-        while ((line = reader.ReadLine()) != null)
+        var reader = new StreamReader(anOldQQQ.Script);
+        var writer = new StreamWriter(tempFile);
+        try
         {
-            // If the line is not the one we want to remove, write it to the temp file.
-            if (currentLineNumber != anOldQQQ.LineNumber)
+            while ((line = reader.ReadLine()) != null)
             {
-                writer.WriteLine(line);
-            }
-            else
-            {
-                // Remove the old QQQ and add the new one, then write the line to file.
-                var lineWithoutQQQ = GetLineWithoutQQQ(line);
+                // If the line is not the one we want to remove, write it to the temp file.
+                if (currentLineNumber != anOldQQQ.LineNumber)
+                {
+                    writer.WriteLine(line);
+                }
+                else
+                {
+                    // Remove the old QQQ and add the new one, then write the line to file.
+                    var lineWithoutQQQ = GetLineWithoutQQQ(line);
 
-                var slashes = "";
-                slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //"; // If the line isn't empty we want a space before the comment.
+                    var slashes = "";
+                    slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //"; // If the line isn't empty we want a space before the comment.
 
-                var newLine = lineWithoutQQQ + slashes + CodeTODOsPrefs.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
-                writer.WriteLine(newLine);
+                    var newLine = lineWithoutQQQ + slashes + CodeTODOsPrefs.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
+                    writer.WriteLine(newLine);
+                }
+                currentLineNumber++;
             }
-            currentLineNumber++;
+            reader.Close();
+            writer.Close();
         }
-
-        // Close streams
-        reader.Close();
-        writer.Close();
-
+        catch (Exception)
+        {
+            reader.Dispose();
+            writer.Dispose();
+        }
         // Overwrite the old file with the temp file.
         File.Delete(anOldQQQ.Script);
         File.Move(tempFile, anOldQQQ.Script);
@@ -235,27 +241,32 @@ public static class CodeTODOsIO
     public static void AddQQQ(QQQ aQQQ)
     {
         var tempFile = Path.GetTempFileName();
-
-        var reader = new StreamReader(aQQQ.Script);
-        var writer = new StreamWriter(tempFile);
         var line = "";
         var currentLineNumber = 0;
 
-        while ((line = reader.ReadLine()) != null)
+        var reader = new StreamReader(aQQQ.Script);
+        var writer = new StreamWriter(tempFile);
+        try
         {
-            // Add the new QQQ as the first line in the file.
-            if (currentLineNumber == aQQQ.LineNumber)
+            while ((line = reader.ReadLine()) != null)
             {
-                var newQQQ = "//QQQ" + (int)aQQQ.Priority + " " + aQQQ.Task;
-                writer.WriteLine(newQQQ);
+                // Add the new QQQ as the first line in the file.
+                if (currentLineNumber == aQQQ.LineNumber)
+                {
+                    var newQQQ = "//QQQ" + (int)aQQQ.Priority + " " + aQQQ.Task;
+                    writer.WriteLine(newQQQ);
+                }
+                writer.WriteLine(line);
+                currentLineNumber++;
             }
-            writer.WriteLine(line);
-            currentLineNumber++;
+            reader.Close();
+            writer.Close();
         }
-
-        // Close streams
-        reader.Close();
-        writer.Close();
+        catch (Exception)
+        {
+            reader.Dispose();
+            writer.Dispose();
+        }
 
         // Overwrite the old file with the temp file.
         File.Delete(aQQQ.Script);
@@ -270,21 +281,27 @@ public static class CodeTODOsIO
 
         // Parse the document for exclusions.
         var excludedScripts = new List<string>();
-        var reader = new StreamReader(excludeDoc);
         string line;
-        while ((line = reader.ReadLine()) != null)
+        var reader = new StreamReader(excludeDoc);
+        try
         {
-            if (line.StartsWith("#") || System.String.IsNullOrEmpty(line) || line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
+            while ((line = reader.ReadLine()) != null)
             {
-                continue;
+                if (line.StartsWith("#") || String.IsNullOrEmpty(line) || line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
+                {
+                    continue;
+                }
+                else
+                {
+                    excludedScripts.Add(line);
+                }
             }
-            else
-            {
-                excludedScripts.Add(line);
-            }
+            reader.Close();
         }
-        reader.Close();
-
+        catch (Exception)
+        {
+            reader.Dispose();
+        }
         return excludedScripts;
     }
 
@@ -294,9 +311,9 @@ public static class CodeTODOsIO
     {
         var assetsPaths = UnityEditor.AssetDatabase.GetAllAssetPaths();
         var filePath = "";
-        foreach( var path in assetsPaths)
+        foreach (var path in assetsPaths)
         {
-            if(path.EndsWith(aPathEnd))
+            if (path.EndsWith(aPathEnd))
             {
                 filePath = path;
                 break;
@@ -309,53 +326,95 @@ public static class CodeTODOsIO
     /// Load the QQQs saved in qqqs.bak.
     public static List<QQQ> LoadStoredQQQs()
     {
-        var excludeDoc = GetFilePath("CodeTODOs/qqqs.bak");
-
-        // Parse the document for exclusions.
         var backedQQQs = new List<QQQ>();
-        var reader = new StreamReader(excludeDoc);
-        string line;
-        while ((line = reader.ReadLine()) != null)
+
+        var qqqsFile = GetFilePath("CodeTODOs/bak.gdtb");
+        if (!string.IsNullOrEmpty(qqqsFile))
         {
-            if (line.StartsWith("#") || System.String.IsNullOrEmpty(line) || line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
+            // Parse the document for exclusions.
+            string line;
+            var reader = new StreamReader(qqqsFile);
+            try
             {
-                continue;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line.StartsWith("#") || String.IsNullOrEmpty(line) || line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        backedQQQs.Add(ParseQQQ(line));
+                    }
+                }
+                reader.Close();
             }
-            else
+            catch(Exception ex)
             {
-                backedQQQs.Add(ParseQQQ(line));
+                reader.Dispose();
             }
         }
-        reader.Close();
-
         return backedQQQs;
     }
 
 
-    /// Parse a line in qqqs.bak.
+    /// Parse a line in the backup file.
     private static QQQ ParseQQQ(string aString)
     {
         var parts = aString.Split('|');
 
         // Make sure that priority is assigned.
-        short priority;
-        if(System.Int16.TryParse(parts[0], out priority) == false)
+        int priority;
+        if (Int32.TryParse(parts[0], out priority) == false)
         {
             priority = 2;
         }
 
         // Make sure that line number is assigned.
         int lineNumber;
-        if(System.Int32.TryParse(parts[0], out lineNumber) == false)
+        if (Int32.TryParse(parts[3], out lineNumber) == false)
         {
             lineNumber = 0;
         }
 
-        var qqq = new QQQ(System.Int16.Parse(parts[0]), parts[1], parts[2], System.Int32.Parse(parts[3]));
+        var qqq = new QQQ(priority, parts[1], parts[2], lineNumber);
         return qqq;
     }
 
 
+    /// Write QQQs in memory to the backup file.
+    public static void WriteQQQsToFile()
+    {
+        var bakFile = GetFilePath("bak.gdtb");
+        var tempFile = Path.GetTempFileName();
 
+        if (string.IsNullOrEmpty(bakFile))
+        {
+            var codeTodosFolder = GetFirstInstanceOfFolder("CodeTODOs");
+            bakFile = codeTodosFolder + "/bak.gdtb";
+        }
+
+        var writer = new StreamWriter(tempFile, false);
+        try
+        {
+            foreach (var qqq in CodeTODOs.QQQs)
+            {
+                var priority = CodeTODOsHelper.PriorityToInt(qqq.Priority);
+                var line = priority + "|" + qqq.Task + "|" + qqq.Script + "|" + qqq.LineNumber;
+                writer.WriteLine(line);
+            }
+            writer.Close();
+        }
+        catch (Exception)
+        {
+            writer.Dispose();
+        }
+
+        if (File.Exists(bakFile))
+        {
+            File.Delete(bakFile);
+        }
+        File.Move(tempFile, bakFile);
+    }
 }
 #endif
