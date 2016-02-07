@@ -102,7 +102,7 @@ public class CodeTODOsAdd : EditorWindow
             }
             else
             {
-                if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Don't add task"))
+                if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Cancel"))
                 {
                     var path = AssetDatabase.GetAssetPath(_script);
                     var newQQQ = new QQQ(_priority, _task, path, _lineNumber);

@@ -85,7 +85,7 @@ public class CodeTODOsEdit : EditorWindow
         if (GUI.Button(buttonRect, "Save"))
         {
             // Confirmation dialog.
-            if(EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Do not save"))
+            if(EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
             {
                 CodeTODOsHelper.UpdateTask(_oldQQQ, _newQQQ);
                 EditorWindow.GetWindow(typeof(CodeTODOsEdit)).Close();
