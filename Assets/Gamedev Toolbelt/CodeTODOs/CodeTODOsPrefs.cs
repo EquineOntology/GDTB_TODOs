@@ -23,14 +23,23 @@ public class CodeTODOsPrefs
     }
     private static string[] _displayFormatsString = { "Text only", "Icon only", "Icon and Text" };
 
+
+    // Auto-update QQQs
+    public const string PREFS_CODETODOS_AUTO_REFRESH = "GDTB_CodeTODOs_AutoUpdate";
+    private static bool _autoRefresh = true;
+    public static bool AutoRefresh
+    {
+        get { return _autoRefresh; }
+    }
+
     [PreferenceItem("Code TODOs")]
     public static void PreferencesGUI()
     {
         RefreshPrefs();
         EditorGUILayout.BeginVertical();
         _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
-
         _priorityDisplay = (PriorityDisplayFormat) EditorGUILayout.Popup("Priority format", System.Convert.ToInt16(_priorityDisplay), _displayFormatsString);
+        _autoRefresh = EditorGUILayout.Toggle("Auto refresh", _autoRefresh);
 
         if (GUI.changed)
         {
@@ -43,20 +52,25 @@ public class CodeTODOsPrefs
     {
         UpdateQQQTemplate(_todoToken);
         UpdatePriorityDisplay(_priorityDisplay);
+        UpdateAutoRefresh(_autoRefresh);
     }
 
 
     private static void UpdateQQQTemplate(string aNewToken)
     {
         EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, aNewToken);
-        _todoToken = "QQQ";
     }
 
 
     private static void UpdatePriorityDisplay(PriorityDisplayFormat aDisplayFormat)
     {
         EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(aDisplayFormat));
-        _priorityDisplay = PriorityDisplayFormat.ICON_ONLY;
+    }
+
+
+    private static void UpdateAutoRefresh(bool aToggle)
+    {
+        EditorPrefs.SetBool(PREFS_CODETODOS_AUTO_REFRESH, aToggle);
     }
 
 
@@ -83,6 +97,17 @@ public class CodeTODOsPrefs
         else
         {
             _priorityDisplay = (PriorityDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, 2);
+        }
+
+        // Auto refresh
+        if (!EditorPrefs.HasKey(PREFS_CODETODOS_AUTO_REFRESH))
+        {
+            EditorPrefs.SetBool(PREFS_CODETODOS_AUTO_REFRESH, true);
+            _autoRefresh = true;
+        }
+        else
+        {
+            _autoRefresh = EditorPrefs.GetBool(PREFS_CODETODOS_AUTO_REFRESH, true);
         }
     }
 }

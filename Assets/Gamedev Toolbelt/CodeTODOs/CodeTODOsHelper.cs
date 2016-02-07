@@ -271,5 +271,35 @@ public static class CodeTODOsHelper
         CodeTODOsIO.AddQQQ(aQQQ);
         CodeTODOs.QQQs.Add(aQQQ);
     }
+
+
+    /// Get the int equivalent of a QQQPriority.
+    public static int PriorityToInt(QQQPriority aPriority)
+    {
+        switch (aPriority)
+        {
+            case QQQPriority.URGENT:
+                return 1;
+            case QQQPriority.MINOR:
+                return 3;
+            default:
+                return 2;
+        }
+    }
+
+
+    /// Get the QQQPriority equivalent of an int
+    public static QQQPriority IntToPriority(int anInt)
+    {
+        switch (anInt)
+        {
+            case 1:
+                return QQQPriority.URGENT;
+            case 3:
+                return QQQPriority.MINOR;
+            default:
+                return QQQPriority.NORMAL;
+        }
+    }
 }
 #endif
