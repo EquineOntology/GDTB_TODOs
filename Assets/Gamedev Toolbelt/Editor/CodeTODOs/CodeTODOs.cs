@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
@@ -28,6 +27,7 @@ public class CodeTODOs : EditorWindow
         // Get existing open window or if none, make a new one.
         var window = (CodeTODOs)EditorWindow.GetWindow(typeof(CodeTODOs));
         window.titleContent = new GUIContent(GUIConstants.TEXT_WINDOW_TITLE);
+        window.minSize = new Vector2(250f, 100f);
 
         CodeTODOsPrefs.RefreshPrefs();
 
@@ -96,7 +96,7 @@ public class CodeTODOs : EditorWindow
             _scrollViewRect.height = _heightIndex;
 
             DrawHelpBox(helpBoxRect);
-            DrawPriority(_priorityRect, QQQs[i]);
+            DrawPriority(_priorityRect, QQQs[i], helpBoxHeight);
             DrawTaskAndScriptLabels(_qqqRect, QQQs[i], taskHeight);
             DrawEditAndCompleteButtons(_rightButtonsRect, QQQs[i]);
         }
@@ -107,7 +107,7 @@ public class CodeTODOs : EditorWindow
     #region QQQPriorityMethods
 
     /// Select which priority format to use based on the user preference.
-    private void DrawPriority(Rect aRect, QQQ aQQQ)
+    private void DrawPriority(Rect aRect, QQQ aQQQ, float helpBoxHeight = 30)
     {
         switch (CodeTODOsPrefs.QQQPriorityDisplay)
         {
@@ -120,9 +120,42 @@ public class CodeTODOs : EditorWindow
             case PriorityDisplayFormat.ICON_AND_TEXT:
                 DrawPriorityIconAndText(aRect, aQQQ);
                 break;
+            case PriorityDisplayFormat.PEGS:
+            default:
+                DrawPriorityPegs(aRect, aQQQ, helpBoxHeight);
+                break;
         }
     }
 
+    /// Draw priority for the "Pegs" setting.
+    private void DrawPriorityPegs(Rect aRect, QQQ aQQQ, float helpBoxHeight)
+    {
+        var borderWidth = 1;
+        var priorityRect = aRect;
+        var newY = 0;
+        var newX = 0;
+
+        newX = (int)priorityRect.x + IconSize / 2 + _helpBoxOffset;
+        newY = (int)priorityRect.y + _helpBoxOffset;
+
+        priorityRect.width = IconSize;
+        priorityRect.height = helpBoxHeight - (_helpBoxOffset * 2);
+        priorityRect.position = new Vector2(newX, newY);
+
+        var color = GetQQQPriorityColor((int)aQQQ.Priority);
+        EditorGUI.DrawRect(priorityRect, color);
+
+        // Draw bodrers
+        var topBorder = new Rect (priorityRect.x, priorityRect.y, priorityRect.width, borderWidth);
+        var bottomBorder = new Rect (priorityRect.x, (priorityRect.y + priorityRect.height - borderWidth), priorityRect.width, borderWidth);
+        var leftBorder = new Rect (priorityRect.x, priorityRect.y, borderWidth, priorityRect.height);
+        var rightBorder = new Rect ((priorityRect.x + priorityRect.width - borderWidth), priorityRect.y, borderWidth, priorityRect.height);
+
+        EditorGUI.DrawRect(topBorder, Color.gray);
+        EditorGUI.DrawRect(bottomBorder, Color.gray);
+        EditorGUI.DrawRect(leftBorder, Color.gray);
+        EditorGUI.DrawRect(rightBorder, Color.gray);
+    }
 
     /// Draw priority for the "Icon only" setting.
     private void DrawPriorityIcon(Rect aRect, QQQ aQQQ)
@@ -211,6 +244,27 @@ public class CodeTODOs : EditorWindow
                 break;
         }
         return tex;
+    }
+
+
+    /// Get the correct color for a priority rectangle.
+    private Color GetQQQPriorityColor(int aPriority)
+    {
+        Color col;
+        switch (aPriority)
+        {
+            case 1:
+                col = CodeTODOsPrefs.PriColor1;
+                break;
+            case 3:
+                col = CodeTODOsPrefs.PriColor3;
+                break;
+            case 2:
+            default:
+                col = CodeTODOsPrefs.PriColor2;
+                break;
+        }
+        return col;
     }
 
     #endregion
@@ -388,4 +442,3 @@ public class CodeTODOs : EditorWindow
         }
     }
 }
-#endif

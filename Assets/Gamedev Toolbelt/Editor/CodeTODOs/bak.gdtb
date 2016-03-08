@@ -1,0 +1,223 @@
+1|means urgent, QQQ2 means normal, QQQ3 means minor. In case there's nothing (or something else/incorrect), we default to normal.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|73
+2|> QQQs = new List<QQQ>();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|6
+2|s.Count == 0 && CodeTODOsPrefs.AutoRefresh)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|36
+2|sFromAllScripts();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|38
+2|s();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|39
+2|s.Clear();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|43
+2|s.AddRange(CodeTODOsIO.LoadStoredQQQs());|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|44
+2|s();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|62
+2|s.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|70
+2|s()|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|71
+2|s.Count; i++)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|77
+2|s[i].Task);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|79
+2|s[i], helpBoxHeight);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|98
+2|s[i], taskHeight);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|99
+2|s[i]);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|100
+2|PriorityMethods|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|106
+2|aQQQ, float helpBoxHeight = 30)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|109
+2|PriorityDisplay)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|111
+2|);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|114
+2|);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|117
+2|);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|120
+2|, helpBoxHeight);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|124
+2|aQQQ, float helpBoxHeight)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|130
+2|PriorityColor((int)aQQQ.Priority);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|144
+2|aQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|160
+2|PriorityTexture((int)aQQQ.Priority);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|181
+2|aQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|187
+2|.Priority.ToString());|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|197
+2|aQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|202
+2|PriorityTexture((int)aQQQ.Priority);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|213
+2|.Priority.ToString());|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|224
+2|PriorityTexture(int aPriority)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|229
+2|_URGENT);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|235
+2|_MINOR);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|238
+2|_NORMAL);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|242
+2|PriorityColor(int aPriority)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|250
+2|s.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|272
+2|aQQQ, float aHeight)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|273
+2|.Task, _taskStyle);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|280
+2|.Script;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|288
+2|, scriptRect.width, _scriptStyle);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|289
+2|);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|296
+2|s visually.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|301
+2|aQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|309
+2|_EDIT, typeof(Texture2D)) as Texture2D, "Edit this task");|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|317
+2|);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|322
+2|_DONE, typeof(Texture2D)) as Texture2D, "Complete this task");|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|328
+2|on click.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|330
+2|(aQQQ);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|336
+2|_REFRESH, typeof(Texture2D)) as Texture2D, "Refresh list of tasks");|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|347
+2|s.Clear();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|352
+2|sFromAllScripts();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|353
+2|s();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|354
+2|_ADD, typeof(Texture2D)) as Texture2D, "Add a new task");|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|364
+2|on click.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|366
+2|PriorityDisplay.ToString() == "ICON_ONLY")|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|405
+2|sToFile();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOs.cs|440
+2|s in all scripts.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|43
+2|sFromAllScripts()|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|44
+2|>();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|47
+2|sFromScript(allScripts[i]));|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|51
+2|s = qqqs;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|53
+2|s in a single script.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|57
+2|> GetQQQsFromScript(string aPath)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|58
+2|s = new List<QQQ>();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|60
+2|newQQQ;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|63
+2|= new QQQ();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|66
+2|'s priority.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|72
+2|.Priority = QQQPriority.URGENT;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|77
+2|.Priority = QQQPriority.NORMAL;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|81
+2|.Priority = QQQPriority.MINOR;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|85
+2|.Priority = QQQPriority.NORMAL;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|89
+2|has an explicit priority, we add 1 to the index so that the number doesn't appear in the task.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|94
+2|.Task = tempString;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|102
+2|.Script = aPath;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|105
+2|.LineNumber = i;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|108
+2|s.Add(newQQQ);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|110
+2|s;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|113
+2|s in a script to the list in CodeTODOs.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|117
+2|s(string aScript)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|118
+2|sFromScript(aScript);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|120
+2|s.Contains(qqqs[i]))|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|124
+2|s.Add(qqqs[i]);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|126
+2|s.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|132
+2|s.Count; i++)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|135
+2|s[i].Script == aScript)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|137
+2|s.Remove(CodeTODOs.QQQs[i]);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|139
+2|s to another script (for when a script is moved).|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|146
+2|(string aPathTo, string aPathFrom)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|147
+2|s.Count; i++)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|149
+2|s[i].Script == aPathTo)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|151
+2|s[i].Script = aPathFrom;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|153
+2|list based on the urgency of tasks.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|171
+2|s()|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|172
+2|s = CodeTODOs.QQQs;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|174
+2|s = new List<QQQ>();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|175
+2|s.Count; i++)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|178
+2|s[i].Priority == QQQPriority.URGENT)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|180
+2|s.Add(originalQQQs[i]);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|182
+2|s.Count; i++)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|187
+2|s[i].Priority == QQQPriority.NORMAL)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|189
+2|s.Add(originalQQQs[i]);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|191
+2|s.Count; i++)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|196
+2|s[i].Priority == QQQPriority.MINOR)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|198
+2|s.Add(originalQQQs[i]);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|200
+2|s = orderedQQQs;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|204
+2|'s script.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|208
+2|aQQQ, float aWidth, GUIStyle aStyle)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|209
+2|.Script);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|211
+2|.LineNumber + 1).ToString() + " in \"\"")).x;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|214
+2|.Script;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|216
+2|, permittedWidth, aStyle);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|220
+2|.LineNumber + 1) + " in \"" + formattedScript + "\"";|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|221
+2|.LineNumber + 1) + " in \"" + formattedScript + "\"";|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|225
+2|aQQQ, float aWidth, GUIStyle aStyle)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|233
+2|.Script)).x;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|235
+2|.Script.Length - 1); // +4 because of the "..." we'll be adding.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|239
+2|.Script.Substring(cutoffIndex);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|240
+2|(both from the list and from the file in which it was written).|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|244
+2|(QQQ aQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|245
+2|.Script, aQQQ.LineNumber);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|247
+2|s.Remove(aQQQ);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|248
+2|aQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|253
+2|.Script) as UnityEngine.TextAsset;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|255
+2|.LineNumber + 1));|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|256
+2|.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|260
+2|anOldQQQ, QQQ aNewQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|261
+2|(anOldQQQ, aNewQQQ);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|263
+2|at the beginning of a script.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|267
+2|(QQQ aQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|268
+2|(aQQQ);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|270
+2|s.Add(aQQQ);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|271
+2|Priority.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|275
+2|Priority aPriority)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|276
+2|Priority.URGENT:|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|280
+2|Priority.MINOR:|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|282
+2|Priority equivalent of an int|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|290
+2|Priority IntToPriority(int anInt)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|291
+2|Priority.URGENT;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|296
+2|Priority.MINOR;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|298
+2|Priority.NORMAL;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsHelper.cs|300
+2|).|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsPrefs.cs|7
+2|";|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsPrefs.cs|9
+2|";|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsPrefs.cs|10
+2|PriorityDisplay|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsPrefs.cs|21
+2|s.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsPrefs.cs|28
+2|Template();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsPrefs.cs|87
+2|Template()|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsPrefs.cs|93
+2|Priority display|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsPrefs.cs|130
+2|: System.Object|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|1
+2|Priority Priority;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|3
+2|(int aPriority, string aTask, string aScript, int aLineNumber)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|9
+2|Priority.URGENT;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|14
+2|Priority.NORMAL;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|17
+2|Priority.MINOR;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|20
+2|Priority.NORMAL;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|23
+2|(QQQPriority aPriority, string aTask, string aScript, int aLineNumber)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|32
+2|(string aTask, string aScript)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|41
+2|Priority.NORMAL;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|43
+2|()|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|50
+2|Priority.NORMAL;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQ.cs|52
+2|Priority|Assets/Gamedev Toolbelt/Editor/CodeTODOs/Types/QQQPriority.cs|0
+2|= GetLineWithoutQQQ(line);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|146
+2|))|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|147
+2|);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|149
+2|to see if they are spaces or backslashes. If they are, remove them.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|169
+2|wihtout removing anything else of importance (including stuff in a comment BEFORE a QQQ).|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|170
+2|(string aLine)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|171
+2|= aLine.Substring(0, aLine.Length - (aLine.Length - qqqIndex));|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|188
+2|;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|190
+2|.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|194
+2|(QQQ anOldQQQ, QQQ aNewQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|195
+2|.Script);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|201
+2|.LineNumber)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|208
+2|and add the new one, then write the line to file.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|214
+2|= GetLineWithoutQQQ(line);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|215
+2|) ? "//" : " //"; // If the line isn't empty we want a space before the comment.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|218
+2|+ slashes + CodeTODOsPrefs.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|220
+2|.Script);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|234
+2|.Script);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|235
+2|to a script.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|239
+2|(QQQ aQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|240
+2|.Script);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|246
+2|as the first line in the file.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|252
+2|.LineNumber)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|253
+2|= "//QQQ" + (int)aQQQ.Priority + " " + aQQQ.Task;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|255
+2|);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|256
+2|.Script);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|271
+2|.Script);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|272
+2|s saved in qqqs.bak.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|325
+2|> LoadStoredQQQs()|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|326
+2|s = new List<QQQ>();|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|328
+2|s.Add(ParseQQQ(line));|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|347
+2|s;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|357
+2|ParseQQQ(string aString)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|362
+2|(priority, task, parts[2], lineNumber);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|383
+2|s in memory to the backup file.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|388
+2|sToFile()|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|389
+2|s)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsIO.cs|397
+2|Check layouting constraints for edit window|Assets/TestScript.cs|6
+2|Spacing between lines is a bit off|Assets/TestScript.cs|11
+2|Merge back into develop|Assets/TestScript.cs|12
+2|Check small window size when ICON_AND_TEXT and TEXT_ONLY|Assets/TestScript.cs|16
+2|EditorApplication.ExecuteMenuItem() doesn't work :( Use reflection.|Assets/TestScript.cs|17
+2|_oldQQQ;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|8
+2|_newQQQ;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|9
+2|aQQQ)|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|13
+2|= aQQQ;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|19
+2|= new QQQ((int)aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|20
+2|.Priority;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|47
+2|.Priority;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|51
+2|.Priority = (QQQPriority)priorityIndex;|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|57
+2|'s task.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|61
+2|.Task = EditorGUI.TextField(fieldRect, _newQQQ.Task);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|76
+2|, _newQQQ);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsEdit.cs|89
+2|s from deleted files.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/ScriptsPostProcessor.cs|14
+2|s when a script is moved.|Assets/Gamedev Toolbelt/Editor/CodeTODOs/ScriptsPostProcessor.cs|24
+2|(movedFromAssetPaths[i], movedAssets[i]);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/ScriptsPostProcessor.cs|29
+2|s from a script if it was added or reimported (i.e. modified).|Assets/Gamedev Toolbelt/Editor/CodeTODOs/ScriptsPostProcessor.cs|53
+2|s(asset);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/ScriptsPostProcessor.cs|58
+2|= new QQQ(_priority, _task, path, _lineNumber);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsAdd.cs|112
+2|(newQQQ);|Assets/Gamedev Toolbelt/Editor/CodeTODOs/CodeTODOsAdd.cs|113
+3|I feel like all my dev time is spent on GUI suff|Assets/TestScript.cs|18
