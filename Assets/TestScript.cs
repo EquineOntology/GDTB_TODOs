@@ -1,19 +1,19 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class TestScript : MonoBehaviour
 {
     void Start()
     {
-
+        //QQQ Check layouting constraints for edit window
     }
 
     void Update()
-    {//QQQ Bananas
-     ///QQQ1Melonas
+    {
+        //QQQ Spacing between lines is a bit off
+        //QQQ Merge back into develop
 
-    }//QQQ3TUTTIFRUTTISUMMERLOVE
+    }
 }
-//QQQ HELLO
-//QQQ QQQ1Melonas
-//QQQ 2
-///QQQ #<$+%>!`&*‘|{?“=}/:\@uyao1234567890987654321yuijh(*&%&)(*403972-0578-937-497230947````¬ ```¦¦
+// QQQ Check small window size when ICON_AND_TEXT and TEXT_ONLY
+//QQQ EditorApplication.ExecuteMenuItem() doesn't work :( Use reflection.
+//QQQ3 I feel like all my dev time is spent on GUI suff
