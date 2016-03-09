@@ -23,7 +23,7 @@ public class CodeTODOsPrefs
     {
         get { return _priorityDisplay; }
     }
-    private static string[] _displayFormatsString = { "Text only", "Icon only", "Icon and Text", "Pegs" };
+    private static string[] _displayFormatsString = { "Text only", "Icon only", "Icon and Text", "Bars" };
 
 
     // Auto-update QQQs.
@@ -192,6 +192,6 @@ public enum PriorityDisplayFormat
     TEXT_ONLY,
     ICON_ONLY,
     ICON_AND_TEXT,
-    PEGS
+    BARS
 }
 #endif

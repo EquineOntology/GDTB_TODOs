@@ -12,7 +12,7 @@ public class CodeTODOs : EditorWindow
     private const int IconSize = 16;
 
     private int _unit, _priorityWidth, _qqqWidth, _editAndDoneWidth;
-    private int _helpBoxOffset = 5;
+    private int _offset = 5;
 
     private int _priorityLabelWidth;
 
@@ -74,7 +74,7 @@ public class CodeTODOs : EditorWindow
         _scrollViewRect.height = _heightIndex;
         _scrollRect.width += IconSize + 2;
         _scrollPosition = GUI.BeginScrollView(_scrollRect, _scrollPosition, _scrollViewRect);
-        _heightIndex = _helpBoxOffset;
+        _heightIndex = _offset;
         for (var i = 0; i < QQQs.Count; i++)
         {
             var taskContent = new GUIContent(QQQs[i].Task);
@@ -85,14 +85,14 @@ public class CodeTODOs : EditorWindow
 
             _qqqRect = new Rect(_priorityWidth, _heightIndex, _qqqWidth, helpBoxHeight);
             _priorityRect = new Rect(0, _qqqRect.y, _priorityWidth, helpBoxHeight);
-            _rightButtonsRect = new Rect(_priorityWidth + _qqqWidth + (_helpBoxOffset * 2), _qqqRect.y, _editAndDoneWidth, helpBoxHeight);
+            _rightButtonsRect = new Rect(_priorityWidth + _qqqWidth + (_offset * 2), _qqqRect.y, _editAndDoneWidth, helpBoxHeight);
 
             var helpBoxRect = _priorityRect;
             helpBoxRect.height = helpBoxHeight;
-            helpBoxRect.width = position.width - (_helpBoxOffset * 2) - IconSize;
-            helpBoxRect.x += _helpBoxOffset;
+            helpBoxRect.width = position.width - (_offset * 2) - IconSize;
+            helpBoxRect.x += _offset;
 
-            _heightIndex += (int)helpBoxHeight + _helpBoxOffset;
+            _heightIndex += (int)helpBoxHeight + _offset;
             _scrollViewRect.height = _heightIndex;
 
             DrawHelpBox(helpBoxRect);
@@ -120,26 +120,26 @@ public class CodeTODOs : EditorWindow
             case PriorityDisplayFormat.ICON_AND_TEXT:
                 DrawPriorityIconAndText(aRect, aQQQ);
                 break;
-            case PriorityDisplayFormat.PEGS:
+            case PriorityDisplayFormat.BARS:
             default:
-                DrawPriorityPegs(aRect, aQQQ, helpBoxHeight);
+                DrawPriorityBars(aRect, aQQQ, helpBoxHeight);
                 break;
         }
     }
 
-    /// Draw priority for the "Pegs" setting.
-    private void DrawPriorityPegs(Rect aRect, QQQ aQQQ, float helpBoxHeight)
+    /// Draw priority for the "Bars" setting.
+    private void DrawPriorityBars(Rect aRect, QQQ aQQQ, float helpBoxHeight)
     {
         var borderWidth = 1;
         var priorityRect = aRect;
         var newY = 0;
         var newX = 0;
 
-        newX = (int)priorityRect.x + IconSize / 2 + _helpBoxOffset;
-        newY = (int)priorityRect.y + _helpBoxOffset;
+        newX = (int)priorityRect.x + (_offset * 2);
+        newY = (int)priorityRect.y + _offset;
 
         priorityRect.width = IconSize;
-        priorityRect.height = helpBoxHeight - (_helpBoxOffset * 2);
+        priorityRect.height = helpBoxHeight - (_offset * 2);
         priorityRect.position = new Vector2(newX, newY);
 
         var color = GetQQQPriorityColor((int)aQQQ.Priority);
@@ -164,10 +164,10 @@ public class CodeTODOs : EditorWindow
         var priorityRect = aRect;
         var newY = 0;
         var newX = 0;
-        if (aRect.width > IconSize + (_helpBoxOffset * 2))
+        if (aRect.width > IconSize + (_offset * 2))
         {
-            newX = (int)priorityRect.x + IconSize / 2 + _helpBoxOffset;
-            newY = (int)priorityRect.y + IconSize / 2 + _helpBoxOffset;
+            newX = (int)priorityRect.x + IconSize / 2 + _offset;
+            newY = (int)priorityRect.y + IconSize / 2 + _offset;
         }
         else
         {
@@ -188,11 +188,11 @@ public class CodeTODOs : EditorWindow
     private void DrawPriorityText(Rect aRect, QQQ aQQQ)
     {
         var priorityRect = aRect;
-        priorityRect.width -= _helpBoxOffset;
-        priorityRect.height -= (IconSize / 2 + _helpBoxOffset);
+        priorityRect.width -= _offset;
+        priorityRect.height -= (IconSize / 2 + _offset);
 
-        var newX = (int)priorityRect.x + _helpBoxOffset;
-        var newY = (int)priorityRect.y + _helpBoxOffset;
+        var newX = (int)priorityRect.x + _offset;
+        var newY = (int)priorityRect.y + _offset;
         priorityRect.position = new Vector2(newX, newY);
 
         EditorGUI.LabelField(priorityRect, aQQQ.Priority.ToString());
@@ -207,7 +207,7 @@ public class CodeTODOs : EditorWindow
         iconRect.width = IconSize;
         iconRect.height = IconSize;
 
-        var iconNewY = iconRect.y + _helpBoxOffset;
+        var iconNewY = iconRect.y + _offset;
         var iconNewX = iconRect.x + Mathf.Clamp(_unit, 1, IconSize + (int)(_priorityLabelWidth / 2));
         iconRect.position = new Vector2(iconNewX, iconNewY);
 
@@ -216,9 +216,9 @@ public class CodeTODOs : EditorWindow
 
         // Draw the label.
         var labelRect = aRect;
-        labelRect.width -= _helpBoxOffset;
+        labelRect.width -= _offset;
 
-        var labelNewX = labelRect.x + _helpBoxOffset;
+        var labelNewX = labelRect.x + _offset;
         var labelNewY = (int)(iconRect.y + iconRect.height);
         labelRect.position = new Vector2(labelNewX, labelNewY);
 
@@ -276,7 +276,7 @@ public class CodeTODOs : EditorWindow
         // Task.
         var taskRect = aRect;
         taskRect.x = _priorityWidth;
-        taskRect.y += _helpBoxOffset;
+        taskRect.y += _offset;
         taskRect.height = aHeight;
         EditorGUI.LabelField(taskRect, aQQQ.Task, _taskStyle);
 
@@ -311,7 +311,7 @@ public class CodeTODOs : EditorWindow
     {
         // "Edit" button.
         var editRect = aRect;
-        editRect.x = position.width - (IconSize * 2) - (_helpBoxOffset * 2);
+        editRect.x = position.width - (IconSize * 2) - (_offset * 2);
         editRect.y += 3;
         editRect.width = IconSize;
         editRect.height = IconSize;
@@ -361,7 +361,7 @@ public class CodeTODOs : EditorWindow
     private void DrawAddButton()
     {
         // "Add" button.
-        var addRect = new Rect((position.width / 2) - (IconSize * 1.5f) - _helpBoxOffset, position.height - (IconSize * 1.5f), IconSize, IconSize);
+        var addRect = new Rect((position.width / 2) - (IconSize * 1.5f) - _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
         var addButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D, "Add a new task");
 
         // Add QQQ on click.
@@ -376,7 +376,7 @@ public class CodeTODOs : EditorWindow
     private void DrawSettingsButton()
     {
         // "Settings" button.
-        var settingsRect = new Rect((position.width / 2) + (IconSize * 0.5f) + _helpBoxOffset, position.height - (IconSize * 1.5f), IconSize, IconSize);
+        var settingsRect = new Rect((position.width / 2) + (IconSize * 0.5f) + _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
         var settingsButton = new GUIContent(Resources.Load(GUIConstants.FILE_SETTINGS, typeof(Texture2D)) as Texture2D, "Open settings window");
 
         // Open settings on click.
@@ -396,7 +396,7 @@ public class CodeTODOs : EditorWindow
     {
         var width = position.width - IconSize;
 
-        _scrollRect = new Rect(_helpBoxOffset, _helpBoxOffset, width - (_helpBoxOffset * 2), position.height - IconSize * 2.5f);
+        _scrollRect = new Rect(_offset, _offset, width - (_offset * 2), position.height - IconSize * 2.5f);
 
         _scrollViewRect = _scrollRect;
 
@@ -405,7 +405,11 @@ public class CodeTODOs : EditorWindow
         // Priority rect width has different size based on preferences.
         if (CodeTODOsPrefs.QQQPriorityDisplay.ToString() == "ICON_ONLY")
         {
-            _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize + _helpBoxOffset) * 2);
+            _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize + _offset) * 2);
+        }
+        else if (CodeTODOsPrefs.QQQPriorityDisplay.ToString() == "BARS")
+        {
+            _priorityWidth = IconSize * 2;
         }
         else
         {
@@ -413,7 +417,7 @@ public class CodeTODOs : EditorWindow
         }
 
         _editAndDoneWidth = (IconSize * 2) + 5;
-        _qqqWidth = (int)width - _priorityWidth - _editAndDoneWidth - (_helpBoxOffset * 2);
+        _qqqWidth = (int)width - _priorityWidth - _editAndDoneWidth - (_offset * 2);
     }
 
 
