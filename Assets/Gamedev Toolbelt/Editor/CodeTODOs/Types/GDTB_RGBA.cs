@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-public class RGBA : MonoBehaviour
+public class GDTB_RGBA : MonoBehaviour
 {
     public static string ColorToString(Color aColor)
     {

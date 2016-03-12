@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public static class CodeTODOsHelper
+public static class GDTB_CodeTODOsHelper
 {
     /// Find all files ending with .cs or .js (exclude those in exclude.txt).
     public static List<string> FindAllScripts()
     {
         var assetsPaths = AssetDatabase.GetAllAssetPaths();
 
-        var excludedScripts = CodeTODOsIO.GetExcludedScripts();
+        var excludedScripts = GDTB_CodeTODOsIO.GetExcludedScripts();
         var allScripts = new List<string>();
         foreach (var path in assetsPaths)
         {
@@ -45,29 +45,29 @@ public static class CodeTODOsHelper
     public static void GetQQQsFromAllScripts()
     {
         var allScripts = FindAllScripts();
-        var qqqs = new List<QQQ>();
+        var qqqs = new List<GDTB_QQQ>();
 
         for (int i = 0; i < allScripts.Count; i++)
         {
             qqqs.AddRange(GetQQQsFromScript(allScripts[i]));
         }
-        CodeTODOs.QQQs = qqqs;
+        GDTB_CodeTODOs.QQQs = qqqs;
     }
 
 
     /// Find the QQQs in a single script.
-    public static List<QQQ> GetQQQsFromScript(string aPath)
+    public static List<GDTB_QQQ> GetQQQsFromScript(string aPath)
     {
-        var currentQQQs = new List<QQQ>();
+        var currentQQQs = new List<GDTB_QQQ>();
         var lines = File.ReadAllLines(aPath);
 
-        QQQ newQQQ;
+        GDTB_QQQ newQQQ;
         for (int i = 0; i < lines.Length; i++)
         {
-            newQQQ = new QQQ();
-            if (lines[i].Contains(CodeTODOsPrefs.TODOToken))
+            newQQQ = new GDTB_QQQ();
+            if (lines[i].Contains(GDTB_CodeTODOsPrefs.TODOToken))
             {
-                var index = lines[i].IndexOf(CodeTODOsPrefs.TODOToken);
+                var index = lines[i].IndexOf(GDTB_CodeTODOsPrefs.TODOToken);
                 var hasExplicitPriority = false;
 
                 // First we find the QQQ's priority.
@@ -75,19 +75,19 @@ public static class CodeTODOsHelper
                 switch (lines[i][index + 3])
                 {
                     case '1':
-                        newQQQ.Priority = QQQPriority.URGENT;
+                        newQQQ.Priority = GDTB_QQQPriority.URGENT;
                         hasExplicitPriority = true;
                         break;
                     case '2':
-                        newQQQ.Priority = QQQPriority.NORMAL;
+                        newQQQ.Priority = GDTB_QQQPriority.NORMAL;
                         hasExplicitPriority = true;
                         break;
                     case '3':
-                        newQQQ.Priority = QQQPriority.MINOR;
+                        newQQQ.Priority = GDTB_QQQPriority.MINOR;
                         hasExplicitPriority = true;
                         break;
                     default:
-                        newQQQ.Priority = QQQPriority.NORMAL;
+                        newQQQ.Priority = GDTB_QQQPriority.NORMAL;
                         break;
                 }
 
@@ -98,7 +98,7 @@ public static class CodeTODOsHelper
                     index += 1;
                 }
                 var tempString = lines[i].Substring(index);
-                tempString = tempString.Substring(CodeTODOsPrefs.TODOToken.Length);
+                tempString = tempString.Substring(GDTB_CodeTODOsPrefs.TODOToken.Length);
                 tempString = tempString.Trim();
                 newQQQ.Task = tempString;
 
@@ -118,13 +118,13 @@ public static class CodeTODOsHelper
     /// Add the QQQs in a script to the list in CodeTODOs.
     public static void AddQQQs(string aScript)
     {
-        var qqqs = CodeTODOsHelper.GetQQQsFromScript(aScript);
+        var qqqs = GDTB_CodeTODOsHelper.GetQQQsFromScript(aScript);
 
         for (int i = 0; i < qqqs.Count; i++)
         {
-            if (!CodeTODOs.QQQs.Contains(qqqs[i]))
+            if (!GDTB_CodeTODOs.QQQs.Contains(qqqs[i]))
             {
-                CodeTODOs.QQQs.Add(qqqs[i]);
+                GDTB_CodeTODOs.QQQs.Add(qqqs[i]);
             }
         }
     }
@@ -133,11 +133,11 @@ public static class CodeTODOsHelper
     /// Remove all references to the given script in CodeTODOs.QQQs.
     public static void RemoveScript(string aScript)
     {
-        for (int i = 0; i < CodeTODOs.QQQs.Count; i++)
+        for (int i = 0; i < GDTB_CodeTODOs.QQQs.Count; i++)
         {
-            if (CodeTODOs.QQQs[i].Script == aScript)
+            if (GDTB_CodeTODOs.QQQs[i].Script == aScript)
             {
-                CodeTODOs.QQQs.Remove(CodeTODOs.QQQs[i]);
+                GDTB_CodeTODOs.QQQs.Remove(GDTB_CodeTODOs.QQQs[i]);
                 i--;
             }
         }
@@ -147,11 +147,11 @@ public static class CodeTODOsHelper
     /// Change all references to a script in CodeTODOs.QQQs to another script (for when a script is moved).
     public static void ChangeScriptOfQQQ(string aPathTo, string aPathFrom)
     {
-        for (int i = 0; i < CodeTODOs.QQQs.Count; i++)
+        for (int i = 0; i < GDTB_CodeTODOs.QQQs.Count; i++)
         {
-            if (CodeTODOs.QQQs[i].Script == aPathTo)
+            if (GDTB_CodeTODOs.QQQs[i].Script == aPathTo)
             {
-                CodeTODOs.QQQs[i].Script = aPathFrom;
+                GDTB_CodeTODOs.QQQs[i].Script = aPathFrom;
             }
         }
     }
@@ -172,13 +172,13 @@ public static class CodeTODOsHelper
     /// Reorder the given QQQ list based on the urgency of tasks.
     public static void ReorderQQQs()
     {
-        var originalQQQs = CodeTODOs.QQQs;
-        var orderedQQQs = new List<QQQ>();
+        var originalQQQs = GDTB_CodeTODOs.QQQs;
+        var orderedQQQs = new List<GDTB_QQQ>();
 
         // First add urgent tasks.
         for (int i = 0; i < originalQQQs.Count; i++)
         {
-            if (originalQQQs[i].Priority == QQQPriority.URGENT)
+            if (originalQQQs[i].Priority == GDTB_QQQPriority.URGENT)
             {
                 orderedQQQs.Add(originalQQQs[i]);
             }
@@ -187,7 +187,7 @@ public static class CodeTODOsHelper
         // Then normal ones.
         for (int i = 0; i < originalQQQs.Count; i++)
         {
-            if (originalQQQs[i].Priority == QQQPriority.NORMAL)
+            if (originalQQQs[i].Priority == GDTB_QQQPriority.NORMAL)
             {
                 orderedQQQs.Add(originalQQQs[i]);
             }
@@ -196,18 +196,18 @@ public static class CodeTODOsHelper
         // Then minor ones.
         for (int i = 0; i < originalQQQs.Count; i++)
         {
-            if (originalQQQs[i].Priority == QQQPriority.MINOR)
+            if (originalQQQs[i].Priority == GDTB_QQQPriority.MINOR)
             {
                 orderedQQQs.Add(originalQQQs[i]);
             }
         }
 
-        CodeTODOs.QQQs = orderedQQQs;
+        GDTB_CodeTODOs.QQQs = orderedQQQs;
     }
 
 
     /// Format a QQQ's script.
-    public static string CreateScriptLabel(QQQ aQQQ, float aWidth, GUIStyle aStyle)
+    public static string CreateScriptLabel(GDTB_QQQ aQQQ, float aWidth, GUIStyle aStyle)
     {
         var scriptContent = new GUIContent(aQQQ.Script);
         var scriptWidth = aStyle.CalcSize(scriptContent).x;
@@ -231,11 +231,11 @@ public static class CodeTODOsHelper
 
 
     /// If the script path is wider than its rect, cut it and insert "..."
-    private static string ReduceScriptPath(QQQ aQQQ, float aWidth, GUIStyle aStyle)
+    private static string ReduceScriptPath(GDTB_QQQ aQQQ, float aWidth, GUIStyle aStyle)
     {
         var stringWidth = aStyle.CalcSize(new GUIContent(aQQQ.Script)).x;
         var surplusWidth = stringWidth - aWidth;
-        var surplusCharacters = (int)Mathf.Ceil(surplusWidth / GUIConstants.NORMAL_CHAR_WIDTH);
+		var surplusCharacters = (int)Mathf.Ceil(surplusWidth / GDTB_CodeTODOsConstants.NORMAL_CHAR_WIDTH);
 
         int cutoffIndex = Mathf.Clamp(surplusCharacters + 4, 0, aQQQ.Script.Length - 1); // +4 because of the "..." we'll be adding.
         return "..." + aQQQ.Script.Substring(cutoffIndex);
@@ -243,15 +243,15 @@ public static class CodeTODOsHelper
 
 
     /// Remove a QQQ (both from the list and from the file in which it was written).
-    public static void CompleteQQQ(QQQ aQQQ)
+    public static void CompleteQQQ(GDTB_QQQ aQQQ)
     {
-        CodeTODOsIO.RemoveLineFromFile(aQQQ.Script, aQQQ.LineNumber);
-        CodeTODOs.QQQs.Remove(aQQQ);
+        GDTB_CodeTODOsIO.RemoveLineFromFile(aQQQ.Script, aQQQ.LineNumber);
+        GDTB_CodeTODOs.QQQs.Remove(aQQQ);
     }
 
 
     /// Open the script associated with the qqq in question.
-    public static void OpenScript(QQQ aQQQ)
+    public static void OpenScript(GDTB_QQQ aQQQ)
     {
         var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script) as UnityEngine.TextAsset;
         AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
@@ -259,28 +259,28 @@ public static class CodeTODOsHelper
 
 
     /// Change the task of a QQQ.
-    public static void UpdateTask(QQQ anOldQQQ, QQQ aNewQQQ)
+    public static void UpdateTask(GDTB_QQQ anOldQQQ, GDTB_QQQ aNewQQQ)
     {
-        CodeTODOsIO.ChangeQQQ(anOldQQQ, aNewQQQ);
+        GDTB_CodeTODOsIO.ChangeQQQ(anOldQQQ, aNewQQQ);
     }
 
 
     /// Create a new QQQ at the beginning of a script.
-    public static void AddQQQ(QQQ aQQQ)
+    public static void AddQQQ(GDTB_QQQ aQQQ)
     {
-        CodeTODOsIO.AddQQQ(aQQQ);
-        CodeTODOs.QQQs.Add(aQQQ);
+        GDTB_CodeTODOsIO.AddQQQ(aQQQ);
+        GDTB_CodeTODOs.QQQs.Add(aQQQ);
     }
 
 
     /// Get the int equivalent of a QQQPriority.
-    public static int PriorityToInt(QQQPriority aPriority)
+    public static int PriorityToInt(GDTB_QQQPriority aPriority)
     {
         switch (aPriority)
         {
-            case QQQPriority.URGENT:
+            case GDTB_QQQPriority.URGENT:
                 return 1;
-            case QQQPriority.MINOR:
+            case GDTB_QQQPriority.MINOR:
                 return 3;
             default:
                 return 2;
@@ -289,16 +289,16 @@ public static class CodeTODOsHelper
 
 
     /// Get the QQQPriority equivalent of an int
-    public static QQQPriority IntToPriority(int anInt)
+    public static GDTB_QQQPriority IntToPriority(int anInt)
     {
         switch (anInt)
         {
             case 1:
-                return QQQPriority.URGENT;
+                return GDTB_QQQPriority.URGENT;
             case 3:
-                return QQQPriority.MINOR;
+                return GDTB_QQQPriority.MINOR;
             default:
-                return QQQPriority.NORMAL;
+                return GDTB_QQQPriority.NORMAL;
         }
     }
 }

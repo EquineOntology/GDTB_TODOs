@@ -6,5 +6,5 @@
 #
 # You can include both folders and single files.
 
-/Gamedev Toolbelt/CodeTODOs/
-/Gamedev Toolbelt/Resources/GUI/GUIConstants.cs
+/Gamedev Toolbelt/Editor/CodeTODOs/
+/Gamedev Toolbelt/Resources/GUI/GDTB_CodeTODOsConstants.cs

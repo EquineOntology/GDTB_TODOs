@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 
-public class CodeTODOsAdd : EditorWindow
+public class GDTB_CodeTODOsAdd : EditorWindow
 {
     private GUISkin _GDTBSkin;
 
@@ -18,14 +18,14 @@ public class CodeTODOsAdd : EditorWindow
 
     public static void Init()
     {
-        CodeTODOsAdd window = (CodeTODOsAdd)EditorWindow.GetWindow(typeof(CodeTODOsAdd));
+        GDTB_CodeTODOsAdd window = (GDTB_CodeTODOsAdd)EditorWindow.GetWindow(typeof(GDTB_CodeTODOsAdd));
         window.ShowUtility();
     }
 
     public void OnEnable()
     {
         _defaultSkin = GUI.skin;
-        _GDTBSkin = Resources.Load(GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+		_GDTBSkin = Resources.Load(GDTB_CodeTODOsConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
         _script = new MonoScript();
     }
 
@@ -110,9 +110,9 @@ public class CodeTODOsAdd : EditorWindow
                 if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Cancel"))
                 {
                     var path = AssetDatabase.GetAssetPath(_script);
-                    var newQQQ = new QQQ(_priority, _task, path, _lineNumber);
-                    CodeTODOsHelper.AddQQQ(newQQQ);
-                    EditorWindow.GetWindow(typeof(CodeTODOsAdd)).Close();
+                    var newQQQ = new GDTB_QQQ(_priority, _task, path, _lineNumber);
+                    GDTB_CodeTODOsHelper.AddQQQ(newQQQ);
+                    EditorWindow.GetWindow(typeof(GDTB_CodeTODOsAdd)).Close();
                 }
             }
         }

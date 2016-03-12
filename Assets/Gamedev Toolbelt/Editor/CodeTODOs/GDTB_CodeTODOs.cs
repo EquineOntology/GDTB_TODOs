@@ -2,9 +2,9 @@
 using UnityEditor;
 using System.Collections.Generic;
 
-public class CodeTODOs : EditorWindow
+public class GDTB_CodeTODOs : EditorWindow
 {
-    public static List<QQQ> QQQs = new List<QQQ>();
+    public static List<GDTB_QQQ> QQQs = new List<GDTB_QQQ>();
     private GUISkin _gdtbSkin;
     private GUIStyle _priorityStyle, _taskStyle, _scriptStyle;
 
@@ -25,24 +25,24 @@ public class CodeTODOs : EditorWindow
     public static void Init()
     {
         // Get existing open window or if none, make a new one.
-        var window = (CodeTODOs)EditorWindow.GetWindow(typeof(CodeTODOs));
-        window.titleContent = new GUIContent(GUIConstants.TEXT_WINDOW_TITLE);
+        var window = (GDTB_CodeTODOs)EditorWindow.GetWindow(typeof(GDTB_CodeTODOs));
+		window.titleContent = new GUIContent(GDTB_CodeTODOsConstants.TEXT_WINDOW_TITLE);
         window.minSize = new Vector2(250f, 100f);
 
-        CodeTODOsPrefs.RefreshPrefs();
+        GDTB_CodeTODOsPrefs.RefreshAllPrefs();
 
         window.UpdateLayoutingSizes();
         window._priorityLabelWidth = (int)window._priorityStyle.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
 
-        if (QQQs.Count == 0 && CodeTODOsPrefs.AutoRefresh)
+        if (QQQs.Count == 0 && GDTB_CodeTODOsPrefs.AutoRefresh)
         {
-            CodeTODOsHelper.GetQQQsFromAllScripts();
-            CodeTODOsHelper.ReorderQQQs();
+            GDTB_CodeTODOsHelper.GetQQQsFromAllScripts();
+            GDTB_CodeTODOsHelper.ReorderQQQs();
         }
-        else if (CodeTODOsPrefs.AutoRefresh == false)
+        else if (GDTB_CodeTODOsPrefs.AutoRefresh == false)
         {
             QQQs.Clear();
-            QQQs.AddRange(CodeTODOsIO.LoadStoredQQQs());
+            QQQs.AddRange(GDTB_CodeTODOsIO.LoadStoredQQQs());
         }
         window.Show();
     }
@@ -80,7 +80,7 @@ public class CodeTODOs : EditorWindow
             var taskContent = new GUIContent(QQQs[i].Task);
             var taskHeight = _taskStyle.CalcHeight(taskContent, _qqqWidth);
 
-            var helpBoxHeight = taskHeight + GUIConstants.LINE_HEIGHT + 5;
+			var helpBoxHeight = taskHeight + GDTB_CodeTODOsConstants.LINE_HEIGHT + 5;
             helpBoxHeight = helpBoxHeight < IconSize * 2.5f ? IconSize * 2.5f : helpBoxHeight;
 
             _qqqRect = new Rect(_priorityWidth, _heightIndex, _qqqWidth, helpBoxHeight);
@@ -107,9 +107,9 @@ public class CodeTODOs : EditorWindow
     #region QQQPriorityMethods
 
     /// Select which priority format to use based on the user preference.
-    private void DrawPriority(Rect aRect, QQQ aQQQ, float helpBoxHeight = 30)
+    private void DrawPriority(Rect aRect, GDTB_QQQ aQQQ, float helpBoxHeight = 30)
     {
-        switch (CodeTODOsPrefs.QQQPriorityDisplay)
+        switch (GDTB_CodeTODOsPrefs.QQQPriorityDisplay)
         {
             case PriorityDisplayFormat.TEXT_ONLY:
                 DrawPriorityText(aRect, aQQQ);
@@ -128,7 +128,7 @@ public class CodeTODOs : EditorWindow
     }
 
     /// Draw priority for the "Bars" setting.
-    private void DrawPriorityBars(Rect aRect, QQQ aQQQ, float helpBoxHeight)
+    private void DrawPriorityBars(Rect aRect, GDTB_QQQ aQQQ, float helpBoxHeight)
     {
         var borderWidth = 1;
         var priorityRect = aRect;
@@ -158,7 +158,7 @@ public class CodeTODOs : EditorWindow
     }
 
     /// Draw priority for the "Icon only" setting.
-    private void DrawPriorityIcon(Rect aRect, QQQ aQQQ)
+    private void DrawPriorityIcon(Rect aRect, GDTB_QQQ aQQQ)
     {
         // Prepare the rectangle for layouting. The layout is "space-icon-space".
         var priorityRect = aRect;
@@ -185,7 +185,7 @@ public class CodeTODOs : EditorWindow
 
 
     /// Draw priority for the "Text only" setting.
-    private void DrawPriorityText(Rect aRect, QQQ aQQQ)
+    private void DrawPriorityText(Rect aRect, GDTB_QQQ aQQQ)
     {
         var priorityRect = aRect;
         priorityRect.width -= _offset;
@@ -200,7 +200,7 @@ public class CodeTODOs : EditorWindow
 
 
     /// Draw priority for the "Icon and Text" setting.
-    private void DrawPriorityIconAndText(Rect aRect, QQQ aQQQ)
+    private void DrawPriorityIconAndText(Rect aRect, GDTB_QQQ aQQQ)
     {
         // Draw the Icon.
         var iconRect = aRect;
@@ -233,14 +233,14 @@ public class CodeTODOs : EditorWindow
         switch (aPriority)
         {
             case 1:
-                tex = Resources.Load<Texture2D>(GUIConstants.FILE_QQQ_URGENT);
+			tex = Resources.Load<Texture2D>(GDTB_CodeTODOsConstants.FILE_QQQ_URGENT);
                 break;
             case 3:
-                tex = Resources.Load<Texture2D>(GUIConstants.FILE_QQQ_MINOR);
+			tex = Resources.Load<Texture2D>(GDTB_CodeTODOsConstants.FILE_QQQ_MINOR);
                 break;
             case 2:
             default:
-                tex = Resources.Load<Texture2D>(GUIConstants.FILE_QQQ_NORMAL);
+			tex = Resources.Load<Texture2D>(GDTB_CodeTODOsConstants.FILE_QQQ_NORMAL);
                 break;
         }
         return tex;
@@ -254,14 +254,14 @@ public class CodeTODOs : EditorWindow
         switch (aPriority)
         {
             case 1:
-                col = CodeTODOsPrefs.PriColor1;
+                col = GDTB_CodeTODOsPrefs.PriColor1;
                 break;
             case 3:
-                col = CodeTODOsPrefs.PriColor3;
+                col = GDTB_CodeTODOsPrefs.PriColor3;
                 break;
             case 2:
             default:
-                col = CodeTODOsPrefs.PriColor2;
+                col = GDTB_CodeTODOsPrefs.PriColor2;
                 break;
         }
         return col;
@@ -271,7 +271,7 @@ public class CodeTODOs : EditorWindow
 
 
     /// Draws the "Task" and "Script" texts for QQQs.
-    private void DrawTaskAndScriptLabels(Rect aRect, QQQ aQQQ, float aHeight)
+    private void DrawTaskAndScriptLabels(Rect aRect, GDTB_QQQ aQQQ, float aHeight)
     {
         // Task.
         var taskRect = aRect;
@@ -284,17 +284,17 @@ public class CodeTODOs : EditorWindow
         var scriptRect = aRect;
         scriptRect.x = _priorityWidth;
         scriptRect.y += (taskRect.height + 5);
-        scriptRect.height = GUIConstants.LINE_HEIGHT;
+		scriptRect.height = GDTB_CodeTODOsConstants.LINE_HEIGHT;
 
         //var scriptLabel = aQQQ.Script;
-        var scriptLabel = CodeTODOsHelper.CreateScriptLabel(aQQQ, scriptRect.width, _scriptStyle);
+        var scriptLabel = GDTB_CodeTODOsHelper.CreateScriptLabel(aQQQ, scriptRect.width, _scriptStyle);
         EditorGUI.LabelField(scriptRect, scriptLabel, _scriptStyle);
 
         // Open editor on click.
         EditorGUIUtility.AddCursorRect(scriptRect, MouseCursor.Link);
         if (Event.current.type == EventType.MouseUp && scriptRect.Contains(Event.current.mousePosition))
         {
-            CodeTODOsHelper.OpenScript(aQQQ);
+            GDTB_CodeTODOsHelper.OpenScript(aQQQ);
         }
     }
 
@@ -307,7 +307,7 @@ public class CodeTODOs : EditorWindow
 
 
     /// Draw the "Edit" and "Complete" buttons.
-    private void DrawEditAndCompleteButtons(Rect aRect, QQQ aQQQ)
+    private void DrawEditAndCompleteButtons(Rect aRect, GDTB_QQQ aQQQ)
     {
         // "Edit" button.
         var editRect = aRect;
@@ -315,18 +315,18 @@ public class CodeTODOs : EditorWindow
         editRect.y += 3;
         editRect.width = IconSize;
         editRect.height = IconSize;
-        var editButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_EDIT, typeof(Texture2D)) as Texture2D, "Edit this task");
+		var editButton = new GUIContent(Resources.Load(GDTB_CodeTODOsConstants.FILE_QQQ_EDIT, typeof(Texture2D)) as Texture2D, "Edit this task");
 
         // Open edit window on click.
         if (GUI.Button(editRect, editButton))
         {
-            CodeTODOsEdit.Init(aQQQ);
+            GDTB_CodeTODOsEdit.Init(aQQQ);
         }
 
         // "Complete" button.
         var completeRect = editRect;
         completeRect.y = editRect.y + editRect.height + 2;
-        var completeButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_DONE, typeof(Texture2D)) as Texture2D, "Complete this task");
+		var completeButton = new GUIContent(Resources.Load(GDTB_CodeTODOsConstants.FILE_QQQ_DONE, typeof(Texture2D)) as Texture2D, "Complete this task");
 
         // Complete QQQ on click.
         if (GUI.Button(completeRect, completeButton))
@@ -334,7 +334,7 @@ public class CodeTODOs : EditorWindow
             // Confirmation dialog.
             if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
             {
-                CodeTODOsHelper.CompleteQQQ(aQQQ);
+                GDTB_CodeTODOsHelper.CompleteQQQ(aQQQ);
             }
         }
     }
@@ -345,14 +345,14 @@ public class CodeTODOs : EditorWindow
     {
         // "Refresh" button.
         var refreshRect = new Rect((position.width / 2) - (IconSize * 0.5f), position.height - (IconSize * 1.5f), IconSize, IconSize);
-        var refreshButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_REFRESH, typeof(Texture2D)) as Texture2D, "Refresh list of tasks");
+		var refreshButton = new GUIContent(Resources.Load(GDTB_CodeTODOsConstants.FILE_QQQ_REFRESH, typeof(Texture2D)) as Texture2D, "Refresh list of tasks");
 
         // Refresh on click.
         if (GUI.Button(refreshRect, refreshButton))
         {
             QQQs.Clear();
-            CodeTODOsHelper.GetQQQsFromAllScripts();
-            CodeTODOsHelper.ReorderQQQs();
+            GDTB_CodeTODOsHelper.GetQQQsFromAllScripts();
+            GDTB_CodeTODOsHelper.ReorderQQQs();
         }
     }
 
@@ -362,12 +362,12 @@ public class CodeTODOs : EditorWindow
     {
         // "Add" button.
         var addRect = new Rect((position.width / 2) - (IconSize * 1.5f) - _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
-        var addButton = new GUIContent(Resources.Load(GUIConstants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D, "Add a new task");
+		var addButton = new GUIContent(Resources.Load(GDTB_CodeTODOsConstants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D, "Add a new task");
 
         // Add QQQ on click.
         if (GUI.Button(addRect, addButton))
         {
-            CodeTODOsAdd.Init();
+            GDTB_CodeTODOsAdd.Init();
         }
     }
 
@@ -377,7 +377,7 @@ public class CodeTODOs : EditorWindow
     {
         // "Settings" button.
         var settingsRect = new Rect((position.width / 2) + (IconSize * 0.5f) + _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
-        var settingsButton = new GUIContent(Resources.Load(GUIConstants.FILE_SETTINGS, typeof(Texture2D)) as Texture2D, "Open settings window");
+		var settingsButton = new GUIContent(Resources.Load(GDTB_CodeTODOsConstants.FILE_SETTINGS, typeof(Texture2D)) as Texture2D, "Open settings window");
 
         // Open settings on click.
         if (GUI.Button(settingsRect, settingsButton))
@@ -403,11 +403,11 @@ public class CodeTODOs : EditorWindow
         _unit = (int)(width / 28) == 0 ? 1 : (int)(width / 28); // If the unit would be 0, set it to 1.
 
         // Priority rect width has different size based on preferences.
-        if (CodeTODOsPrefs.QQQPriorityDisplay.ToString() == "ICON_ONLY")
+        if (GDTB_CodeTODOsPrefs.QQQPriorityDisplay.ToString() == "ICON_ONLY")
         {
             _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize + _offset) * 2);
         }
-        else if (CodeTODOsPrefs.QQQPriorityDisplay.ToString() == "BARS")
+        else if (GDTB_CodeTODOsPrefs.QQQPriorityDisplay.ToString() == "BARS")
         {
             _priorityWidth = IconSize * 2;
         }
@@ -415,7 +415,6 @@ public class CodeTODOs : EditorWindow
         {
             _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize * 2) + _priorityLabelWidth);
         }
-
         _editAndDoneWidth = (IconSize * 2) + 5;
         _qqqWidth = (int)width - _priorityWidth - _editAndDoneWidth - (_offset * 2);
     }
@@ -424,7 +423,7 @@ public class CodeTODOs : EditorWindow
     /// Load the CodeTODOs skin.
     private void LoadSkin()
     {
-        _gdtbSkin = Resources.Load(GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+		_gdtbSkin = Resources.Load(GDTB_CodeTODOsConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
     }
 
 
@@ -440,9 +439,9 @@ public class CodeTODOs : EditorWindow
     /// Called when the window is closed.
     private void OnDestroy()
     {
-        if (CodeTODOsPrefs.AutoRefresh == false)
+        if (GDTB_CodeTODOsPrefs.AutoRefresh == false)
         {
-            CodeTODOsIO.WriteQQQsToFile();
+            GDTB_CodeTODOsIO.WriteQQQsToFile();
         }
     }
 }

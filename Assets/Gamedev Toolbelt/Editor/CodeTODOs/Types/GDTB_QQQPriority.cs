@@ -1,4 +1,4 @@
-﻿public enum QQQPriority
+﻿public enum GDTB_QQQPriority
 {
     URGENT = 1,
     NORMAL = 2,

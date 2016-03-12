@@ -2,30 +2,30 @@
 using UnityEngine;
 using UnityEditor;
 
-public class CodeTODOsEdit : EditorWindow
+public class GDTB_CodeTODOsEdit : EditorWindow
 {
     private GUISkin _GDTBSkin;
 
-    private static QQQ _oldQQQ;
-    private static QQQ _newQQQ;
+    private static GDTB_QQQ _oldQQQ;
+    private static GDTB_QQQ _newQQQ;
 
     private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
 
-    public static void Init(QQQ aQQQ)
+    public static void Init(GDTB_QQQ aQQQ)
     {
         // Get existing open window or if none, make a new one.
-        CodeTODOsEdit window = (CodeTODOsEdit)EditorWindow.GetWindow(typeof(CodeTODOsEdit));
+        GDTB_CodeTODOsEdit window = (GDTB_CodeTODOsEdit)EditorWindow.GetWindow(typeof(GDTB_CodeTODOsEdit));
         //window.minSize = new Vector2(EDITOR_WINDOW_MINSIZE_X, EDITOR_WINDOW_MINSIZE_Y);
-        window.titleContent = new GUIContent(GUIConstants.TEXT_EDIT_WINDOW_TITLE);
+		window.titleContent = new GUIContent(GDTB_CodeTODOsConstants.TEXT_EDIT_WINDOW_TITLE);
         _oldQQQ = aQQQ;
-        _newQQQ = new QQQ((int)aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);
+        _newQQQ = new GDTB_QQQ((int)aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);
         window.Show();
     }
 
 
     public void OnEnable()
     {
-        _GDTBSkin = Resources.Load(GUIConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+		_GDTBSkin = Resources.Load(GDTB_CodeTODOsConstants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
     }
 
 
@@ -55,7 +55,7 @@ public class CodeTODOsEdit : EditorWindow
         var popupRect = new Rect(10, 10, 60, 10);
         priorityIndex = EditorGUI.Popup(popupRect, priorityIndex - 1, _qqqPriorities) + 1;
 
-        _newQQQ.Priority = (QQQPriority)priorityIndex;
+        _newQQQ.Priority = (GDTB_QQQPriority)priorityIndex;
     }
 
 
@@ -87,8 +87,8 @@ public class CodeTODOsEdit : EditorWindow
             // Confirmation dialog.
             if(EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
             {
-                CodeTODOsHelper.UpdateTask(_oldQQQ, _newQQQ);
-                EditorWindow.GetWindow(typeof(CodeTODOsEdit)).Close();
+                GDTB_CodeTODOsHelper.UpdateTask(_oldQQQ, _newQQQ);
+                EditorWindow.GetWindow(typeof(GDTB_CodeTODOsEdit)).Close();
             }
         }
     }

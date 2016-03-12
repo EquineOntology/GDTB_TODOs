@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 
-public static class CodeTODOsIO
+public static class GDTB_CodeTODOsIO
 {
     /// Return the path to the extension's folder.
     public static string GetGDTBPath()
@@ -171,7 +171,7 @@ public static class CodeTODOsIO
     /// This is to remove the whole QQQ wihtout removing anything else of importance (including stuff in a comment BEFORE a QQQ).
     private static string GetLineWithoutQQQ(string aLine)
     {
-        var qqqIndex = aLine.IndexOf(CodeTODOsPrefs.TODOToken);
+        var qqqIndex = aLine.IndexOf(GDTB_CodeTODOsPrefs.TODOToken);
 
         int j = qqqIndex - 1;
         while (j >= 0 && (aLine[j] == ' ' || aLine[j] == '/'))
@@ -193,7 +193,7 @@ public static class CodeTODOsIO
 
 
     /// Update the task and priority of a QQQ.
-    public static void ChangeQQQ(QQQ anOldQQQ, QQQ aNewQQQ)
+    public static void ChangeQQQ(GDTB_QQQ anOldQQQ, GDTB_QQQ aNewQQQ)
     {
         var tempFile = Path.GetTempFileName();
         var line = "";
@@ -218,7 +218,7 @@ public static class CodeTODOsIO
                     var slashes = "";
                     slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //"; // If the line isn't empty we want a space before the comment.
 
-                    var newLine = lineWithoutQQQ + slashes + CodeTODOsPrefs.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
+                    var newLine = lineWithoutQQQ + slashes + GDTB_CodeTODOsPrefs.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
                     writer.WriteLine(newLine);
                 }
                 currentLineNumber++;
@@ -238,7 +238,7 @@ public static class CodeTODOsIO
 
 
     /// Add a QQQ to a script.
-    public static void AddQQQ(QQQ aQQQ)
+    public static void AddQQQ(GDTB_QQQ aQQQ)
     {
         var tempFile = Path.GetTempFileName();
         var line = "";
@@ -324,9 +324,9 @@ public static class CodeTODOsIO
 
 
     /// Load the QQQs saved in qqqs.bak.
-    public static List<QQQ> LoadStoredQQQs()
+    public static List<GDTB_QQQ> LoadStoredQQQs()
     {
-        var backedQQQs = new List<QQQ>();
+        var backedQQQs = new List<GDTB_QQQ>();
 
         var bakFile = GetFirstInstanceOfFolder("CodeTODOs") + "/bak.gdtb";
 
@@ -360,7 +360,7 @@ public static class CodeTODOsIO
 
 
     /// Parse a line in the backup file.
-    private static QQQ ParseQQQ(string aString)
+    private static GDTB_QQQ ParseQQQ(string aString)
     {
         var parts = aString.Split('|');
 
@@ -381,7 +381,7 @@ public static class CodeTODOsIO
             lineNumber = 0;
         }
 
-        var qqq = new QQQ(priority, task, parts[2], lineNumber);
+        var qqq = new GDTB_QQQ(priority, task, parts[2], lineNumber);
         return qqq;
     }
 
@@ -395,9 +395,9 @@ public static class CodeTODOsIO
         var writer = new StreamWriter(tempFile, false);
         try
         {
-            foreach (var qqq in CodeTODOs.QQQs)
+            foreach (var qqq in GDTB_CodeTODOs.QQQs)
             {
-                var priority = CodeTODOsHelper.PriorityToInt(qqq.Priority);
+                var priority = GDTB_CodeTODOsHelper.PriorityToInt(qqq.Priority);
                 var task = qqq.Task.Replace("|", "(U+007C)"); // Replace pipes so that the parser doesn't get confused on reimport.
                 var line = priority + "|" + task + "|" + qqq.Script + "|" + qqq.LineNumber;
                 writer.WriteLine(line);
