@@ -1,6 +1,9 @@
-﻿public enum QQQPriority
+﻿namespace GDTB.CodeTODOs
 {
-    URGENT = 1,
-    NORMAL = 2,
-    MINOR = 3
+    public enum QQQPriority
+    {
+        URGENT = 1,
+        NORMAL = 2,
+        MINOR = 3
+    }
 }

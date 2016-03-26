@@ -1,62 +1,65 @@
 ﻿using UnityEditor;
 using System.Collections.Generic;
 
-// If you don't know what an asset postprocessor is, don't worry about this class, it won't change anything.
-// If you know what an asset postprocessor is: I need to use OnPostProcessAllAssets because there's no function
-// for text files only, so I need to actually check if each file is a script.
-public class ScriptsPostProcessor : AssetPostprocessor
+namespace GDTB.CodeTODOs
 {
-    private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+    // If you don't know what an asset postprocessor is, don't worry about this class, it won't change anything.
+    // If you know what an asset postprocessor is: I need to use OnPostProcessAllAssets because there's no function
+    // for text files only, so I need to actually check if each file is a script to update the QQQ db.
+    public class ScriptsPostProcessor : AssetPostprocessor
     {
-        if (CodeTODOsPrefs.AutoRefresh == false)
+        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
-            return;
-        }
-        // Remove QQQs from deleted files.
-        foreach (var asset in deletedAssets)
-        {
-            if (asset.EndsWith(".cs") || asset.EndsWith(".js"))
+            if (PreferencesManager.AutoRefresh == false)
             {
-                CodeTODOsHelper.RemoveScript(asset);
+                return;
             }
-        }
-
-
-        // Change the script reference for QQQs when a script is moved.
-        for (int i = 0; i < movedAssets.Length; i++)
-        {
-            if (movedAssets[i].EndsWith(".cs") || movedAssets[i].EndsWith(".js"))
+            // Remove QQQs from deleted files.
+            foreach (var asset in deletedAssets)
             {
-                CodeTODOsHelper.ChangeScriptOfQQQ(movedFromAssetPaths[i], movedAssets[i]);
-            }
-        }
-
-
-        var excludedScripts = CodeTODOsIO.GetExcludedScripts();
-        var importedAssetsCopy = new List<string>();
-
-        foreach (var asset in importedAssets)
-        {
-            var shouldBeExcluded = false;
-            foreach (var exclusion in excludedScripts)
-            {
-                if (asset.Contains(exclusion))
+                if (asset.EndsWith(".cs") || asset.EndsWith(".js"))
                 {
-                    shouldBeExcluded = true;
+                    Helper.RemoveScript(asset);
                 }
             }
-            if (shouldBeExcluded == false)
-            {
-                importedAssetsCopy.Add(asset);
-            }
-        }
 
-        // Add QQQs from a script if it was added or reimported (i.e. modified).
-        foreach (var asset in importedAssetsCopy)
-        {
-            if (asset.EndsWith(".cs") || asset.EndsWith(".js"))
+
+            // Change the script reference for QQQs when a script is moved.
+            for (int i = 0; i < movedAssets.Length; i++)
             {
-                CodeTODOsHelper.AddQQQs(asset);
+                if (movedAssets[i].EndsWith(".cs") || movedAssets[i].EndsWith(".js"))
+                {
+                    Helper.ChangeScriptOfQQQ(movedFromAssetPaths[i], movedAssets[i]);
+                }
+            }
+
+
+            var excludedScripts = IO.GetExcludedScripts();
+            var importedAssetsCopy = new List<string>();
+
+            foreach (var asset in importedAssets)
+            {
+                var shouldBeExcluded = false;
+                foreach (var exclusion in excludedScripts)
+                {
+                    if (asset.Contains(exclusion))
+                    {
+                        shouldBeExcluded = true;
+                    }
+                }
+                if (shouldBeExcluded == false)
+                {
+                    importedAssetsCopy.Add(asset);
+                }
+            }
+
+            // Add QQQs from a script if it was added or reimported (i.e. modified).
+            foreach (var asset in importedAssetsCopy)
+            {
+                if (asset.EndsWith(".cs") || asset.EndsWith(".js"))
+                {
+                    Helper.AddQQQs(asset);
+                }
             }
         }
     }
