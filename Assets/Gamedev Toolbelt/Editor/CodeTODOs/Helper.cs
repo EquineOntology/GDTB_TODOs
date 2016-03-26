@@ -18,19 +18,19 @@ namespace GDTB.CodeTODOs
             {
                 // There are some files we don't want to include.
                 var shouldBeExcluded = false;
-                foreach (var exclusion in excludedScripts)
+                if (path.EndsWith(".cs") || path.EndsWith(".js"))
                 {
-                    if (path.EndsWith(".cs") || path.EndsWith(".js"))
+                    foreach (var exclusion in excludedScripts)
                     {
                         if (path.Contains(exclusion)) // This works for both files and directories.
                         {
                             shouldBeExcluded = true;
                         }
                     }
-                    else
-                    {
-                        shouldBeExcluded = true;
-                    }
+                }
+                else
+                {
+                    shouldBeExcluded = true;
                 }
 
                 if (shouldBeExcluded == false)
