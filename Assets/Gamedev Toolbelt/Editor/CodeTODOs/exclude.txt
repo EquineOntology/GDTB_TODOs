@@ -7,4 +7,3 @@
 # You can include both folders and single files.
 
 /Gamedev Toolbelt/Editor/CodeTODOs/
-/Gamedev Toolbelt/Resources/GUI/GDTB_CodeTODOsConstants.cs
