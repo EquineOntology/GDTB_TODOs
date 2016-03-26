@@ -23,7 +23,7 @@ namespace GDTB.CodeTODOs
         private Rect _scrollRect, _scrollViewRect, _qqqRect, _priorityRect, _rightButtonsRect;
 
         // ====================================================================
-        [MenuItem("Window/CodeTODOs %q")]
+        [MenuItem("Window/Gamedev Toolbelt/CodeTODOs %q")]
         public static void Init()
         {
             // Get existing open window or if none, make a new one.
