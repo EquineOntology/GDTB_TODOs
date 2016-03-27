@@ -83,9 +83,9 @@ namespace GDTB.CodeTODOs
             var lineRect = new Rect(10, 176, Mathf.Clamp(position.width - 20, 80, 500), 16);
             _lineNumber = EditorGUI.IntField(lineRect, _lineNumber);
 
-            if (_lineNumber < 0)
+            if (_lineNumber < 1)
             {
-                _lineNumber = 0;
+                _lineNumber = 1;
             }
         }
 

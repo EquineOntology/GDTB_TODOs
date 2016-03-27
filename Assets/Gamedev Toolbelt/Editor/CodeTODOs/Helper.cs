@@ -73,7 +73,7 @@ namespace GDTB.CodeTODOs
 
                     // First we find the QQQ's priority.
                     // QQQ1 means urgent, QQQ2 means normal, QQQ3 means minor. In case there's nothing (or something else/incorrect), we default to normal.
-                    switch (lines[i][index + 3])
+                    switch (lines[i][index + PreferencesManager.TODOToken.Length])
                     {
                         case '1':
                             newQQQ.Priority = QQQPriority.URGENT;
@@ -271,6 +271,8 @@ namespace GDTB.CodeTODOs
         {
             IO.AddQQQ(aQQQ);
             WindowMain.QQQs.Add(aQQQ);
+            ReorderQQQs();
+            EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
         }
 
 
