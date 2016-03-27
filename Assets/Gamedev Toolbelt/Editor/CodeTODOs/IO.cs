@@ -6,69 +6,6 @@ namespace GDTB.CodeTODOs
 {
     public static class IO
     {
-        /// Return the path to the extension's folder.
-        public static string GetGDTBPath()
-        {
-            var path = GetFirstInstanceOfFolder("Gamedev Toolbelt");
-            return path;
-        }
-
-
-        /// Return the first instance of the given filename.
-        /// This is a non-recursive, breadth-first search algorithm.
-        private static string GetFirstInstanceOfFile(string aFileName)
-        {
-            var projectDirectoryPath = Directory.GetCurrentDirectory();
-            var projectDirectoryInfo = new DirectoryInfo(projectDirectoryPath);
-            var listOfAssetsDirs = projectDirectoryInfo.GetDirectories("Assets");
-            var assetsDir = "";
-            foreach (var dir in listOfAssetsDirs)
-            {
-                if (dir.FullName.EndsWith("\\Assets"))
-                {
-                    assetsDir = dir.FullName;
-                }
-            }
-            var path = assetsDir;
-
-            var q = new Queue<string>();
-            q.Enqueue(path);
-            var absolutePath = "";
-            while (q.Count > 0)
-            {
-                path = q.Dequeue();
-                try
-                {
-                    foreach (string subDir in Directory.GetDirectories(path))
-                    {
-                        q.Enqueue(subDir);
-                    }
-                }
-                catch (Exception) { }
-
-                string[] files = null;
-                try
-                {
-                    files = Directory.GetFiles(path);
-                }
-                catch (Exception) { }
-
-                if (files != null)
-                {
-                    for (int i = 0; i < files.Length; i++)
-                    {
-                        if (files[i].EndsWith(aFileName))
-                        {
-                            absolutePath = files[i];
-                        }
-                    }
-                }
-            }
-            var relativePath = absolutePath.Remove(0, projectDirectoryPath.Length + 1);
-            return relativePath;
-        }
-
-
         /// Return the first instance of the given folder.
         /// This is a non-recursive, breadth-first search algorithm.
         private static string GetFirstInstanceOfFolder(string aFolderName)
@@ -115,6 +52,7 @@ namespace GDTB.CodeTODOs
                         if (folders[i].EndsWith(aFolderName))
                         {
                             absolutePath = folders[i];
+                            break;
                         }
                     }
                 }
@@ -155,16 +93,16 @@ namespace GDTB.CodeTODOs
                 }
                 reader.Close();
                 writer.Close();
+
+                // Overwrite the old file with the temp file.
+                File.Delete(aFile);
+                File.Move(tempFile, aFile);
             }
             catch (Exception)
             {
                 reader.Dispose();
                 writer.Dispose();
             }
-
-            // Overwrite the old file with the temp file.
-            File.Delete(aFile);
-            File.Move(tempFile, aFile);
         }
 
 
@@ -226,15 +164,16 @@ namespace GDTB.CodeTODOs
                 }
                 reader.Close();
                 writer.Close();
+
+                // Overwrite the old file with the temp file.
+                File.Delete(anOldQQQ.Script);
+                File.Move(tempFile, anOldQQQ.Script);
             }
             catch (Exception)
             {
                 reader.Dispose();
                 writer.Dispose();
             }
-            // Overwrite the old file with the temp file.
-            File.Delete(anOldQQQ.Script);
-            File.Move(tempFile, anOldQQQ.Script);
         }
 
 
@@ -262,16 +201,16 @@ namespace GDTB.CodeTODOs
                 }
                 reader.Close();
                 writer.Close();
+
+                // Overwrite the old file with the temp file.
+                File.Delete(aQQQ.Script);
+                File.Move(tempFile, aQQQ.Script);
             }
             catch (Exception)
             {
                 reader.Dispose();
                 writer.Dispose();
             }
-
-            // Overwrite the old file with the temp file.
-            File.Delete(aQQQ.Script);
-            File.Move(tempFile, aQQQ.Script);
         }
 
 
@@ -404,17 +343,55 @@ namespace GDTB.CodeTODOs
                     writer.WriteLine(line);
                 }
                 writer.Close();
+
+                // Overwrite the old file with the temp file.
+                if (File.Exists(bakFile))
+                {
+                    File.Delete(bakFile);
+                }
+                File.Move(tempFile, bakFile);
             }
             catch (Exception)
             {
                 writer.Dispose();
             }
+        }
 
-            if (File.Exists(bakFile))
+        public static void OverwriteShortcut(string aShortcut)
+        {
+            var tempFile = Path.GetTempFileName();
+            var file = GetFilePath("Gamedev Toolbelt/Editor/CodeTODOs/WindowMain.cs");
+
+            var writer = new StreamWriter(tempFile, false);
+            var reader = new StreamReader(file);
+
+            var line = "";
+            try
             {
-                File.Delete(bakFile);
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if(line.Contains("[MenuItem"))
+                    {
+                        writer.WriteLine("        [MenuItem(" + '"' + "Window/Gamedev Toolbelt/CodeTODOs " + aShortcut + '"' + ")]");
+                    }
+                    else
+                    {
+                        writer.WriteLine(line);
+                    }
+                }
+                reader.Close();
+                writer.Close();
+
+                // Overwrite the old file with the temp file.
+                File.Delete(file);
+                File.Move(tempFile, file);
+                UnityEditor.AssetDatabase.ImportAsset(file);
             }
-            File.Move(tempFile, bakFile);
+            catch (Exception)
+            {
+                reader.Dispose();
+                writer.Dispose();
+            }
         }
     }
 }
