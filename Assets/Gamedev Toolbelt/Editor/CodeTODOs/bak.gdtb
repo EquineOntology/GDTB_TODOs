@@ -1,6 +1,0 @@
-2|Check layouting constraints for edit window|Assets/TestScript.cs|6
-2|Spacing between lines is a bit off|Assets/TestScript.cs|11
-2|Merge back into develop|Assets/TestScript.cs|12
-2|Check small window size when ICON_AND_TEXT and TEXT_ONLY|Assets/TestScript.cs|16
-2|EditorApplication.ExecuteMenuItem() doesn't work :( Use reflection.|Assets/TestScript.cs|17
-3|I feel like all my dev time is spent on GUI suff|Assets/TestScript.cs|18
