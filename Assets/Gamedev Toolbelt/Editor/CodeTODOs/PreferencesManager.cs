@@ -18,8 +18,8 @@ namespace GDTB.CodeTODOs
 
         // Priority displayed as text, icon, text + icon.
         public const string PREFS_CODETODOS_PRIORITY_DISPLAY = "GDTB_CodeTODOs_PriorityDisplay";
-        private static PriorityDisplayFormat _priorityDisplay = PriorityDisplayFormat.ICON_ONLY;
-        private static int _priorityDisplay_default = 2;
+        private static PriorityDisplayFormat _priorityDisplay = PriorityDisplayFormat.BARS;
+        private static int _priorityDisplay_default = 3;
         public static PriorityDisplayFormat QQQPriorityDisplay
         {
             get { return _priorityDisplay; }
@@ -72,6 +72,19 @@ namespace GDTB.CodeTODOs
         {
             get { return _borderColor; }
         }
+
+        // Custom shortcut
+        public const string PREFS_CODETODOS_SHORTCUT = "GDTB_CodeTODOs_Shortcut";
+        private static string _shortcut = "%|q";
+        private static string _shortcut_default = "%|q";
+        public static string Shortcut
+        {
+            get { return _shortcut; }
+        }
+        private static bool[] _modifierKeys = new bool[] { false, false, false }; // Ctrl/Cmd, Alt, Shift.
+        private static int _mainShortcutKeyIndex = 0;
+        // Want absolute control over values.
+        private static string[] _shortcutKeys = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "LEFT","RIGHT","UP","DOWN", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "HOME", "END", "PGUP", "PGDN"};
         #endregion fields
 
 
@@ -88,6 +101,8 @@ namespace GDTB.CodeTODOs
             _priColor3 = EditorGUILayout.ColorField("Minor priority color", _priColor3);
             _borderColor = EditorGUILayout.ColorField("Borders", _borderColor);
 
+            _shortcut = DrawShortcutSelector();
+
             if (GUI.changed)
             {
                 UpdatePreferences();
@@ -95,28 +110,17 @@ namespace GDTB.CodeTODOs
             }
         }
 
+
         private static void UpdatePreferences()
         {
-            UpdateQQQTemplate();
-            UpdatePriorityDisplay(_priorityDisplay);
-            UpdateAutoRefresh();
-            UpdateColours();
-        }
-
-        private static void UpdateQQQTemplate()
-        {
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, _todoToken);
-        }
-
-        private static void UpdatePriorityDisplay(PriorityDisplayFormat aDisplayFormat)
-        {
-            EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(aDisplayFormat));
-        }
-
-        private static void UpdateAutoRefresh()
-        {
+            EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(_priorityDisplay));
             EditorPrefs.SetBool(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh);
+
+            UpdateColours();
+            UpdateShortcut();
         }
+
 
         private static void UpdateColours()
         {
@@ -127,82 +131,143 @@ namespace GDTB.CodeTODOs
         }
 
 
+        private static void UpdateShortcut()
+        {
+            EditorPrefs.SetString(PREFS_CODETODOS_SHORTCUT, _shortcut);
+            var formattedShortcut = _shortcut.Replace("|", "");
+            IO.OverwriteShortcut(formattedShortcut);
+        }
+
+
         /// If preferences have keys already saved in EditorPrefs, get them. Otherwise, set them.
         public static void RefreshAllPrefs()
         {
-            // TODO token.
-            _todoToken = RefreshPref(PREFS_CODETODOS_TOKEN, _todoToken, _todoToken_default);
-
-            // QQQ Priority display
-            if (!EditorPrefs.HasKey(PREFS_CODETODOS_PRIORITY_DISPLAY))
-            {
-                EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, _priorityDisplay_default);
-                _priorityDisplay = PriorityDisplayFormat.ICON_ONLY;
-            }
-            else
-            {
-                _priorityDisplay = (PriorityDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, _priorityDisplay_default);
-            }
-
-            // Auto refresh
-            _autoRefresh = RefreshPref(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh, _autoRefresh_default);
-
-            // URGENT priority color.
-            _priColor1 = RefreshPref(PREFS_CODETODOS_COLOR_PRI1, _priColor1, _priColor1_default);
-
-            // NORMAL priority color.
-            _priColor2 = RefreshPref(PREFS_CODETODOS_COLOR_PRI2, _priColor2, _priColor2_default);
-
-            // MINOR priority color.
-            _priColor3 = RefreshPref(PREFS_CODETODOS_COLOR_PRI3, _priColor3, _priColor3_default);
-
-            // Priority bar border color.
-            _borderColor = RefreshPref(PREFS_CODETODOS_COLOR_BORDER, _borderColor, _borderColor_default);
+            _todoToken = RefreshPref(PREFS_CODETODOS_TOKEN, _todoToken_default); // TODO token.
+            _priorityDisplay = (PriorityDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, _priorityDisplay_default); // QQQ Priority display
+            _autoRefresh = RefreshPref(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh
+            _priColor1 = RefreshPref(PREFS_CODETODOS_COLOR_PRI1, _priColor1_default); // URGENT priority color.
+            _priColor2 = RefreshPref(PREFS_CODETODOS_COLOR_PRI2, _priColor2_default); // NORMAL priority color.
+            _priColor3 = RefreshPref(PREFS_CODETODOS_COLOR_PRI3, _priColor3_default); // MINOR priority color.
+            _borderColor = RefreshPref(PREFS_CODETODOS_COLOR_BORDER, _borderColor_default); // Priority bar border color.
+            _shortcut = RefreshPref(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut
+            ParseShortcutValues();
         }
 
-        private static bool RefreshPref(string aKey, bool aValue, bool aDefault)
+
+        private static bool RefreshPref(string aKey, bool aDefault)
         {
+            bool val;
             if (!EditorPrefs.HasKey(aKey))
             {
                 EditorPrefs.SetBool(aKey, aDefault);
-                aValue = aDefault;
+                val = aDefault;
             }
             else
             {
-                aValue = EditorPrefs.GetBool(aKey, aDefault);
+                val = EditorPrefs.GetBool(aKey, aDefault);
             }
 
-            return aValue;
+            return val;
         }
 
-        private static string RefreshPref(string aKey, string aValue, string aDefault)
+        private static string RefreshPref(string aKey, string aDefault)
         {
+            string val;
             if (!EditorPrefs.HasKey(aKey))
             {
                 EditorPrefs.SetString(aKey, aDefault);
-                aValue = aDefault;
+                val = aDefault;
             }
             else
             {
-                aValue = EditorPrefs.GetString(aKey, aDefault);
+                val = EditorPrefs.GetString(aKey, aDefault);
             }
 
-            return aValue;
+            return val;
         }
 
-        private static Color RefreshPref(string aKey, Color aValue, Color aDefault)
+        private static Color RefreshPref(string aKey, Color aDefault)
         {
+            Color val;
             if (!EditorPrefs.HasKey(aKey))
             {
                 EditorPrefs.SetString(aKey, RGBA.ColorToString(aDefault));
-                aValue = aDefault;
+                val = aDefault;
             }
             else
             {
-                aValue = RGBA.StringToColor(EditorPrefs.GetString(aKey, RGBA.ColorToString(aDefault)));
+                val = RGBA.StringToColor(EditorPrefs.GetString(aKey, RGBA.ColorToString(aDefault)));
             }
 
-            return aValue;
+            return val;
+        }
+
+
+        ///Draw the shortcut selector.
+        private static string DrawShortcutSelector()
+        {
+            // Differentiate between Mac Editor (CMD) and Win editor (CTRL).
+            var platformKey = Application.platform == RuntimePlatform.OSXEditor ? "CMD" : "CTRL";
+            var shortcut = "";
+            ParseShortcutValues();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Shortcut ");
+            GUILayout.Space(20);
+            _modifierKeys[0] = GUILayout.Toggle(_modifierKeys[0], platformKey, EditorStyles.miniButton, GUILayout.Width(50));
+            _modifierKeys[1] = GUILayout.Toggle(_modifierKeys[1], "ALT", EditorStyles.miniButton, GUILayout.Width(40));
+            _modifierKeys[2] = GUILayout.Toggle(_modifierKeys[2], "SHIFT", EditorStyles.miniButton, GUILayout.Width(60));
+            _mainShortcutKeyIndex = EditorGUILayout.Popup(_mainShortcutKeyIndex, _shortcutKeys, GUILayout.Width(60));
+            GUILayout.EndHorizontal();
+
+            // Generate shortcut string.
+            if (_modifierKeys[0] == true)
+            {
+                shortcut += "%|";
+            }
+            if (_modifierKeys[1] == true)
+            {
+                shortcut += "&|";
+            }
+            if (_modifierKeys[2] == true)
+            {
+                shortcut += "#|";
+            }
+            shortcut += _shortcutKeys[_mainShortcutKeyIndex];
+
+            return shortcut;
+        }
+
+
+        /// Get usable values from the shortcut string pref.
+        private static void ParseShortcutValues()
+        {
+            var foundCmd = false;
+            var foundAlt = false;
+            var foundShift = false;
+
+            var keys = _shortcut.Split('|');
+            for (var i = 0; i < keys.Length; i++)
+            {
+                switch (keys[i])
+                {
+                    case "%":
+                        foundCmd = true;
+                        break;
+                    case "&":
+                        foundAlt = true;
+                        break;
+                    case "#":
+                        foundShift = true;
+                        break;
+                    default:
+                        _mainShortcutKeyIndex = System.Array.IndexOf(_shortcutKeys, keys[i]);
+                        break;
+                }
+            }
+            _modifierKeys[0] = foundCmd; // Ctrl/Cmd.
+            _modifierKeys[1] = foundAlt; // Alt.
+            _modifierKeys[2] = foundShift; // Shift.
         }
     }
 
