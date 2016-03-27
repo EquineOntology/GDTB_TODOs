@@ -22,6 +22,7 @@ namespace GDTB.CodeTODOs
         private Vector2 _scrollPosition = new Vector2(Screen.width - 5, Screen.height);
         private Rect _scrollRect, _scrollViewRect, _qqqRect, _priorityRect, _rightButtonsRect;
 
+
         // ====================================================================
         [MenuItem("Window/Gamedev Toolbelt/CodeTODOs %q")]
         public static void Init()
@@ -52,6 +53,8 @@ namespace GDTB.CodeTODOs
 
         public void OnEnable()
         {
+
+            PreferencesManager.RefreshAllPrefs();
             LoadSkin();
             LoadStyles();
         }
