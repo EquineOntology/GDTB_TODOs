@@ -116,6 +116,7 @@ namespace GDTB.CodeTODOs
         }
 
 
+        /// Set the value of all preferences.
         private static void SetPrefValues()
         {
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, _todoToken);
@@ -127,6 +128,7 @@ namespace GDTB.CodeTODOs
         }
 
 
+        /// Set the value of a Color preference.
         private static void SetColorPrefs()
         {
             EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI1, RGBA.ColorToString(_priColor1));
@@ -136,6 +138,7 @@ namespace GDTB.CodeTODOs
         }
 
 
+        /// Set the value of the shortcut preference.
         private static void SetShortcutPrefs()
         {
             if (_newShortcut != _shortcut)
@@ -163,6 +166,7 @@ namespace GDTB.CodeTODOs
         }
 
 
+        /// Get the value of a bool preference.
         private static bool GetPrefValue(string aKey, bool aDefault)
         {
             bool val;
@@ -179,6 +183,8 @@ namespace GDTB.CodeTODOs
             return val;
         }
 
+
+        /// Get the value of a string preference.
         private static string GetPrefValue(string aKey, string aDefault)
         {
             string val;
@@ -195,6 +201,8 @@ namespace GDTB.CodeTODOs
             return val;
         }
 
+
+        /// Get the value of a Color preference.
         private static Color GetPrefValue(string aKey, Color aDefault)
         {
             Color val;

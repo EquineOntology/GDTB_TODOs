@@ -36,14 +36,21 @@ namespace GDTB.CodeTODOs
                         q.Enqueue(subDir);
                     }
                 }
-                catch (Exception){}
+                catch (Exception ex){
+                    UnityEngine.Debug.Log(ex.Message);
+                    UnityEngine.Debug.Log(ex.StackTrace);
+                }
 
                 string[] folders = null;
                 try
                 {
                     folders = Directory.GetDirectories(path);
                 }
-                catch (Exception){}
+                catch (Exception ex){
+
+                    UnityEngine.Debug.Log(ex.Message);
+                    UnityEngine.Debug.Log(ex.StackTrace);
+                }
 
                 if (folders != null)
                 {
@@ -52,7 +59,6 @@ namespace GDTB.CodeTODOs
                         if (folders[i].EndsWith(aFolderName))
                         {
                             absolutePath = folders[i];
-                            break;
                         }
                     }
                 }
@@ -107,10 +113,11 @@ namespace GDTB.CodeTODOs
 
 
         /// Check for character before the QQQ to see if they are spaces or backslashes. If they are, remove them.
-        /// This is to remove the whole QQQ wihtout removing anything else of importance (including stuff in a comment BEFORE a QQQ).
+        /// This is to remove the whole QQQ without removing anything else of importance (including stuff in a comment BEFORE a QQQ).
         private static string GetLineWithoutQQQ(string aLine)
         {
             var qqqIndex = aLine.IndexOf(PreferencesManager.TODOToken);
+            qqqIndex = qqqIndex < 1 ? 1 : qqqIndex;
 
             int j = qqqIndex - 1;
             while (j >= 0 && (aLine[j] == ' ' || aLine[j] == '/'))
@@ -181,34 +188,65 @@ namespace GDTB.CodeTODOs
         public static void AddQQQ(QQQ aQQQ)
         {
             var tempFile = Path.GetTempFileName();
-            var line = "";
-            var currentLineNumber = 0;
+            var lines = File.ReadAllLines(aQQQ.Script);
 
-            var reader = new StreamReader(aQQQ.Script);
+            if (lines.Length < aQQQ.LineNumber - 1)
+            {
+                var oldLines = lines;
+                lines = new string[aQQQ.LineNumber];
+                for(var i = 0; i < oldLines.Length; i++)
+                {
+                    lines[i] = oldLines[i];
+                }
+
+            }
+
+            var currentLineNumber = 0;
             var writer = new StreamWriter(tempFile);
             try
             {
-                while ((line = reader.ReadLine()) != null)
+                while (currentLineNumber < lines.Length)
                 {
                     // Add the new QQQ as the first line in the file.
-                    if (currentLineNumber == aQQQ.LineNumber)
+                    if (currentLineNumber == aQQQ.LineNumber - 1 || (currentLineNumber == aQQQ.LineNumber && aQQQ.LineNumber == 0))
                     {
-                        var newQQQ = "//QQQ" + (int)aQQQ.Priority + " " + aQQQ.Task;
+                        var newQQQ = "//" + PreferencesManager.TODOToken + (int)aQQQ.Priority + " " + aQQQ.Task;
+
+
                         writer.WriteLine(newQQQ);
+                        if (currentLineNumber == lines.Length - 1)
+                        {
+                            writer.Write(lines[currentLineNumber]);
+                        }
+                        else
+                        {
+                            writer.WriteLine(lines[currentLineNumber]);
+                        }
                     }
-                    writer.WriteLine(line);
+                    else
+                    {
+                        if (lines[currentLineNumber] != null)
+                        {
+                            writer.WriteLine(lines[currentLineNumber]);
+                        }
+                        else
+                        {
+                            writer.WriteLine();
+                        }
+                    }
                     currentLineNumber++;
                 }
-                reader.Close();
                 writer.Close();
 
                 // Overwrite the old file with the temp file.
                 File.Delete(aQQQ.Script);
                 File.Move(tempFile, aQQQ.Script);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                reader.Dispose();
+                UnityEngine.Debug.Log(ex.Message);
+                UnityEngine.Debug.Log(ex.Data);
+                UnityEngine.Debug.Log(ex.StackTrace);
                 writer.Dispose();
             }
         }
@@ -331,6 +369,7 @@ namespace GDTB.CodeTODOs
         {
             var tempFile = Path.GetTempFileName();
             var bakFile = GetFirstInstanceOfFolder("CodeTODOs") + "/bak.gdtb";
+            UnityEngine.Debug.Log(bakFile);
 
             var writer = new StreamWriter(tempFile, false);
             try
@@ -351,8 +390,11 @@ namespace GDTB.CodeTODOs
                 }
                 File.Move(tempFile, bakFile);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                UnityEngine.Debug.Log(ex.Message);
+                UnityEngine.Debug.Log(ex.Data);
+                UnityEngine.Debug.Log(ex.StackTrace);
                 writer.Dispose();
             }
         }
