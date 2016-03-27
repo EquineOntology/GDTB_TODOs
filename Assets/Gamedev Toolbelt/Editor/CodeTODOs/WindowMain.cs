@@ -53,7 +53,6 @@ namespace GDTB.CodeTODOs
 
         public void OnEnable()
         {
-
             Preferences.GetAllPrefValues();
             LoadSkin();
             LoadStyles();
@@ -65,11 +64,27 @@ namespace GDTB.CodeTODOs
             UpdateLayoutingSizes();
             GUI.skin = _gdtbSkin;
 
+            if(QQQs.Count == 0)
+            {
+                DrawNoQQQsMessage();
+            }
+
             DrawQQQs();
 
             DrawAddButton();
             DrawRefreshButton();
             DrawSettingsButton();
+        }
+
+
+        /// If there are no QQQs, tell the user.
+        private void DrawNoQQQsMessage()
+        {
+            var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken + " in it!";
+            var labelContent = new GUIContent(label);
+            var labelSize =  EditorStyles.centeredGreyMiniLabel.CalcSize(labelContent);
+            var labelRect = new Rect(position.width / 2 - labelSize.x / 2, position.height / 2 - labelSize.y / 2, labelSize.x, labelSize.y);
+            EditorGUI.LabelField(labelRect, labelContent, EditorStyles.centeredGreyMiniLabel);
         }
 
 
