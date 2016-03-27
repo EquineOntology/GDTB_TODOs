@@ -76,6 +76,7 @@ namespace GDTB.CodeTODOs
         // Custom shortcut
         public const string PREFS_CODETODOS_SHORTCUT = "GDTB_CodeTODOs_Shortcut";
         private static string _shortcut = "%|q";
+        private static string _newShortcut;
         private static string _shortcut_default = "%|q";
         public static string Shortcut
         {
@@ -84,14 +85,14 @@ namespace GDTB.CodeTODOs
         private static bool[] _modifierKeys = new bool[] { false, false, false }; // Ctrl/Cmd, Alt, Shift.
         private static int _mainShortcutKeyIndex = 0;
         // Want absolute control over values.
-        private static string[] _shortcutKeys = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "LEFT","RIGHT","UP","DOWN", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "HOME", "END", "PGUP", "PGDN"};
+        private static string[] _shortcutKeys = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "LEFT", "RIGHT", "UP", "DOWN", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "HOME", "END", "PGUP", "PGDN" };
         #endregion fields
 
 
         [PreferenceItem("Code TODOs")]
         public static void PreferencesGUI()
         {
-            RefreshAllPrefs();
+            GetAllPrefValues();
             EditorGUILayout.BeginVertical();
             _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
             _priorityDisplay = (PriorityDisplayFormat)EditorGUILayout.Popup("Priority format", System.Convert.ToInt16(_priorityDisplay), _displayFormatsString);
@@ -100,29 +101,33 @@ namespace GDTB.CodeTODOs
             _priColor2 = EditorGUILayout.ColorField("Normal priority color", _priColor2);
             _priColor3 = EditorGUILayout.ColorField("Minor priority color", _priColor3);
             _borderColor = EditorGUILayout.ColorField("Borders", _borderColor);
+            _newShortcut = DrawShortcutSelector();
 
-            _shortcut = DrawShortcutSelector();
+            GUILayout.Space(20);
+
+            DrawResetButton();
+            EditorGUILayout.EndVertical();
 
             if (GUI.changed)
             {
-                UpdatePreferences();
-                RefreshAllPrefs();
+                SetPrefValues();
+                GetAllPrefValues();
             }
         }
 
 
-        private static void UpdatePreferences()
+        private static void SetPrefValues()
         {
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, _todoToken);
             EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(_priorityDisplay));
             EditorPrefs.SetBool(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh);
 
-            UpdateColours();
-            UpdateShortcut();
+            SetColorPrefs();
+            SetShortcutPrefs();
         }
 
 
-        private static void UpdateColours()
+        private static void SetColorPrefs()
         {
             EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI1, RGBA.ColorToString(_priColor1));
             EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI2, RGBA.ColorToString(_priColor2));
@@ -131,30 +136,34 @@ namespace GDTB.CodeTODOs
         }
 
 
-        private static void UpdateShortcut()
+        private static void SetShortcutPrefs()
         {
-            EditorPrefs.SetString(PREFS_CODETODOS_SHORTCUT, _shortcut);
-            var formattedShortcut = _shortcut.Replace("|", "");
-            IO.OverwriteShortcut(formattedShortcut);
+            if (_newShortcut != _shortcut)
+            {
+                _shortcut = _newShortcut;
+                EditorPrefs.SetString(PREFS_CODETODOS_SHORTCUT, _shortcut);
+                var formattedShortcut = _shortcut.Replace("|", "");
+                IO.OverwriteShortcut(formattedShortcut);
+            }
         }
 
 
         /// If preferences have keys already saved in EditorPrefs, get them. Otherwise, set them.
-        public static void RefreshAllPrefs()
+        public static void GetAllPrefValues()
         {
-            _todoToken = RefreshPref(PREFS_CODETODOS_TOKEN, _todoToken_default); // TODO token.
+            _todoToken = GetPrefValue(PREFS_CODETODOS_TOKEN, _todoToken_default); // TODO token.
             _priorityDisplay = (PriorityDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, _priorityDisplay_default); // QQQ Priority display
-            _autoRefresh = RefreshPref(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh
-            _priColor1 = RefreshPref(PREFS_CODETODOS_COLOR_PRI1, _priColor1_default); // URGENT priority color.
-            _priColor2 = RefreshPref(PREFS_CODETODOS_COLOR_PRI2, _priColor2_default); // NORMAL priority color.
-            _priColor3 = RefreshPref(PREFS_CODETODOS_COLOR_PRI3, _priColor3_default); // MINOR priority color.
-            _borderColor = RefreshPref(PREFS_CODETODOS_COLOR_BORDER, _borderColor_default); // Priority bar border color.
-            _shortcut = RefreshPref(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut
+            _autoRefresh = GetPrefValue(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh
+            _priColor1 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, _priColor1_default); // URGENT priority color.
+            _priColor2 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, _priColor2_default); // NORMAL priority color.
+            _priColor3 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, _priColor3_default); // MINOR priority color.
+            _borderColor = GetPrefValue(PREFS_CODETODOS_COLOR_BORDER, _borderColor_default); // Priority bar border color.
+            _shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut
             ParseShortcutValues();
         }
 
 
-        private static bool RefreshPref(string aKey, bool aDefault)
+        private static bool GetPrefValue(string aKey, bool aDefault)
         {
             bool val;
             if (!EditorPrefs.HasKey(aKey))
@@ -170,7 +179,7 @@ namespace GDTB.CodeTODOs
             return val;
         }
 
-        private static string RefreshPref(string aKey, string aDefault)
+        private static string GetPrefValue(string aKey, string aDefault)
         {
             string val;
             if (!EditorPrefs.HasKey(aKey))
@@ -186,7 +195,7 @@ namespace GDTB.CodeTODOs
             return val;
         }
 
-        private static Color RefreshPref(string aKey, Color aDefault)
+        private static Color GetPrefValue(string aKey, Color aDefault)
         {
             Color val;
             if (!EditorPrefs.HasKey(aKey))
@@ -268,6 +277,37 @@ namespace GDTB.CodeTODOs
             _modifierKeys[0] = foundCmd; // Ctrl/Cmd.
             _modifierKeys[1] = foundAlt; // Alt.
             _modifierKeys[2] = foundShift; // Shift.
+        }
+
+
+        /// Draw reset button.
+        private static void DrawResetButton()
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.Space();
+            if (GUILayout.Button("Reset preferences", GUILayout.Width(120)))
+            {
+                ResetPrefsToDefault();
+            }
+            EditorGUILayout.Space();
+            EditorGUILayout.EndHorizontal();
+        }
+
+
+        /// Reset all preferences to default.
+        private static void ResetPrefsToDefault()
+        {
+            _todoToken = _todoToken_default;
+            _priorityDisplay = (PriorityDisplayFormat)_priorityDisplay_default;
+            _autoRefresh = _autoRefresh_default;
+            _priColor1 = new Color(_priColor1_default.r / 255, _priColor1_default.g / 255, _priColor1_default.b / 255, _priColor1_default.a);
+            _priColor2 = new Color(_priColor2_default.r / 255, _priColor2_default.g / 255, _priColor2_default.b / 255, _priColor2_default.a);
+            _priColor3 = new Color(_priColor3_default.r / 255, _priColor3_default.g / 255, _priColor3_default.b / 255, _priColor3_default.a);
+            _borderColor = _borderColor_default;
+            _shortcut = _shortcut_default;
+
+            SetPrefValues();
+            GetAllPrefValues();
         }
     }
 

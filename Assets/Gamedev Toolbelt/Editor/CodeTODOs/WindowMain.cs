@@ -32,7 +32,7 @@ namespace GDTB.CodeTODOs
             window.titleContent = new GUIContent(Constants.TEXT_WINDOW_TITLE);
             window.minSize = new Vector2(250f, 100f);
 
-            PreferencesManager.RefreshAllPrefs();
+            PreferencesManager.GetAllPrefValues();
 
             window.UpdateLayoutingSizes();
             window._priorityLabelWidth = (int)window._priorityStyle.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
@@ -54,7 +54,7 @@ namespace GDTB.CodeTODOs
         public void OnEnable()
         {
 
-            PreferencesManager.RefreshAllPrefs();
+            PreferencesManager.GetAllPrefValues();
             LoadSkin();
             LoadStyles();
         }
