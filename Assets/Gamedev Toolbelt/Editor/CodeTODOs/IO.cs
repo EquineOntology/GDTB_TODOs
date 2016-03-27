@@ -116,7 +116,7 @@ namespace GDTB.CodeTODOs
         /// This is to remove the whole QQQ without removing anything else of importance (including stuff in a comment BEFORE a QQQ).
         private static string GetLineWithoutQQQ(string aLine)
         {
-            var qqqIndex = aLine.IndexOf(PreferencesManager.TODOToken);
+            var qqqIndex = aLine.IndexOf(Preferences.TODOToken);
             qqqIndex = qqqIndex < 1 ? 1 : qqqIndex;
 
             int j = qqqIndex - 1;
@@ -164,7 +164,7 @@ namespace GDTB.CodeTODOs
                         var slashes = "";
                         slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //"; // If the line isn't empty we want a space before the comment.
 
-                        var newLine = lineWithoutQQQ + slashes + PreferencesManager.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
+                        var newLine = lineWithoutQQQ + slashes + Preferences.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
                         writer.WriteLine(newLine);
                     }
                     currentLineNumber++;
@@ -210,7 +210,7 @@ namespace GDTB.CodeTODOs
                     // Add the new QQQ as the first line in the file.
                     if (currentLineNumber == aQQQ.LineNumber - 1 || (currentLineNumber == aQQQ.LineNumber && aQQQ.LineNumber == 0))
                     {
-                        var newQQQ = "//" + PreferencesManager.TODOToken + (int)aQQQ.Priority + " " + aQQQ.Task;
+                        var newQQQ = "//" + Preferences.TODOToken + (int)aQQQ.Priority + " " + aQQQ.Task;
 
 
                         writer.WriteLine(newQQQ);

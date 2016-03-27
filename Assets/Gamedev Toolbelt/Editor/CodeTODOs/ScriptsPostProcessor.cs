@@ -10,7 +10,7 @@ namespace GDTB.CodeTODOs
     {
         private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
-            if (PreferencesManager.AutoRefresh == false)
+            if (Preferences.AutoRefresh == false)
             {
                 return;
             }

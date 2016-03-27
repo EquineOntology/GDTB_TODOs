@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace GDTB.CodeTODOs
 {
-    public class PreferencesManager
+    public class Preferences
     {
         #region fields
         // TODO token (QQQ).
@@ -97,14 +97,14 @@ namespace GDTB.CodeTODOs
             _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
             _priorityDisplay = (PriorityDisplayFormat)EditorGUILayout.Popup("Priority format", System.Convert.ToInt16(_priorityDisplay), _displayFormatsString);
             _autoRefresh = EditorGUILayout.Toggle("Auto refresh", _autoRefresh);
-            _priColor1 = EditorGUILayout.ColorField("High priority color", _priColor1);
-            _priColor2 = EditorGUILayout.ColorField("Normal priority color", _priColor2);
-            _priColor3 = EditorGUILayout.ColorField("Minor priority color", _priColor3);
+            EditorGUILayout.Separator();
+            _priColor1 = EditorGUILayout.ColorField("Urgent priority", _priColor1);
+            _priColor2 = EditorGUILayout.ColorField("Normal priority", _priColor2);
+            _priColor3 = EditorGUILayout.ColorField("Minor priority", _priColor3);
             _borderColor = EditorGUILayout.ColorField("Borders", _borderColor);
+            EditorGUILayout.Separator();
             _newShortcut = DrawShortcutSelector();
-
             GUILayout.Space(20);
-
             DrawResetButton();
             EditorGUILayout.EndVertical();
 
@@ -220,7 +220,7 @@ namespace GDTB.CodeTODOs
         }
 
 
-        ///Draw the shortcut selector.
+        /// Draw the shortcut selector.
         private static string DrawShortcutSelector()
         {
             // Differentiate between Mac Editor (CMD) and Win editor (CTRL).

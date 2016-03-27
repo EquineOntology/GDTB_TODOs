@@ -32,17 +32,17 @@ namespace GDTB.CodeTODOs
             window.titleContent = new GUIContent(Constants.TEXT_WINDOW_TITLE);
             window.minSize = new Vector2(250f, 100f);
 
-            PreferencesManager.GetAllPrefValues();
+            Preferences.GetAllPrefValues();
 
             window.UpdateLayoutingSizes();
             window._priorityLabelWidth = (int)window._priorityStyle.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
 
-            if (QQQs.Count == 0 && PreferencesManager.AutoRefresh)
+            if (QQQs.Count == 0 && Preferences.AutoRefresh)
             {
                 Helper.GetQQQsFromAllScripts();
                 Helper.ReorderQQQs();
             }
-            else if (PreferencesManager.AutoRefresh == false)
+            else if (Preferences.AutoRefresh == false)
             {
                 QQQs.Clear();
                 QQQs.AddRange(IO.LoadStoredQQQs());
@@ -54,7 +54,7 @@ namespace GDTB.CodeTODOs
         public void OnEnable()
         {
 
-            PreferencesManager.GetAllPrefValues();
+            Preferences.GetAllPrefValues();
             LoadSkin();
             LoadStyles();
         }
@@ -114,7 +114,7 @@ namespace GDTB.CodeTODOs
         /// Select which priority format to use based on the user preference.
         private void DrawPriority(Rect aRect, QQQ aQQQ, float helpBoxHeight = 30)
         {
-            switch (PreferencesManager.QQQPriorityDisplay)
+            switch (Preferences.QQQPriorityDisplay)
             {
                 case PriorityDisplayFormat.TEXT_ONLY:
                     DrawPriorityText(aRect, aQQQ);
@@ -259,14 +259,14 @@ namespace GDTB.CodeTODOs
             switch (aPriority)
             {
                 case 1:
-                    col = PreferencesManager.PriColor1;
+                    col = Preferences.PriColor1;
                     break;
                 case 3:
-                    col = PreferencesManager.PriColor3;
+                    col = Preferences.PriColor3;
                     break;
                 case 2:
                 default:
-                    col = PreferencesManager.PriColor2;
+                    col = Preferences.PriColor2;
                     break;
             }
             return col;
@@ -408,11 +408,11 @@ namespace GDTB.CodeTODOs
             _unit = (int)(width / 28) == 0 ? 1 : (int)(width / 28); // If the unit would be 0, set it to 1.
 
             // Priority rect width has different size based on preferences.
-            if (PreferencesManager.QQQPriorityDisplay.ToString() == "ICON_ONLY")
+            if (Preferences.QQQPriorityDisplay.ToString() == "ICON_ONLY")
             {
                 _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize + _offset) * 2);
             }
-            else if (PreferencesManager.QQQPriorityDisplay.ToString() == "BARS")
+            else if (Preferences.QQQPriorityDisplay.ToString() == "BARS")
             {
                 _priorityWidth = IconSize * 2;
             }
@@ -444,7 +444,7 @@ namespace GDTB.CodeTODOs
         /// Called when the window is closed.
         private void OnDestroy()
         {
-            if (PreferencesManager.AutoRefresh == false)
+            if (Preferences.AutoRefresh == false)
             {
                 IO.WriteQQQsToFile();
             }

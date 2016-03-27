@@ -66,14 +66,14 @@ namespace GDTB.CodeTODOs
             for (int i = 0; i < lines.Length; i++)
             {
                 newQQQ = new QQQ();
-                if (lines[i].Contains(PreferencesManager.TODOToken))
+                if (lines[i].Contains(Preferences.TODOToken))
                 {
-                    var index = lines[i].IndexOf(PreferencesManager.TODOToken);
+                    var index = lines[i].IndexOf(Preferences.TODOToken);
                     var hasExplicitPriority = false;
 
                     // First we find the QQQ's priority.
                     // QQQ1 means urgent, QQQ2 means normal, QQQ3 means minor. In case there's nothing (or something else/incorrect), we default to normal.
-                    switch (lines[i][index + PreferencesManager.TODOToken.Length])
+                    switch (lines[i][index + Preferences.TODOToken.Length])
                     {
                         case '1':
                             newQQQ.Priority = QQQPriority.URGENT;
@@ -99,7 +99,7 @@ namespace GDTB.CodeTODOs
                         index += 1;
                     }
                     var tempString = lines[i].Substring(index);
-                    tempString = tempString.Substring(PreferencesManager.TODOToken.Length);
+                    tempString = tempString.Substring(Preferences.TODOToken.Length);
                     tempString = tempString.Trim();
                     newQQQ.Task = tempString;
 
