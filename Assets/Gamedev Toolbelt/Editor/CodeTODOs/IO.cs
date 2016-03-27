@@ -369,7 +369,6 @@ namespace GDTB.CodeTODOs
         {
             var tempFile = Path.GetTempFileName();
             var bakFile = GetFirstInstanceOfFolder("CodeTODOs") + "/bak.gdtb";
-            UnityEngine.Debug.Log(bakFile);
 
             var writer = new StreamWriter(tempFile, false);
             try
