@@ -26,13 +26,16 @@ namespace GDTB.CodeTODOs
 
         public void OnEnable()
         {
-            _defaultSkin = GUI.skin;
             _GDTBSkin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
             _script = new MonoScript();
         }
 
         public void OnGUI()
         {
+            if (_defaultSkin == null)
+            {
+                _defaultSkin = GUI.skin;
+            }
             DrawScriptPicker();
             DrawTaskField();
             DrawPriorityPopup();
