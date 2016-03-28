@@ -7,11 +7,13 @@ namespace GDTB.CodeTODOs
     public class WindowMain : EditorWindow
     {
         public static List<QQQ> QQQs = new List<QQQ>();
-        private GUISkin _gdtbSkin;
+        private GUISkin _skin, _defaultSkin;
         private GUIStyle _priorityStyle, _taskStyle, _scriptStyle;
 
         // ========================= Editor layouting =========================
         private const int IconSize = 16;
+        private const int ButtonWidth = 70;
+        private const int ButtonHeight = 18;
 
         private int _unit, _priorityWidth, _qqqWidth, _editAndDoneWidth;
         private int _offset = 5;
@@ -30,7 +32,7 @@ namespace GDTB.CodeTODOs
             // Get existing open window or if none, make a new one.
             var window = (WindowMain)EditorWindow.GetWindow(typeof(WindowMain));
             window.titleContent = new GUIContent(Constants.TEXT_WINDOW_TITLE);
-            window.minSize = new Vector2(250f, 100f);
+            window.minSize = new Vector2(270f, 100f);
 
             Preferences.GetAllPrefValues();
 
@@ -54,7 +56,7 @@ namespace GDTB.CodeTODOs
         public void OnEnable()
         {
             Preferences.GetAllPrefValues();
-            LoadSkin();
+            ChooseSkin();
             LoadStyles();
         }
 
@@ -62,18 +64,21 @@ namespace GDTB.CodeTODOs
         private void OnGUI()
         {
             UpdateLayoutingSizes();
-            GUI.skin = _gdtbSkin;
 
-            if(QQQs.Count == 0)
+            // Save default skin (once), assign new one.
+            if (_defaultSkin == null)
+            {
+                _defaultSkin = GUI.skin;
+            }
+            GUI.skin = _skin;
+
+            if (QQQs.Count == 0)
             {
                 DrawNoQQQsMessage();
             }
 
             DrawQQQs();
-
-            DrawAddButton();
-            DrawRefreshButton();
-            DrawSettingsButton();
+            DrawARS();
         }
 
 
@@ -82,7 +87,7 @@ namespace GDTB.CodeTODOs
         {
             var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken + " in it!";
             var labelContent = new GUIContent(label);
-            var labelSize =  EditorStyles.centeredGreyMiniLabel.CalcSize(labelContent);
+            var labelSize = EditorStyles.centeredGreyMiniLabel.CalcSize(labelContent);
             var labelRect = new Rect(position.width / 2 - labelSize.x / 2, position.height / 2 - labelSize.y / 2, labelSize.x, labelSize.y);
             EditorGUI.LabelField(labelRect, labelContent, EditorStyles.centeredGreyMiniLabel);
         }
@@ -102,6 +107,10 @@ namespace GDTB.CodeTODOs
 
                 var helpBoxHeight = taskHeight + Constants.LINE_HEIGHT + 5;
                 helpBoxHeight = helpBoxHeight < IconSize * 2.5f ? IconSize * 2.5f : helpBoxHeight;
+                if (Preferences.QQQPriorityDisplay.ToString() == "TEXT_ONLY")
+                {
+                    helpBoxHeight += 4;
+                }
 
                 _qqqRect = new Rect(_priorityWidth, _heightIndex, _qqqWidth, helpBoxHeight);
                 _priorityRect = new Rect(0, _qqqRect.y, _priorityWidth, helpBoxHeight);
@@ -117,39 +126,39 @@ namespace GDTB.CodeTODOs
 
                 DrawHelpBox(helpBoxRect);
                 DrawPriority(_priorityRect, QQQs[i], helpBoxHeight);
-                DrawTaskAndScriptLabels(_qqqRect, QQQs[i], taskHeight);
-                DrawEditAndCompleteButtons(_rightButtonsRect, QQQs[i]);
+                DrawTaskAndScript(_qqqRect, QQQs[i], taskHeight);
+                DrawEditAndComplete(_rightButtonsRect, QQQs[i]);
             }
             GUI.EndScrollView();
         }
 
 
         #region QQQPriorityMethods
-
         /// Select which priority format to use based on the user preference.
         private void DrawPriority(Rect aRect, QQQ aQQQ, float helpBoxHeight = 30)
         {
             switch (Preferences.QQQPriorityDisplay)
             {
                 case PriorityDisplayFormat.TEXT_ONLY:
-                    DrawPriorityText(aRect, aQQQ);
+                    DrawPriority_Text(aRect, aQQQ);
                     break;
                 case PriorityDisplayFormat.ICON_ONLY:
-                    DrawPriorityIcon(aRect, aQQQ);
+                    DrawPriority_Icon(aRect, aQQQ);
                     break;
                 case PriorityDisplayFormat.ICON_AND_TEXT:
-                    DrawPriorityIconAndText(aRect, aQQQ);
+                    DrawPriority_IconAndText(aRect, aQQQ);
                     break;
                 case PriorityDisplayFormat.BARS:
                 default:
-                    DrawPriorityBars(aRect, aQQQ, helpBoxHeight);
+                    DrawPriority_Bars(aRect, aQQQ, helpBoxHeight);
                     break;
             }
         }
 
         /// Draw priority for the "Bars" setting.
-        private void DrawPriorityBars(Rect aRect, QQQ aQQQ, float helpBoxHeight)
+        private void DrawPriority_Bars(Rect aRect, QQQ aQQQ, float helpBoxHeight)
         {
+            GUI.skin = _skin;
             var borderWidth = 1;
             var priorityRect = aRect;
             var newY = 0;
@@ -166,10 +175,10 @@ namespace GDTB.CodeTODOs
             EditorGUI.DrawRect(priorityRect, color);
 
             // Draw bodrers
-            var topBorder = new Rect (priorityRect.x, priorityRect.y, priorityRect.width, borderWidth);
-            var bottomBorder = new Rect (priorityRect.x, (priorityRect.y + priorityRect.height - borderWidth), priorityRect.width, borderWidth);
-            var leftBorder = new Rect (priorityRect.x, priorityRect.y, borderWidth, priorityRect.height);
-            var rightBorder = new Rect ((priorityRect.x + priorityRect.width - borderWidth), priorityRect.y, borderWidth, priorityRect.height);
+            var topBorder = new Rect(priorityRect.x, priorityRect.y, priorityRect.width, borderWidth);
+            var bottomBorder = new Rect(priorityRect.x, (priorityRect.y + priorityRect.height - borderWidth), priorityRect.width, borderWidth);
+            var leftBorder = new Rect(priorityRect.x, priorityRect.y, borderWidth, priorityRect.height);
+            var rightBorder = new Rect((priorityRect.x + priorityRect.width - borderWidth), priorityRect.y, borderWidth, priorityRect.height);
 
             EditorGUI.DrawRect(topBorder, Color.gray);
             EditorGUI.DrawRect(bottomBorder, Color.gray);
@@ -178,8 +187,9 @@ namespace GDTB.CodeTODOs
         }
 
         /// Draw priority for the "Icon only" setting.
-        private void DrawPriorityIcon(Rect aRect, QQQ aQQQ)
+        private void DrawPriority_Icon(Rect aRect, QQQ aQQQ)
         {
+            GUI.skin = _skin;
             // Prepare the rectangle for layouting. The layout is "space-icon-space".
             var priorityRect = aRect;
             var newY = 0;
@@ -205,14 +215,14 @@ namespace GDTB.CodeTODOs
 
 
         /// Draw priority for the "Text only" setting.
-        private void DrawPriorityText(Rect aRect, QQQ aQQQ)
+        private void DrawPriority_Text(Rect aRect, QQQ aQQQ)
         {
             var priorityRect = aRect;
             priorityRect.width -= _offset;
             priorityRect.height -= (IconSize / 2 + _offset);
 
-            var newX = (int)priorityRect.x + _offset;
-            var newY = (int)priorityRect.y + _offset;
+            var newX = (int)priorityRect.x + _offset * 2;
+            var newY = (int)priorityRect.y + _offset - 1;
             priorityRect.position = new Vector2(newX, newY);
 
             EditorGUI.LabelField(priorityRect, aQQQ.Priority.ToString());
@@ -220,8 +230,9 @@ namespace GDTB.CodeTODOs
 
 
         /// Draw priority for the "Icon and Text" setting.
-        private void DrawPriorityIconAndText(Rect aRect, QQQ aQQQ)
+        private void DrawPriority_IconAndText(Rect aRect, QQQ aQQQ)
         {
+            GUI.skin = _skin;
             // Draw the Icon.
             var iconRect = aRect;
             iconRect.width = IconSize;
@@ -253,14 +264,14 @@ namespace GDTB.CodeTODOs
             switch (aPriority)
             {
                 case 1:
-                tex = Resources.Load<Texture2D>(Constants.FILE_QQQ_URGENT);
+                    tex = Resources.Load<Texture2D>(Constants.FILE_QQQ_URGENT);
                     break;
                 case 3:
-                tex = Resources.Load<Texture2D>(Constants.FILE_QQQ_MINOR);
+                    tex = Resources.Load<Texture2D>(Constants.FILE_QQQ_MINOR);
                     break;
                 case 2:
                 default:
-                tex = Resources.Load<Texture2D>(Constants.FILE_QQQ_NORMAL);
+                    tex = Resources.Load<Texture2D>(Constants.FILE_QQQ_NORMAL);
                     break;
             }
             return tex;
@@ -291,8 +302,9 @@ namespace GDTB.CodeTODOs
 
 
         /// Draws the "Task" and "Script" texts for QQQs.
-        private void DrawTaskAndScriptLabels(Rect aRect, QQQ aQQQ, float aHeight)
+        private void DrawTaskAndScript(Rect aRect, QQQ aQQQ, float aHeight)
         {
+            GUI.skin = _skin;
             // Task.
             var taskRect = aRect;
             taskRect.x = _priorityWidth;
@@ -326,9 +338,26 @@ namespace GDTB.CodeTODOs
         }
 
 
-        /// Draw the "Edit" and "Complete" buttons.
-        private void DrawEditAndCompleteButtons(Rect aRect, QQQ aQQQ)
+        #region EditAndComplete
+        /// Select which format to use based on the user preference.
+        private void DrawEditAndComplete(Rect aRect, QQQ aQQQ)
         {
+            switch (Preferences.QQQPriorityDisplay)
+            {
+                case PriorityDisplayFormat.TEXT_ONLY:
+                    DrawEditAndComplete_Text(aRect, aQQQ);
+                    break;
+                default:
+                    DrawEditAndComplete_Texture(aRect, aQQQ);
+                    break;
+            }
+        }
+
+
+        /// Draw Edit and Complete with texture buttons.
+        private void DrawEditAndComplete_Texture(Rect aRect, QQQ aQQQ)
+        {
+            GUI.skin = _skin;
             // "Edit" button.
             var editRect = aRect;
             editRect.x = position.width - (IconSize * 2) - (_offset * 2);
@@ -360,9 +389,97 @@ namespace GDTB.CodeTODOs
         }
 
 
-        /// Draw the "Refresh" button.
-        private void DrawRefreshButton()
+        /// Draw Edit and Complete with regular buttons.
+        private void DrawEditAndComplete_Text(Rect aRect, QQQ aQQQ)
         {
+            GUI.skin = _defaultSkin;
+            // "Edit" button.
+            var editRect = aRect;
+            editRect.x = position.width - ButtonWidth - IconSize - (_offset * 2);
+            editRect.height = ButtonHeight;
+            editRect.y += 3;
+            editRect.width = ButtonWidth;
+            var editButton = new GUIContent("Edit", "Edit this task");
+
+            // Open edit window on click.
+            if (GUI.Button(editRect, editButton))
+            {
+                WindowEdit.Init(aQQQ);
+            }
+
+            // "Complete" button.
+            var completeRect = editRect;
+            completeRect.y = editRect.y + editRect.height + 2;
+            var completeButton = new GUIContent("Complete", "Complete this task");
+
+            // Complete QQQ on click.
+            if (GUI.Button(completeRect, completeButton))
+            {
+                // Confirmation dialog.
+                if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
+                {
+                    Helper.CompleteQQQ(aQQQ);
+                }
+            }
+        }
+        #endregion
+
+        #region A-R-S buttons
+        /// Draw Add, Refresh and Edit based of preferences.
+        private void DrawARS()
+        {
+            switch (Preferences.QQQPriorityDisplay)
+            {
+                case PriorityDisplayFormat.TEXT_ONLY:
+                    DrawAdd_Text();
+                    DrawRefresh_Text();
+                    DrawSettings_Text();
+                    break;
+                default:
+                    DrawAdd_Texture();
+                    DrawRefresh_Texture();
+                    DrawSettings_Texture();
+                    break;
+            }
+        }
+
+
+        /// Draw the texture "Add" button.
+        private void DrawAdd_Texture()
+        {
+            GUI.skin = _skin;
+            // "Add" button.
+            var addRect = new Rect((position.width / 2) - (IconSize * 1.5f) - _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
+            var addButton = new GUIContent(Resources.Load(Constants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D, "Add a new task");
+
+            // Add QQQ on click.
+            if (GUI.Button(addRect, addButton))
+            {
+                WindowAdd.Init();
+            }
+        }
+
+
+        /// Draw the text "Add" button.
+        private void DrawAdd_Text()
+        {
+            GUI.skin = _defaultSkin;
+            // "Add" button.
+            var addRect = new Rect((position.width / 2) - ButtonWidth * 1.5f - _offset * 2, position.height - (IconSize * 1.5f), ButtonWidth, ButtonHeight);
+            var addButton = new GUIContent("Add new", "Add a new task");
+
+            // Add QQQ on click.
+            if (GUI.Button(addRect, addButton))
+            {
+                WindowAdd.Init();
+            }
+        }
+
+
+        /// Draw the texture "Refresh" button.
+        private void DrawRefresh_Texture()
+        {
+            GUI.skin = _skin;
             // "Refresh" button.
             var refreshRect = new Rect((position.width / 2) - (IconSize * 0.5f), position.height - (IconSize * 1.5f), IconSize, IconSize);
             var refreshButton = new GUIContent(Resources.Load(Constants.FILE_QQQ_REFRESH, typeof(Texture2D)) as Texture2D, "Refresh list of tasks");
@@ -377,24 +494,28 @@ namespace GDTB.CodeTODOs
         }
 
 
-        /// Draw the "Add" button.
-        private void DrawAddButton()
+        /// Draw the text "Refresh" button.
+        private void DrawRefresh_Text()
         {
-            // "Add" button.
-            var addRect = new Rect((position.width / 2) - (IconSize * 1.5f) - _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
-            var addButton = new GUIContent(Resources.Load(Constants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D, "Add a new task");
+            GUI.skin = _defaultSkin;
+            // "Refesh" button.
+            var refreshRect = new Rect((position.width / 2) - ButtonWidth / 2 - _offset, position.height - (IconSize * 1.5f), ButtonWidth, ButtonHeight);
+            var refreshButton = new GUIContent("Refresh", "Refresh list of tasks");
 
-            // Add QQQ on click.
-            if (GUI.Button(addRect, addButton))
+            // Refresh on click.
+            if (GUI.Button(refreshRect, refreshButton))
             {
-                WindowAdd.Init();
+                QQQs.Clear();
+                Helper.GetQQQsFromAllScripts();
+                Helper.ReorderQQQs();
             }
         }
 
 
-        /// Draw the "Settings" button.
-        private void DrawSettingsButton()
+        /// Draw the texture "Settings" button.
+        private void DrawSettings_Texture()
         {
+            GUI.skin = _skin;
             // "Settings" button.
             var settingsRect = new Rect((position.width / 2) + (IconSize * 0.5f) + _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
             var settingsButton = new GUIContent(Resources.Load(Constants.FILE_SETTINGS, typeof(Texture2D)) as Texture2D, "Open settings window");
@@ -409,6 +530,27 @@ namespace GDTB.CodeTODOs
                 M.Invoke(null, null);
             }
         }
+
+
+        /// Draw the texture "Settings" button.
+        private void DrawSettings_Text()
+        {
+            GUI.skin = _defaultSkin;
+            // "Settings" button.
+            var settingsRect = new Rect((position.width / 2) + ButtonWidth / 2, position.height - (IconSize * 1.5f), ButtonWidth, ButtonHeight);
+            var settingsButton = new GUIContent("Settings", "Open settings window");
+
+            // Open settings on click.
+            if (GUI.Button(settingsRect, settingsButton))
+            {
+                // Unfortunately EditorApplication.ExecuteMenuItem(...) doesn't work, so we have to rely on a bit of reflection.
+                var asm = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
+                var T = asm.GetType("UnityEditor.PreferencesWindow");
+                var M = T.GetMethod("ShowPreferencesWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                M.Invoke(null, null);
+            }
+        }
+        #endregion
 
 
         /// Update sizes used in layouting based on the window size.
@@ -426,33 +568,40 @@ namespace GDTB.CodeTODOs
             if (Preferences.QQQPriorityDisplay.ToString() == "ICON_ONLY")
             {
                 _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize + _offset) * 2);
+                _editAndDoneWidth = (IconSize * 2) + 5;
             }
             else if (Preferences.QQQPriorityDisplay.ToString() == "BARS")
             {
                 _priorityWidth = IconSize * 2;
+                _editAndDoneWidth = (IconSize * 2) + 5;
+            }
+            else if (Preferences.QQQPriorityDisplay.ToString() == "TEXT_ONLY")
+            {
+                _priorityWidth = _priorityLabelWidth + _offset * 4;
+                _editAndDoneWidth = ButtonWidth + _offset;
             }
             else
             {
                 _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize * 2) + _priorityLabelWidth);
+                _editAndDoneWidth = (IconSize * 2) + 5;
             }
-            _editAndDoneWidth = (IconSize * 2) + 5;
             _qqqWidth = (int)width - _priorityWidth - _editAndDoneWidth - (_offset * 2);
         }
 
 
         /// Load the CodeTODOs skin.
-        private void LoadSkin()
+        private void ChooseSkin()
         {
-            _gdtbSkin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
         }
 
 
         /// Assign the GUI Styles
         private void LoadStyles()
         {
-            _priorityStyle = _gdtbSkin.GetStyle("label");
-            _taskStyle = _gdtbSkin.GetStyle("task");
-            _scriptStyle = _gdtbSkin.GetStyle("script");
+            _priorityStyle = _skin.GetStyle("label");
+            _taskStyle = _skin.GetStyle("task");
+            _scriptStyle = _skin.GetStyle("script");
         }
 
 
