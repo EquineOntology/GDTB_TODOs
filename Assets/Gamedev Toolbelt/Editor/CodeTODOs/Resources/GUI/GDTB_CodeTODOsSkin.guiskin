@@ -959,13 +959,13 @@ MonoBehaviour:
   m_verticalScrollbarThumb:
     m_Name: verticalscrollbarthumb
     m_Normal:
-      m_Background: {fileID: 2800000, guid: a180988faea449242a8389d2bcb9680f, type: 3}
+      m_Background: {fileID: 2800000, guid: cae9d1ae3da15d741927c8c553cb76bc, type: 3}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_Hover:
       m_Background: {fileID: 2800000, guid: eed12993400b58d45a49181f0893f059, type: 3}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_Active:
-      m_Background: {fileID: 2800000, guid: 4ab527161d3720744a191f2ec137e2ff, type: 3}
+      m_Background: {fileID: 2800000, guid: 3f755513730901046b32fcb1e5a22d0c, type: 3}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_Focused:
       m_Background: {fileID: 0}
