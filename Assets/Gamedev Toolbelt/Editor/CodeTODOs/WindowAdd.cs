@@ -25,6 +25,7 @@ namespace GDTB.CodeTODOs
         private const int IconSize = 16;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
+        private const int FieldsWidth = 70;
 
 
         public static void Init()
@@ -53,7 +54,7 @@ namespace GDTB.CodeTODOs
             DrawScriptPicker();
             DrawTaskField();
             DrawPriorityPopup();
-            DrawLineField();
+            DrawLineNumberField();
             DrawAdd();
         }
 
@@ -61,10 +62,10 @@ namespace GDTB.CodeTODOs
         /// Draw script picker.
         private void DrawScriptPicker()
         {
-            var labelRect = new Rect(10, 10, 100, 16);
+            var labelRect = new Rect(10, 10, position.width, 16);
             EditorGUI.LabelField(labelRect, "Pick a script:", EditorStyles.boldLabel);
 
-            var pickerRect = new Rect(10, 28, Mathf.Clamp(position.width - 20, 80, 500), 16);
+            var pickerRect = new Rect(10, 28, FieldsWidth, 16);
             _script = (MonoScript)EditorGUI.ObjectField(pickerRect, _script, typeof(MonoScript), false);
         }
 
@@ -72,10 +73,10 @@ namespace GDTB.CodeTODOs
         /// Draw Task input field.
         private void DrawTaskField()
         {
-            var labelRect = new Rect(10, 53, 100, 16);
+            var labelRect = new Rect(10, 53, position.width, 16);
             EditorGUI.LabelField(labelRect, "Write a task:", EditorStyles.boldLabel);
 
-            var taskRect = new Rect(10, 71, Mathf.Clamp(position.width - 20, 80, 500), 32);
+            var taskRect = new Rect(10, 71, position.width - 20, 32);
             _task = EditorGUI.TextField(taskRect, _task);
         }
 
@@ -83,21 +84,21 @@ namespace GDTB.CodeTODOs
         /// Draw priority popup.
         private void DrawPriorityPopup()
         {
-            var labelRect = new Rect(10, 112, 150, 16);
+            var labelRect = new Rect(10, 112, position.width, 16);
             EditorGUI.LabelField(labelRect, "Choose a priority:", EditorStyles.boldLabel);
 
-            var priorityRect = new Rect(10, 130, 70, 16);
+            var priorityRect = new Rect(10, 130, FieldsWidth, 16);
             _priority = EditorGUI.Popup(priorityRect, _priority - 1, _qqqPriorities) + 1;
         }
 
 
         /// Draw line number field.
-        private void DrawLineField()
+        private void DrawLineNumberField()
         {
-            var labelRect = new Rect(10, 155, 200, 32);
+            var labelRect = new Rect(10, 155, position.width, 32);
             EditorGUI.LabelField(labelRect, "Choose the line number:", EditorStyles.boldLabel);
 
-            var lineRect = new Rect(10, 176, Mathf.Clamp(position.width - 20, 80, 500), 16);
+            var lineRect = new Rect(10, 176, FieldsWidth, 16);
             _lineNumber = EditorGUI.IntField(lineRect, _lineNumber);
 
             if (_lineNumber < 1)

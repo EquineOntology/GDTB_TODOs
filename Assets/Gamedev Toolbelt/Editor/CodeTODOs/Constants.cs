@@ -11,14 +11,9 @@
         public const string FILE_SETTINGS = "GUI/gdtb_SETTINGS";
         public const string FILE_QQQ_REFRESH = "GUI/gdtb_REFRESH";
 
-        public const string TEXT_WINDOW_TITLE = "CodeTODOs";
-        public const string TEXT_EDIT_WINDOW_TITLE = "Edit task";
-
         public const string FILE_GUISKIN = "GUI/GDTB_CodeTODOsSkin";
 
         public const int NORMAL_CHAR_WIDTH = 7;
-        public const int CHAR_HEIGHT = 11;
-        public const float VERTICAL_SPACING = 1.5f;
-        public const float LINE_HEIGHT = CHAR_HEIGHT * VERTICAL_SPACING;
+        public const float LINE_HEIGHT = 16.5f;
     }
 }

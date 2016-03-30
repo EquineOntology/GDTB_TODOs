@@ -37,7 +37,7 @@ namespace GDTB.CodeTODOs
         {
             // Get existing open window or if none, make a new one.
             var window = (WindowMain)EditorWindow.GetWindow(typeof(WindowMain));
-            window.titleContent = new GUIContent(Constants.TEXT_WINDOW_TITLE);
+            window.titleContent = new GUIContent("Code TODOs");
             window.minSize = new Vector2(270f, 100f);
 
             Preferences.GetAllPrefValues();
@@ -61,6 +61,7 @@ namespace GDTB.CodeTODOs
 
         public void OnEnable()
         {
+            Instance = this;
             Preferences.GetAllPrefValues();
             ChooseSkin();
             LoadStyles();
