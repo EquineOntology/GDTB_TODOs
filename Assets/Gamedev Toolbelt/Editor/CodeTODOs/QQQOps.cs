@@ -263,6 +263,14 @@ namespace GDTB.CodeTODOs
         public static void UpdateTask(QQQ anOldQQQ, QQQ aNewQQQ)
         {
             IO.ChangeQQQ(anOldQQQ, aNewQQQ);
+            for (var i = 0; i < WindowMain.QQQs.Count; i++)
+            {
+                if (WindowMain.QQQs[i].Script == aNewQQQ.Script && WindowMain.QQQs[i].LineNumber == aNewQQQ.LineNumber)
+                {
+                    WindowMain.QQQs[i] = aNewQQQ;
+                    break;
+                }
+            }
         }
 
 
