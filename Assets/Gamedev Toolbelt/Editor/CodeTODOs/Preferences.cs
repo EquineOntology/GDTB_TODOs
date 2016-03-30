@@ -42,6 +42,7 @@ namespace GDTB.CodeTODOs
         public const string PREFS_CODETODOS_AUTO_REFRESH = "GDTB_CodeTODOs_AutoUpdate";
         private static bool _autoRefresh = true;
         private static bool _autoRefresh_default = true;
+        private static bool _oldAutoRefresh;
         public static bool AutoRefresh
         {
             get { return _autoRefresh; }
@@ -119,9 +120,15 @@ namespace GDTB.CodeTODOs
             GUILayout.Space(20);
             DrawResetButton();
             EditorGUILayout.EndVertical();
-
             if (GUI.changed)
             {
+                // Save QQQs when switching off autorefresh.
+                if (_autoRefresh != _oldAutoRefresh)
+                {
+                    _oldAutoRefresh = _autoRefresh;
+                    IO.WriteQQQsToFile();
+                }
+
                 SetPrefValues();
                 GetAllPrefValues();
                 RepaintOpenWindows();
@@ -172,6 +179,7 @@ namespace GDTB.CodeTODOs
             _priorityDisplay = (PriorityDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, _priorityDisplay_default); // QQQ Priority display.
             _buttonsDisplay = (ButtonsDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, _buttonsDisplay_default); // Buttons display.
             _autoRefresh = GetPrefValue(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh.
+            _oldAutoRefresh = _autoRefresh;
             _priColor1 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, _priColor1_default); // URGENT priority color.
             _priColor2 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, _priColor2_default); // NORMAL priority color.
             _priColor3 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, _priColor3_default); // MINOR priority color.
