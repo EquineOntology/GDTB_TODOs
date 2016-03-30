@@ -7,6 +7,12 @@ namespace GDTB.CodeTODOs
     public class WindowMain : EditorWindow
     {
         public static List<QQQ> QQQs = new List<QQQ>();
+
+        public static WindowMain Instance { get; private set; }
+        public static bool IsOpen {
+            get { return Instance != null; }
+        }
+
         private GUISkin _skin, _defaultSkin;
         private GUIStyle _priorityStyle, _taskStyle, _scriptStyle;
 
@@ -31,7 +37,7 @@ namespace GDTB.CodeTODOs
         {
             // Get existing open window or if none, make a new one.
             var window = (WindowMain)EditorWindow.GetWindow(typeof(WindowMain));
-            window.titleContent = new GUIContent(Constants.TEXT_WINDOW_TITLE);
+            window.titleContent = new GUIContent("Code TODOs");
             window.minSize = new Vector2(270f, 100f);
 
             Preferences.GetAllPrefValues();
@@ -55,6 +61,7 @@ namespace GDTB.CodeTODOs
 
         public void OnEnable()
         {
+            Instance = this;
             Preferences.GetAllPrefValues();
             ChooseSkin();
             LoadStyles();

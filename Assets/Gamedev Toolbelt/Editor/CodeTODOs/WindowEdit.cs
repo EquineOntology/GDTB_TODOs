@@ -5,19 +5,30 @@ namespace GDTB.CodeTODOs
 {
     public class WindowEdit : EditorWindow
     {
-        private GUISkin _GDTBSkin;
+        public static WindowEdit Instance { get; private set; }
+        public static bool IsOpen {
+            get { return Instance != null; }
+
+        }
 
         private static QQQ _oldQQQ;
         private static QQQ _newQQQ;
 
         private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
+        private bool _prioritySetOnce = false;
+
+
+        private GUISkin _GDTBSkin, _defaultSkin;
+        private const int IconSize = 16;
+        private const int ButtonWidth = 70;
+        private const int ButtonHeight = 18;
 
         public static void Init(QQQ aQQQ)
         {
             // Get existing open window or if none, make a new one.
             WindowEdit window = (WindowEdit)EditorWindow.GetWindow(typeof(WindowEdit));
-            //window.minSize = new Vector2(EDITOR_WINDOW_MINSIZE_X, EDITOR_WINDOW_MINSIZE_Y);
-            window.titleContent = new GUIContent(Constants.TEXT_EDIT_WINDOW_TITLE);
+            window.minSize = new Vector2(208f, 140f);
+            window.titleContent = new GUIContent("Edit task");
             _oldQQQ = aQQQ;
             _newQQQ = new QQQ((int)aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);
             window.Show();
@@ -26,23 +37,30 @@ namespace GDTB.CodeTODOs
 
         public void OnEnable()
         {
+            Instance = this;
             _GDTBSkin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
         }
 
 
         private void OnGUI()
         {
+            if (_defaultSkin == null)
+            {
+                _defaultSkin = GUI.skin;
+            }
             GUI.skin = _GDTBSkin;
             DrawPriority();
             DrawTask();
-            DrawButton();
+            DrawEdit();
         }
 
 
-        private bool _prioritySetOnce = false;
-        /// Draw the priority enum.
+        /// Draw priority.
         private void DrawPriority()
         {
+            var labelRect = new Rect(10, 10, position.width, 16);
+            EditorGUI.LabelField(labelRect, "Choose a priority:", EditorStyles.boldLabel);
+
             int priorityIndex;
             if (!_prioritySetOnce)
             {
@@ -53,45 +71,76 @@ namespace GDTB.CodeTODOs
                 priorityIndex = (int)_oldQQQ.Priority;
                 _prioritySetOnce = true;
             }
-            var popupRect = new Rect(10, 10, 60, 10);
+            var popupRect = new Rect(10, 28, 70, 16);
             priorityIndex = EditorGUI.Popup(popupRect, priorityIndex - 1, _qqqPriorities) + 1;
 
             _newQQQ.Priority = (QQQPriority)priorityIndex;
         }
 
 
-        /// Draw the textfield that enables the user to modify the QQQ's task.
+        /// Draw task.
         private void DrawTask()
         {
-            // The "Task:" label.
-            var labelRect = EditorGUILayout.GetControlRect();
-            labelRect.width = 40;
-            labelRect.x = 80;
-            labelRect.y = 10;
+            // Label.
+            var labelRect = new Rect(10, 53, position.width, 16);
             EditorGUI.LabelField(labelRect, "Task:", EditorStyles.boldLabel);
 
             // The task itself.
-            var fieldRect = EditorGUILayout.GetControlRect();
-            fieldRect.x = 130;
-            fieldRect.y = 10;
-            fieldRect.width = fieldRect.width - fieldRect.x - 10;
+            var fieldRect = new Rect(10, 71, position.width - 20, 32);
             _newQQQ.Task = EditorGUI.TextField(fieldRect, _newQQQ.Task);
         }
 
 
-        /// Draw "Save" button;
-        private void DrawButton()
+        /// Draw Edit based of preferences.
+        private void DrawEdit()
         {
-            var buttonRect = new Rect((Screen.width / 2) - 25, 40, 50, 20);
-            if (GUI.Button(buttonRect, "Save"))
+            Rect buttonRect;
+            GUIContent buttonContent;
+
+            switch (Preferences.ButtonsDisplay)
+            {
+                case ButtonsDisplayFormat.REGULAR_BUTTONS:
+                    DrawEdit_Default(out buttonRect, out buttonContent);
+                    break;
+                default:
+                    DrawEdit_Icon(out buttonRect, out buttonContent);
+                    break;
+            }
+
+            if (GUI.Button(buttonRect, buttonContent))
             {
                 // Confirmation dialog.
-                if(EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
+                if (EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
                 {
                     Helper.UpdateTask(_oldQQQ, _newQQQ);
+
+                    if (WindowMain.IsOpen)
+                    {
+                        EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
+                    }
+
                     EditorWindow.GetWindow(typeof(WindowEdit)).Close();
                 }
             }
+        }
+
+
+        /// Draw default-style Edit.
+        private void DrawEdit_Default(out Rect aRect, out GUIContent aContent)
+        {
+            GUI.skin = _defaultSkin;
+
+            aRect = new Rect((position.width / 2) - ButtonWidth/2, position.height - ButtonHeight * 1.5f, ButtonWidth, ButtonHeight);
+            aContent = new GUIContent("Save", "Save edits");
+        }
+
+
+        /// Draw icon Edit.
+        private void DrawEdit_Icon(out Rect aRect, out GUIContent aContent)
+        {
+            GUI.skin = _GDTBSkin;
+            aRect = new Rect((position.width / 2) - IconSize/2, position.height - IconSize * 1.5f, IconSize, IconSize);
+            aContent = new GUIContent(Resources.Load(Constants.FILE_QQQ_EDIT, typeof(Texture2D)) as Texture2D, "Save edits");
         }
     }
 }
