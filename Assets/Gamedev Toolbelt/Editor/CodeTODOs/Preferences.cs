@@ -124,10 +124,7 @@ namespace GDTB.CodeTODOs
             {
                 SetPrefValues();
                 GetAllPrefValues();
-                if(EditorWindow.GetWindow(typeof(WindowMain)) != null)
-                {
-                    EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
-                }
+                RepaintOpenWindows();
             }
         }
 
@@ -335,6 +332,24 @@ namespace GDTB.CodeTODOs
 
             SetPrefValues();
             GetAllPrefValues();
+        }
+
+
+        /// Repaint all open CodeTODOs windows.
+        private static void RepaintOpenWindows()
+        {
+            if (WindowMain.IsOpen)
+            {
+                EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
+            }
+            if (WindowAdd.IsOpen)
+            {
+                EditorWindow.GetWindow(typeof(WindowAdd)).Repaint();
+            }
+            if (WindowEdit.IsOpen)
+            {
+                EditorWindow.GetWindow(typeof(WindowEdit)).Repaint();
+            }
         }
     }
 
