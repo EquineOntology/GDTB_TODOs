@@ -107,7 +107,7 @@ namespace GDTB.CodeTODOs
 
                 var helpBoxHeight = taskHeight + Constants.LINE_HEIGHT + 5;
                 helpBoxHeight = helpBoxHeight < IconSize * 2.5f ? IconSize * 2.5f : helpBoxHeight;
-                if (Preferences.PriorityDisplay.ToString() == "TEXT_ONLY")
+                if (Preferences.ButtonsDisplay.ToString() == "REGULAR_BUTTONS")
                 {
                     helpBoxHeight += 4;
                 }
@@ -573,14 +573,14 @@ namespace GDTB.CodeTODOs
             {
                 _priorityWidth = IconSize * 2;
             }
-            else if (Preferences.PriorityDisplay.ToString() == "TEXT_ONLY")
+            else// if (Preferences.PriorityDisplay.ToString() == "TEXT_ONLY")
             {
                 _priorityWidth = _priorityLabelWidth + _offset * 4;
-            }
+            }/*
             else
             {
                 _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize * 2) + _priorityLabelWidth);
-            }
+            }*/
 
             // Same for buttons size
             if(Preferences.ButtonsDisplay.ToString() == "COOL_ICONS")
