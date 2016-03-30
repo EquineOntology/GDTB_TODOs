@@ -107,7 +107,7 @@ namespace GDTB.CodeTODOs
 
                 var helpBoxHeight = taskHeight + Constants.LINE_HEIGHT + 5;
                 helpBoxHeight = helpBoxHeight < IconSize * 2.5f ? IconSize * 2.5f : helpBoxHeight;
-                if (Preferences.QQQPriorityDisplay.ToString() == "TEXT_ONLY")
+                if (Preferences.PriorityDisplay.ToString() == "TEXT_ONLY")
                 {
                     helpBoxHeight += 4;
                 }
@@ -137,7 +137,7 @@ namespace GDTB.CodeTODOs
         /// Select which priority format to use based on the user preference.
         private void DrawPriority(Rect aRect, QQQ aQQQ, float helpBoxHeight = 30)
         {
-            switch (Preferences.QQQPriorityDisplay)
+            switch (Preferences.PriorityDisplay)
             {
                 case PriorityDisplayFormat.TEXT_ONLY:
                     DrawPriority_Text(aRect, aQQQ);
@@ -342,20 +342,20 @@ namespace GDTB.CodeTODOs
         /// Select which format to use based on the user preference.
         private void DrawEditAndComplete(Rect aRect, QQQ aQQQ)
         {
-            switch (Preferences.QQQPriorityDisplay)
+            switch (Preferences.ButtonsDisplay)
             {
-                case PriorityDisplayFormat.TEXT_ONLY:
-                    DrawEditAndComplete_Text(aRect, aQQQ);
+                case ButtonsDisplayFormat.REGULAR_BUTTONS:
+                    DrawEditAndComplete_Default(aRect, aQQQ);
                     break;
                 default:
-                    DrawEditAndComplete_Texture(aRect, aQQQ);
+                    DrawEditAndComplete_Icon(aRect, aQQQ);
                     break;
             }
         }
 
 
         /// Draw Edit and Complete with texture buttons.
-        private void DrawEditAndComplete_Texture(Rect aRect, QQQ aQQQ)
+        private void DrawEditAndComplete_Icon(Rect aRect, QQQ aQQQ)
         {
             GUI.skin = _skin;
             // "Edit" button.
@@ -390,7 +390,7 @@ namespace GDTB.CodeTODOs
 
 
         /// Draw Edit and Complete with regular buttons.
-        private void DrawEditAndComplete_Text(Rect aRect, QQQ aQQQ)
+        private void DrawEditAndComplete_Default(Rect aRect, QQQ aQQQ)
         {
             GUI.skin = _defaultSkin;
             // "Edit" button.
@@ -428,24 +428,24 @@ namespace GDTB.CodeTODOs
         /// Draw Add, Refresh and Edit based of preferences.
         private void DrawARS()
         {
-            switch (Preferences.QQQPriorityDisplay)
+            switch (Preferences.ButtonsDisplay)
             {
-                case PriorityDisplayFormat.TEXT_ONLY:
-                    DrawAdd_Text();
-                    DrawRefresh_Text();
-                    DrawSettings_Text();
+                case ButtonsDisplayFormat.REGULAR_BUTTONS:
+                    DrawAdd_Default();
+                    DrawRefresh_Default();
+                    DrawSettings_Default();
                     break;
                 default:
-                    DrawAdd_Texture();
-                    DrawRefresh_Texture();
-                    DrawSettings_Texture();
+                    DrawAdd_Icon();
+                    DrawRefresh_Icon();
+                    DrawSettings_Icon();
                     break;
             }
         }
 
 
         /// Draw the texture "Add" button.
-        private void DrawAdd_Texture()
+        private void DrawAdd_Icon()
         {
             GUI.skin = _skin;
             // "Add" button.
@@ -461,7 +461,7 @@ namespace GDTB.CodeTODOs
 
 
         /// Draw the text "Add" button.
-        private void DrawAdd_Text()
+        private void DrawAdd_Default()
         {
             GUI.skin = _defaultSkin;
             // "Add" button.
@@ -477,7 +477,7 @@ namespace GDTB.CodeTODOs
 
 
         /// Draw the texture "Refresh" button.
-        private void DrawRefresh_Texture()
+        private void DrawRefresh_Icon()
         {
             GUI.skin = _skin;
             // "Refresh" button.
@@ -495,7 +495,7 @@ namespace GDTB.CodeTODOs
 
 
         /// Draw the text "Refresh" button.
-        private void DrawRefresh_Text()
+        private void DrawRefresh_Default()
         {
             GUI.skin = _defaultSkin;
             // "Refesh" button.
@@ -513,7 +513,7 @@ namespace GDTB.CodeTODOs
 
 
         /// Draw the texture "Settings" button.
-        private void DrawSettings_Texture()
+        private void DrawSettings_Icon()
         {
             GUI.skin = _skin;
             // "Settings" button.
@@ -533,7 +533,7 @@ namespace GDTB.CodeTODOs
 
 
         /// Draw the texture "Settings" button.
-        private void DrawSettings_Text()
+        private void DrawSettings_Default()
         {
             GUI.skin = _defaultSkin;
             // "Settings" button.
@@ -565,26 +565,33 @@ namespace GDTB.CodeTODOs
             _unit = (int)(width / 28) == 0 ? 1 : (int)(width / 28); // If the unit would be 0, set it to 1.
 
             // Priority rect width has different size based on preferences.
-            if (Preferences.QQQPriorityDisplay.ToString() == "ICON_ONLY")
+            if (Preferences.PriorityDisplay.ToString() == "ICON_ONLY")
             {
                 _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize + _offset) * 2);
-                _editAndDoneWidth = (IconSize * 2) + 5;
             }
-            else if (Preferences.QQQPriorityDisplay.ToString() == "BARS")
+            else if (Preferences.PriorityDisplay.ToString() == "BARS")
             {
                 _priorityWidth = IconSize * 2;
-                _editAndDoneWidth = (IconSize * 2) + 5;
             }
-            else if (Preferences.QQQPriorityDisplay.ToString() == "TEXT_ONLY")
+            else if (Preferences.PriorityDisplay.ToString() == "TEXT_ONLY")
             {
                 _priorityWidth = _priorityLabelWidth + _offset * 4;
-                _editAndDoneWidth = ButtonWidth + _offset;
             }
             else
             {
                 _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize * 2) + _priorityLabelWidth);
+            }
+
+            // Same for buttons size
+            if(Preferences.ButtonsDisplay.ToString() == "COOL_ICONS")
+            {
                 _editAndDoneWidth = (IconSize * 2) + 5;
             }
+            else
+            {
+                _editAndDoneWidth = ButtonWidth + _offset;
+            }
+
             _qqqWidth = (int)width - _priorityWidth - _editAndDoneWidth - (_offset * 2);
         }
 
