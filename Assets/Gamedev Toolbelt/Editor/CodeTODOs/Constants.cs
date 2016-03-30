@@ -11,7 +11,7 @@
         public const string FILE_SETTINGS = "GUI/gdtb_SETTINGS";
         public const string FILE_QQQ_REFRESH = "GUI/gdtb_REFRESH";
 
-        public const string FILE_GUISKIN = "GUI/GDTB_CodeTODOsSkin";
+        public const string FILE_GUISKIN = "GUI/codetodos_skin";
 
         public const int NORMAL_CHAR_WIDTH = 7;
         public const float LINE_HEIGHT = 16.5f;
