@@ -6,6 +6,11 @@ namespace GDTB.CodeTODOs
 {
     public class WindowAdd : EditorWindow
     {
+        public static WindowAdd Instance { get; private set; }
+        public static bool IsOpen {
+            get { return Instance != null; }
+        }
+
         private GUISkin _GDTBSkin;
 
         private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
@@ -17,18 +22,27 @@ namespace GDTB.CodeTODOs
 
         private GUISkin _defaultSkin;
 
+        private const int IconSize = 16;
+        private const int ButtonWidth = 70;
+        private const int ButtonHeight = 18;
+
 
         public static void Init()
         {
             WindowAdd window = (WindowAdd)EditorWindow.GetWindow(typeof(WindowAdd));
+            window.titleContent = new GUIContent("Add task");
+            window.minSize = new Vector2(208f, 230f);
             window.ShowUtility();
         }
 
+
         public void OnEnable()
         {
+            Instance = this;
             _GDTBSkin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
             _script = new MonoScript();
         }
+
 
         public void OnGUI()
         {
@@ -40,7 +54,7 @@ namespace GDTB.CodeTODOs
             DrawTaskField();
             DrawPriorityPopup();
             DrawLineField();
-            DrawButton();
+            DrawAdd();
         }
 
 
@@ -93,14 +107,29 @@ namespace GDTB.CodeTODOs
         }
 
 
-        /// Draw "Add task" button.
-        private void DrawButton()
+        /// Draw Add based of preferences.
+        private void DrawAdd()
+        {
+            switch (Preferences.ButtonsDisplay)
+            {
+                case ButtonsDisplayFormat.REGULAR_BUTTONS:
+                    DrawAdd_Default();
+                    break;
+                default:
+                    DrawAdd_Icon();
+                    break;
+            }
+        }
+
+
+        /// Draw icon Add.
+        private void DrawAdd_Icon()
         {
             GUI.skin = _GDTBSkin;
 
-            var buttonRect = new Rect((Screen.width / 2) - 37, 210, 74, 20);
-
-            if (GUI.Button(buttonRect, "Add task"))
+            var buttonRect = new Rect((position.width / 2) - IconSize / 2, position.height - IconSize * 1.5f, IconSize, IconSize);
+            var buttonContent = new GUIContent(Resources.Load(Constants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D, "Add task");
+            if (GUI.Button(buttonRect, buttonContent))
             {
                 if (_script.name == "")
                 {
@@ -122,6 +151,38 @@ namespace GDTB.CodeTODOs
                 }
             }
             GUI.skin = _defaultSkin;
+        }
+
+
+        /// Draw default-button Add.
+        private void DrawAdd_Default()
+        {
+            GUI.skin = _defaultSkin;
+
+            var buttonRect = new Rect((position.width / 2) - ButtonWidth / 2, position.height - ButtonHeight * 1.5f, ButtonWidth, ButtonHeight);
+
+            var buttonContent = new GUIContent("Add task", "Add task");
+            if (GUI.Button(buttonRect, buttonContent))
+            {
+                if (_script.name == "")
+                {
+                    EditorUtility.DisplayDialog("No script selected", "Please select a script.", "Ok");
+                }
+                else if (_task == "")
+                {
+                    EditorUtility.DisplayDialog("No task to add", "Please create a task.", "Ok");
+                }
+                else
+                {
+                    if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Cancel"))
+                    {
+                        var path = AssetDatabase.GetAssetPath(_script);
+                        var newQQQ = new QQQ(_priority, _task, path, _lineNumber);
+                        Helper.AddQQQ(newQQQ);
+                        EditorWindow.GetWindow(typeof(WindowAdd)).Close();
+                    }
+                }
+            }
         }
     }
 }
