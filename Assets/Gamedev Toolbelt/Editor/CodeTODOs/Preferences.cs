@@ -20,11 +20,22 @@ namespace GDTB.CodeTODOs
         public const string PREFS_CODETODOS_PRIORITY_DISPLAY = "GDTB_CodeTODOs_PriorityDisplay";
         private static PriorityDisplayFormat _priorityDisplay = PriorityDisplayFormat.BARS;
         private static int _priorityDisplay_default = 3;
-        public static PriorityDisplayFormat QQQPriorityDisplay
+        public static PriorityDisplayFormat PriorityDisplay
         {
             get { return _priorityDisplay; }
         }
         private static string[] _displayFormatsString = { "Text only", "Icon only", "Icon and Text", "Bars" };
+
+
+        // Buttons displayed as normal buttons or smaller icons.
+        public const string PREFS_CODETODOS_BUTTONS_DISPLAY = "GDTB_CodeTODOs_ButtonDisplay";
+        private static ButtonsDisplayFormat _buttonsDisplay = ButtonsDisplayFormat.COOL_ICONS;
+        private static int _buttonsDisplay_default = 1;
+        public static ButtonsDisplayFormat ButtonsDisplay
+        {
+            get { return _buttonsDisplay; }
+        }
+        private static string[] _buttonsFormatsString = { "Cool icons", "Regular buttons" };
 
 
         // Auto-update QQQs.
@@ -95,7 +106,8 @@ namespace GDTB.CodeTODOs
             GetAllPrefValues();
             EditorGUILayout.BeginVertical();
             _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
-            _priorityDisplay = (PriorityDisplayFormat)EditorGUILayout.Popup("Priority format", System.Convert.ToInt16(_priorityDisplay), _displayFormatsString);
+            _priorityDisplay = (PriorityDisplayFormat)EditorGUILayout.Popup("Priority style", System.Convert.ToInt16(_priorityDisplay), _displayFormatsString);
+            _buttonsDisplay = (ButtonsDisplayFormat)EditorGUILayout.Popup("Button style", System.Convert.ToInt16(_buttonsDisplay), _buttonsFormatsString);
             _autoRefresh = EditorGUILayout.Toggle("Auto refresh", _autoRefresh);
             EditorGUILayout.Separator();
             _priColor1 = EditorGUILayout.ColorField("Urgent priority", _priColor1);
@@ -112,6 +124,10 @@ namespace GDTB.CodeTODOs
             {
                 SetPrefValues();
                 GetAllPrefValues();
+                if(EditorWindow.GetWindow(typeof(WindowMain)) != null)
+                {
+                    EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
+                }
             }
         }
 
@@ -121,6 +137,7 @@ namespace GDTB.CodeTODOs
         {
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, _todoToken);
             EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(_priorityDisplay));
+            EditorPrefs.SetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, System.Convert.ToInt16(_buttonsDisplay));
             EditorPrefs.SetBool(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh);
 
             SetColorPrefs();
@@ -155,13 +172,14 @@ namespace GDTB.CodeTODOs
         public static void GetAllPrefValues()
         {
             _todoToken = GetPrefValue(PREFS_CODETODOS_TOKEN, _todoToken_default); // TODO token.
-            _priorityDisplay = (PriorityDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, _priorityDisplay_default); // QQQ Priority display
-            _autoRefresh = GetPrefValue(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh
+            _priorityDisplay = (PriorityDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, _priorityDisplay_default); // QQQ Priority display.
+            _buttonsDisplay = (ButtonsDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, _buttonsDisplay_default); // Buttons display.
+            _autoRefresh = GetPrefValue(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh.
             _priColor1 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, _priColor1_default); // URGENT priority color.
             _priColor2 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, _priColor2_default); // NORMAL priority color.
             _priColor3 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, _priColor3_default); // MINOR priority color.
             _borderColor = GetPrefValue(PREFS_CODETODOS_COLOR_BORDER, _borderColor_default); // Priority bar border color.
-            _shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut
+            _shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut.
             ParseShortcutValues();
         }
 
@@ -307,6 +325,7 @@ namespace GDTB.CodeTODOs
         {
             _todoToken = _todoToken_default;
             _priorityDisplay = (PriorityDisplayFormat)_priorityDisplay_default;
+            _buttonsDisplay = (ButtonsDisplayFormat)_buttonsDisplay_default;
             _autoRefresh = _autoRefresh_default;
             _priColor1 = new Color(_priColor1_default.r / 255, _priColor1_default.g / 255, _priColor1_default.b / 255, _priColor1_default.a);
             _priColor2 = new Color(_priColor2_default.r / 255, _priColor2_default.g / 255, _priColor2_default.b / 255, _priColor2_default.a);
@@ -326,5 +345,12 @@ namespace GDTB.CodeTODOs
         ICON_ONLY,
         ICON_AND_TEXT,
         BARS
+    }
+
+
+    public enum ButtonsDisplayFormat
+    {
+        COOL_ICONS,
+        REGULAR_BUTTONS
     }
 }
