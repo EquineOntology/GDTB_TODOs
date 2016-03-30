@@ -192,17 +192,17 @@ namespace GDTB.CodeTODOs
             GUI.skin = _skin;
             // Prepare the rectangle for layouting. The layout is "space-icon-space".
             var priorityRect = aRect;
-            var newY = 0;
-            var newX = 0;
+            var newY = 0.0f;
+            var newX = 0.0f;
             if (aRect.width > IconSize + (_offset * 2))
             {
-                newX = (int)priorityRect.x + IconSize / 2 + _offset;
-                newY = (int)priorityRect.y + IconSize / 2 + _offset;
+                newX = priorityRect.x + IconSize / 2 + _offset;
+                newY = priorityRect.y + IconSize / 2 + _offset;
             }
             else
             {
-                newX = (int)priorityRect.x + IconSize / 2;
-                newY = (int)priorityRect.y + IconSize / 2;
+                newX = priorityRect.x + IconSize / 2;
+                newY = priorityRect.y + IconSize / 2;
             }
 
             priorityRect.width = IconSize;
@@ -221,11 +221,13 @@ namespace GDTB.CodeTODOs
             priorityRect.width -= _offset;
             priorityRect.height -= (IconSize / 2 + _offset);
 
-            var newX = (int)priorityRect.x + _offset * 2;
-            var newY = (int)priorityRect.y + _offset - 1;
+            var newX = priorityRect.x + _offset * 2;
+            var newY = priorityRect.y + _offset - 1;
             priorityRect.position = new Vector2(newX, newY);
 
-            EditorGUI.LabelField(priorityRect, aQQQ.Priority.ToString());
+            var priority = aQQQ.Priority.ToString();
+            priority = priority == "MINOR" ? " MINOR" : priority;
+            EditorGUI.LabelField(priorityRect, priority);
         }
 
 
@@ -238,8 +240,8 @@ namespace GDTB.CodeTODOs
             iconRect.width = IconSize;
             iconRect.height = IconSize;
 
+            var iconNewX = iconRect.x + IconSize + _offset * 2;//iconRect.x + Mathf.Clamp(_unit, 1, IconSize + (int)(_priorityLabelWidth / 2));
             var iconNewY = iconRect.y + _offset;
-            var iconNewX = iconRect.x + Mathf.Clamp(_unit, 1, IconSize + (int)(_priorityLabelWidth / 2));
             iconRect.position = new Vector2(iconNewX, iconNewY);
 
             Texture2D tex = GetQQQPriorityTexture((int)aQQQ.Priority);
@@ -249,11 +251,14 @@ namespace GDTB.CodeTODOs
             var labelRect = aRect;
             labelRect.width -= _offset;
 
-            var labelNewX = labelRect.x + _offset;
-            var labelNewY = (int)(iconRect.y + iconRect.height);
+            var labelNewX = labelRect.x + _offset * 2;
+            var labelNewY = iconRect.y + iconRect.height;
             labelRect.position = new Vector2(labelNewX, labelNewY);
 
-            EditorGUI.LabelField(labelRect, aQQQ.Priority.ToString());
+            var priority = aQQQ.Priority.ToString();
+            priority = priority == "MINOR" ? " MINOR" : priority;
+
+            EditorGUI.LabelField(labelRect, priority);
         }
 
 
@@ -573,14 +578,10 @@ namespace GDTB.CodeTODOs
             {
                 _priorityWidth = IconSize * 2;
             }
-            else// if (Preferences.PriorityDisplay.ToString() == "TEXT_ONLY")
-            {
-                _priorityWidth = _priorityLabelWidth + _offset * 4;
-            }/*
             else
             {
-                _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize * 2) + _priorityLabelWidth);
-            }*/
+                _priorityWidth = _priorityLabelWidth + _offset * 4;
+            }
 
             // Same for buttons size
             if(Preferences.ButtonsDisplay.ToString() == "COOL_ICONS")
