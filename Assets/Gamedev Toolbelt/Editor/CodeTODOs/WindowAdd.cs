@@ -146,7 +146,7 @@ namespace GDTB.CodeTODOs
                     {
                         var path = AssetDatabase.GetAssetPath(_script);
                         var newQQQ = new QQQ(_priority, _task, path, _lineNumber);
-                        Helper.AddQQQ(newQQQ);
+                        QQQOps.AddQQQ(newQQQ);
                         EditorWindow.GetWindow(typeof(WindowAdd)).Close();
                     }
                 }
@@ -179,7 +179,7 @@ namespace GDTB.CodeTODOs
                     {
                         var path = AssetDatabase.GetAssetPath(_script);
                         var newQQQ = new QQQ(_priority, _task, path, _lineNumber);
-                        Helper.AddQQQ(newQQQ);
+                        QQQOps.AddQQQ(newQQQ);
                         EditorWindow.GetWindow(typeof(WindowAdd)).Close();
                     }
                 }

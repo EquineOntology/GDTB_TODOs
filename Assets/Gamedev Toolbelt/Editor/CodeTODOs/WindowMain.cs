@@ -47,8 +47,8 @@ namespace GDTB.CodeTODOs
 
             if (QQQs.Count == 0 && Preferences.AutoRefresh)
             {
-                Helper.GetQQQsFromAllScripts();
-                Helper.ReorderQQQs();
+                QQQOps.GetQQQsFromAllScripts();
+                QQQOps.ReorderQQQs();
             }
             else if (Preferences.AutoRefresh == false)
             {
@@ -331,14 +331,14 @@ namespace GDTB.CodeTODOs
             scriptRect.height = Constants.LINE_HEIGHT;
 
             //var scriptLabel = aQQQ.Script;
-            var scriptLabel = Helper.CreateScriptLabel(aQQQ, scriptRect.width, _scriptStyle);
+            var scriptLabel = QQQOps.CreateScriptLabel(aQQQ, scriptRect.width, _scriptStyle);
             EditorGUI.LabelField(scriptRect, scriptLabel, _scriptStyle);
 
             // Open editor on click.
             EditorGUIUtility.AddCursorRect(scriptRect, MouseCursor.Link);
             if (Event.current.type == EventType.MouseUp && scriptRect.Contains(Event.current.mousePosition))
             {
-                Helper.OpenScript(aQQQ);
+                QQQOps.OpenScript(aQQQ);
             }
         }
 
@@ -395,7 +395,7 @@ namespace GDTB.CodeTODOs
                 // Confirmation dialog.
                 if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
                 {
-                    Helper.CompleteQQQ(aQQQ);
+                    QQQOps.CompleteQQQ(aQQQ);
                 }
             }
         }
@@ -430,7 +430,7 @@ namespace GDTB.CodeTODOs
                 // Confirmation dialog.
                 if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
                 {
-                    Helper.CompleteQQQ(aQQQ);
+                    QQQOps.CompleteQQQ(aQQQ);
                 }
             }
         }
@@ -500,8 +500,8 @@ namespace GDTB.CodeTODOs
             if (GUI.Button(refreshRect, refreshButton))
             {
                 QQQs.Clear();
-                Helper.GetQQQsFromAllScripts();
-                Helper.ReorderQQQs();
+                QQQOps.GetQQQsFromAllScripts();
+                QQQOps.ReorderQQQs();
             }
         }
 
@@ -518,8 +518,8 @@ namespace GDTB.CodeTODOs
             if (GUI.Button(refreshRect, refreshButton))
             {
                 QQQs.Clear();
-                Helper.GetQQQsFromAllScripts();
-                Helper.ReorderQQQs();
+                QQQOps.GetQQQsFromAllScripts();
+                QQQOps.ReorderQQQs();
             }
         }
 

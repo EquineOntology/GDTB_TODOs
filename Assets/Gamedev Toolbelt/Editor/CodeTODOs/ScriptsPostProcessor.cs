@@ -19,7 +19,7 @@ namespace GDTB.CodeTODOs
             {
                 if (asset.EndsWith(".cs") || asset.EndsWith(".js"))
                 {
-                    Helper.RemoveScript(asset);
+                    QQQOps.RemoveScript(asset);
                 }
             }
 
@@ -29,7 +29,7 @@ namespace GDTB.CodeTODOs
             {
                 if (movedAssets[i].EndsWith(".cs") || movedAssets[i].EndsWith(".js"))
                 {
-                    Helper.ChangeScriptOfQQQ(movedFromAssetPaths[i], movedAssets[i]);
+                    QQQOps.ChangeScriptOfQQQ(movedFromAssetPaths[i], movedAssets[i]);
                 }
             }
 
@@ -58,7 +58,7 @@ namespace GDTB.CodeTODOs
             {
                 if (asset.EndsWith(".cs") || asset.EndsWith(".js"))
                 {
-                    Helper.AddQQQs(asset);
+                    QQQOps.AddQQQs(asset);
                 }
             }
         }

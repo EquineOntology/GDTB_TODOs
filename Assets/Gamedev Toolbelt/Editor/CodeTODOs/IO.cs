@@ -375,7 +375,7 @@ namespace GDTB.CodeTODOs
             {
                 foreach (var qqq in WindowMain.QQQs)
                 {
-                    var priority = Helper.PriorityToInt(qqq.Priority);
+                    var priority = QQQOps.PriorityToInt(qqq.Priority);
                     var task = qqq.Task.Replace("|", "(U+007C)"); // Replace pipes so that the parser doesn't get confused on reimport.
                     var line = priority + "|" + task + "|" + qqq.Script + "|" + qqq.LineNumber;
                     writer.WriteLine(line);

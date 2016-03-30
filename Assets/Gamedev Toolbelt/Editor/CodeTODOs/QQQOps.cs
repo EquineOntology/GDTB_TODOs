@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GDTB.CodeTODOs
 {
-    public static class Helper
+    public static class QQQOps
     {
         /// Find all files ending with .cs or .js (exclude those in exclude.txt).
         public static List<string> FindAllScripts()
@@ -119,7 +119,7 @@ namespace GDTB.CodeTODOs
         /// Add the QQQs in a script to the list in CodeTODOs.
         public static void AddQQQs(string aScript)
         {
-            var qqqs = Helper.GetQQQsFromScript(aScript);
+            var qqqs = QQQOps.GetQQQsFromScript(aScript);
 
             for (int i = 0; i < qqqs.Count; i++)
             {

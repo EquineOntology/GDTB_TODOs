@@ -112,7 +112,7 @@ namespace GDTB.CodeTODOs
                 // Confirmation dialog.
                 if (EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
                 {
-                    Helper.UpdateTask(_oldQQQ, _newQQQ);
+                    QQQOps.UpdateTask(_oldQQQ, _newQQQ);
 
                     if (WindowMain.IsOpen)
                     {
