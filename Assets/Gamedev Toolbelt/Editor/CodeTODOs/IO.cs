@@ -36,8 +36,10 @@ namespace GDTB.CodeTODOs
                         q.Enqueue(subDir);
                     }
                 }
-                catch (Exception ex){
+                catch (Exception ex)
+                {
                     UnityEngine.Debug.Log(ex.Message);
+                    UnityEngine.Debug.Log(ex.Data);
                     UnityEngine.Debug.Log(ex.StackTrace);
                 }
 
@@ -46,9 +48,10 @@ namespace GDTB.CodeTODOs
                 {
                     folders = Directory.GetDirectories(path);
                 }
-                catch (Exception ex){
-
+                catch (Exception ex)
+                {
                     UnityEngine.Debug.Log(ex.Message);
+                    UnityEngine.Debug.Log(ex.Data);
                     UnityEngine.Debug.Log(ex.StackTrace);
                 }
 
@@ -104,8 +107,11 @@ namespace GDTB.CodeTODOs
                 File.Delete(aFile);
                 File.Move(tempFile, aFile);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                UnityEngine.Debug.Log(ex.Message);
+                UnityEngine.Debug.Log(ex.Data);
+                UnityEngine.Debug.Log(ex.StackTrace);
                 reader.Dispose();
                 writer.Dispose();
             }
@@ -176,8 +182,11 @@ namespace GDTB.CodeTODOs
                 File.Delete(anOldQQQ.Script);
                 File.Move(tempFile, anOldQQQ.Script);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                UnityEngine.Debug.Log(ex.Message);
+                UnityEngine.Debug.Log(ex.Data);
+                UnityEngine.Debug.Log(ex.StackTrace);
                 reader.Dispose();
                 writer.Dispose();
             }
@@ -276,8 +285,11 @@ namespace GDTB.CodeTODOs
                 }
                 reader.Close();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                UnityEngine.Debug.Log(ex.Message);
+                UnityEngine.Debug.Log(ex.Data);
+                UnityEngine.Debug.Log(ex.StackTrace);
                 reader.Dispose();
             }
             return excludedScripts;
@@ -328,8 +340,11 @@ namespace GDTB.CodeTODOs
                     }
                     reader.Close();
                 }
-                catch(Exception)
+                catch (Exception ex)
                 {
+                    UnityEngine.Debug.Log(ex.Message);
+                    UnityEngine.Debug.Log(ex.Data);
+                    UnityEngine.Debug.Log(ex.StackTrace);
                     reader.Dispose();
                 }
             }
@@ -428,8 +443,11 @@ namespace GDTB.CodeTODOs
                 File.Move(tempFile, file);
                 UnityEditor.AssetDatabase.ImportAsset(file);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                UnityEngine.Debug.Log(ex.Message);
+                UnityEngine.Debug.Log(ex.Data);
+                UnityEngine.Debug.Log(ex.StackTrace);
                 reader.Dispose();
                 writer.Dispose();
             }

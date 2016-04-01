@@ -330,7 +330,6 @@ namespace GDTB.CodeTODOs
             scriptRect.y += (taskRect.height + 5);
             scriptRect.height = Constants.LINE_HEIGHT;
 
-            //var scriptLabel = aQQQ.Script;
             var scriptLabel = QQQOps.CreateScriptLabel(aQQQ, scriptRect.width, _scriptStyle);
             EditorGUI.LabelField(scriptRect, scriptLabel, _scriptStyle);
 
@@ -499,9 +498,7 @@ namespace GDTB.CodeTODOs
             // Refresh on click.
             if (GUI.Button(refreshRect, refreshButton))
             {
-                QQQs.Clear();
-                QQQOps.GetQQQsFromAllScripts();
-                QQQOps.ReorderQQQs();
+                QQQOps.RefreshList();
             }
         }
 
@@ -517,9 +514,7 @@ namespace GDTB.CodeTODOs
             // Refresh on click.
             if (GUI.Button(refreshRect, refreshButton))
             {
-                QQQs.Clear();
-                QQQOps.GetQQQsFromAllScripts();
-                QQQOps.ReorderQQQs();
+                QQQOps.RefreshList();
             }
         }
 
