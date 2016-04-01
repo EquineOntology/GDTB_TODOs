@@ -45,10 +45,9 @@ namespace GDTB.CodeTODOs
             window.UpdateLayoutingSizes();
             window._priorityLabelWidth = (int)window._priorityStyle.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
 
-            if (QQQs.Count == 0 && Preferences.AutoRefresh)
+            if (QQQs.Count == 0 && Preferences.AutoRefresh == true)
             {
-                QQQOps.GetQQQsFromAllScripts();
-                QQQOps.ReorderQQQs();
+                QQQOps.RefreshList();
             }
             else if (Preferences.AutoRefresh == false)
             {
@@ -79,6 +78,22 @@ namespace GDTB.CodeTODOs
             }
             GUI.skin = _skin;
 
+            // If the list is clean (for instance because we just recompiled) load QQQs based on preferences.
+            if (QQQs.Count == 0)
+            {
+                if (Preferences.AutoRefresh == true)
+                {
+                    QQQOps.RefreshList();
+                }
+                else
+                {
+                    Debug.Log("Blimey");
+                    QQQs.Clear();
+                    QQQs.AddRange(IO.LoadStoredQQQs());
+                }
+            }
+
+            // If the list is still clean after the above, then we really have no QQQs.
             if (QQQs.Count == 0)
             {
                 DrawNoQQQsMessage();
