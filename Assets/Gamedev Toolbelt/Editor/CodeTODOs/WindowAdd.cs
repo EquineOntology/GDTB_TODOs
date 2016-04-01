@@ -142,7 +142,22 @@ namespace GDTB.CodeTODOs
                 }
                 else
                 {
-                    if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Cancel"))
+                    var execute = false;
+                    // Get confirmation (through confirmation dialog or automatically if conf. is off).
+                    if (Preferences.ShowConfirmationDialogs == true)
+                    {
+                        if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Cancel"))
+                        {
+                            execute = true;
+                        }
+                    }
+                    else
+                    {
+                        execute = true;
+                    }
+
+                    // Do the thing.
+                    if (execute == true)
                     {
                         var path = AssetDatabase.GetAssetPath(_script);
                         var newQQQ = new QQQ(_priority, _task, path, _lineNumber);
@@ -150,8 +165,8 @@ namespace GDTB.CodeTODOs
                         EditorWindow.GetWindow(typeof(WindowAdd)).Close();
                     }
                 }
+                GUI.skin = _defaultSkin;
             }
-            GUI.skin = _defaultSkin;
         }
 
 
@@ -175,7 +190,22 @@ namespace GDTB.CodeTODOs
                 }
                 else
                 {
-                    if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Cancel"))
+                    var execute = false;
+                    // Get confirmation (through confirmation dialog or automatically if conf. is off).
+                    if (Preferences.ShowConfirmationDialogs == true)
+                    {
+                        if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Cancel"))
+                        {
+                            execute = true;
+                        }
+                    }
+                    else
+                    {
+                        execute = true;
+                    }
+
+                    // Do the thing.
+                    if (execute == true)
                     {
                         var path = AssetDatabase.GetAssetPath(_script);
                         var newQQQ = new QQQ(_priority, _task, path, _lineNumber);

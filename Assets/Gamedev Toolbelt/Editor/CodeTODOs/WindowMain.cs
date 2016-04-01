@@ -391,8 +391,22 @@ namespace GDTB.CodeTODOs
             // Complete QQQ on click.
             if (GUI.Button(completeRect, completeButton))
             {
-                // Confirmation dialog.
-                if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
+                // Get confirmation (through confirmation dialog or automatically if conf. dialogs are off).
+                var execute = false;
+                if (Preferences.ShowConfirmationDialogs == true)
+                {
+                    if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
+                    {
+                        QQQOps.CompleteQQQ(aQQQ);
+                    }
+                }
+                else
+                {
+                    execute = true;
+                }
+
+                // Do the thing.
+                if (execute == true)
                 {
                     QQQOps.CompleteQQQ(aQQQ);
                 }
@@ -426,8 +440,22 @@ namespace GDTB.CodeTODOs
             // Complete QQQ on click.
             if (GUI.Button(completeRect, completeButton))
             {
-                // Confirmation dialog.
-                if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
+                // Get confirmation (through confirmation dialog or automatically if conf. dialogs are off).
+                var execute = false;
+                if (Preferences.ShowConfirmationDialogs == true)
+                {
+                    if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
+                    {
+                        execute = true;
+                    }
+                }
+                else
+                {
+                    execute = true;
+                }
+
+                // Do the thing.
+                if (execute == true)
                 {
                     QQQOps.CompleteQQQ(aQQQ);
                 }
