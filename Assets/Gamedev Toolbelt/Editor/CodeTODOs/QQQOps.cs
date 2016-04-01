@@ -247,7 +247,8 @@ namespace GDTB.CodeTODOs
         public static void CompleteQQQ(QQQ aQQQ)
         {
             IO.RemoveLineFromFile(aQQQ.Script, aQQQ.LineNumber);
-            WindowMain.QQQs.Remove(aQQQ);
+            RefreshList();
+
         }
 
 
@@ -274,12 +275,23 @@ namespace GDTB.CodeTODOs
         }
 
 
+        /// Re-import all QQQs.
+        public static void RefreshList()
+        {
+            WindowMain.QQQs.Clear();
+            QQQOps.GetQQQsFromAllScripts();
+            QQQOps.ReorderQQQs();
+        }
+
+
         /// Create a new QQQ at the beginning of a script.
         public static void AddQQQ(QQQ aQQQ)
         {
             IO.AddQQQ(aQQQ);
-            WindowMain.QQQs.Add(aQQQ);
-            ReorderQQQs();
+            //var adjustedQQQ = aQQQ;
+            //adjustedQQQ.LineNumber -= 1;
+            //WindowMain.QQQs.Add(adjustedQQQ);
+            RefreshList();
             EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
         }
 
