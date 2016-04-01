@@ -38,6 +38,16 @@ namespace GDTB.CodeTODOs
         private static string[] _buttonsFormatsString = { "Cool icons", "Regular buttons" };
 
 
+        // Confirmation dialogus
+        public const string PREFS_CODETODOS_CONFIRMATION_DIALOGS = "GDTB_CodeTODOs_ConfirmationDialogs";
+        private static bool _confirmationDialogs = true;
+        private static bool _confirmationDialogs_default = true;
+        public static bool ShowConfirmationDialogs
+        {
+            get { return _confirmationDialogs; }
+        }
+
+
         // Auto-update QQQs.
         public const string PREFS_CODETODOS_AUTO_REFRESH = "GDTB_CodeTODOs_AutoUpdate";
         private static bool _autoRefresh = true;
@@ -105,21 +115,30 @@ namespace GDTB.CodeTODOs
         public static void PreferencesGUI()
         {
             GetAllPrefValues();
+
             EditorGUILayout.BeginVertical();
             _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
             _priorityDisplay = (PriorityDisplayFormat)EditorGUILayout.Popup("Priority style", System.Convert.ToInt16(_priorityDisplay), _displayFormatsString);
             _buttonsDisplay = (ButtonsDisplayFormat)EditorGUILayout.Popup("Button style", System.Convert.ToInt16(_buttonsDisplay), _buttonsFormatsString);
             _autoRefresh = EditorGUILayout.Toggle("Auto refresh", _autoRefresh);
+            _confirmationDialogs = EditorGUILayout.Toggle("Show confirmation dialogs", _confirmationDialogs);
+
             EditorGUILayout.Separator();
+
             _priColor1 = EditorGUILayout.ColorField("Urgent priority", _priColor1);
             _priColor2 = EditorGUILayout.ColorField("Normal priority", _priColor2);
             _priColor3 = EditorGUILayout.ColorField("Minor priority", _priColor3);
             _borderColor = EditorGUILayout.ColorField("Borders", _borderColor);
+
             EditorGUILayout.Separator();
+
             _newShortcut = DrawShortcutSelector();
+
             GUILayout.Space(20);
+
             DrawResetButton();
             EditorGUILayout.EndVertical();
+
             if (GUI.changed)
             {
                 // Save QQQs when switching off autorefresh.
@@ -143,7 +162,7 @@ namespace GDTB.CodeTODOs
             EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(_priorityDisplay));
             EditorPrefs.SetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, System.Convert.ToInt16(_buttonsDisplay));
             EditorPrefs.SetBool(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh);
-
+            EditorPrefs.SetBool(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs);
             SetColorPrefs();
             SetShortcutPrefs();
         }
@@ -180,6 +199,7 @@ namespace GDTB.CodeTODOs
             _buttonsDisplay = (ButtonsDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, _buttonsDisplay_default); // Buttons display.
             _autoRefresh = GetPrefValue(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh.
             _oldAutoRefresh = _autoRefresh;
+            _confirmationDialogs = GetPrefValue(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs_default);
             _priColor1 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, _priColor1_default); // URGENT priority color.
             _priColor2 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, _priColor2_default); // NORMAL priority color.
             _priColor3 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, _priColor3_default); // MINOR priority color.

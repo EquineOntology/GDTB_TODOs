@@ -288,9 +288,6 @@ namespace GDTB.CodeTODOs
         public static void AddQQQ(QQQ aQQQ)
         {
             IO.AddQQQ(aQQQ);
-            //var adjustedQQQ = aQQQ;
-            //adjustedQQQ.LineNumber -= 1;
-            //WindowMain.QQQs.Add(adjustedQQQ);
             RefreshList();
             EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
         }

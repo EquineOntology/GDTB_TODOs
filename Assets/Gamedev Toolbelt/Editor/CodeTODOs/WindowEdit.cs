@@ -109,16 +109,29 @@ namespace GDTB.CodeTODOs
 
             if (GUI.Button(buttonRect, buttonContent))
             {
-                // Confirmation dialog.
-                if (EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
+                // Get confirmation (through confirmation dialog or automatically if conf. is off).
+                var execute = false;
+
+                if (Preferences.ShowConfirmationDialogs == true)
+                {
+                    if (EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
+                    {
+                        execute = true;
+                    }
+                }
+                else
+                {
+                    execute = true;
+                }
+
+                // Do the thing.
+                if (execute == true)
                 {
                     QQQOps.UpdateTask(_oldQQQ, _newQQQ);
-
                     if (WindowMain.IsOpen)
                     {
                         EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
                     }
-
                     EditorWindow.GetWindow(typeof(WindowEdit)).Close();
                 }
             }
