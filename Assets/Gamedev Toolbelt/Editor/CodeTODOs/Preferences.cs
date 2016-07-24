@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace GDTB.CodeTODOs
+namespace com.immortalhydra.gdtb.codetodos
 {
     public class Preferences
     {
         #region fields
         // TODO token (QQQ).
-        public const string PREFS_CODETODOS_TOKEN = "GDTB_CodeTODOs_TODOToken";
+        private const string PREFS_CODETODOS_TOKEN = "GDTB_CodeTODOs_TODOToken";
         private static string _todoToken = "QQQ";
         private static string _todoToken_default = "QQQ";
         public static string TODOToken
@@ -17,7 +17,7 @@ namespace GDTB.CodeTODOs
 
 
         // Priority displayed as text, icon, text + icon.
-        public const string PREFS_CODETODOS_PRIORITY_DISPLAY = "GDTB_CodeTODOs_PriorityDisplay";
+        private const string PREFS_CODETODOS_PRIORITY_DISPLAY = "GDTB_CodeTODOs_PriorityDisplay";
         private static PriorityDisplayFormat _priorityDisplay = PriorityDisplayFormat.BARS;
         private static int _priorityDisplay_default = 3;
         public static PriorityDisplayFormat PriorityDisplay
@@ -28,7 +28,7 @@ namespace GDTB.CodeTODOs
 
 
         // Buttons displayed as normal buttons or smaller icons.
-        public const string PREFS_CODETODOS_BUTTONS_DISPLAY = "GDTB_CodeTODOs_ButtonDisplay";
+        private const string PREFS_CODETODOS_BUTTONS_DISPLAY = "GDTB_CodeTODOs_ButtonDisplay";
         private static ButtonsDisplayFormat _buttonsDisplay = ButtonsDisplayFormat.COOL_ICONS;
         private static int _buttonsDisplay_default = 1;
         public static ButtonsDisplayFormat ButtonsDisplay
@@ -38,8 +38,8 @@ namespace GDTB.CodeTODOs
         private static string[] _buttonsFormatsString = { "Cool icons", "Regular buttons" };
 
 
-        // Confirmation dialogus
-        public const string PREFS_CODETODOS_CONFIRMATION_DIALOGS = "GDTB_CodeTODOs_ConfirmationDialogs";
+        // Confirmation dialogs
+        private const string PREFS_CODETODOS_CONFIRMATION_DIALOGS = "GDTB_CodeTODOs_ConfirmationDialogs";
         private static bool _confirmationDialogs = true;
         private static bool _confirmationDialogs_default = true;
         public static bool ShowConfirmationDialogs
@@ -49,7 +49,7 @@ namespace GDTB.CodeTODOs
 
 
         // Auto-update QQQs.
-        public const string PREFS_CODETODOS_AUTO_REFRESH = "GDTB_CodeTODOs_AutoUpdate";
+        private const string PREFS_CODETODOS_AUTO_REFRESH = "GDTB_CodeTODOs_AutoUpdate";
         private static bool _autoRefresh = true;
         private static bool _autoRefresh_default = true;
         private static bool _oldAutoRefresh;
@@ -60,7 +60,7 @@ namespace GDTB.CodeTODOs
 
 
         // Color of URGENT tasks.
-        public const string PREFS_CODETODOS_COLOR_PRI1 = "GDTB_CodeTODOs_Color1";
+        private const string PREFS_CODETODOS_COLOR_PRI1 = "GDTB_CodeTODOs_Color1";
         private static Color _priColor1 = new Color(246, 71, 71, 1);  // Sunset orange http://www.flatuicolorpicker.com/pink
         private static Color _priColor1_default = new Color(246, 71, 71, 1);
         public static Color PriColor1
@@ -69,7 +69,7 @@ namespace GDTB.CodeTODOs
         }
 
         // Color of NORMAL tasks
-        public const string PREFS_CODETODOS_COLOR_PRI2 = "GDTB_CodeTODOs_Color2";
+        private const string PREFS_CODETODOS_COLOR_PRI2 = "GDTB_CodeTODOs_Color2";
         private static Color _priColor2 = new Color(244, 208, 63, 1); // Saffron http://www.flatuicolorpicker.com/yellow
         private static Color _priColor2_default = new Color(244, 208, 63, 1);
         public static Color PriColor2
@@ -78,7 +78,7 @@ namespace GDTB.CodeTODOs
         }
 
         // Color of MINOR tasks
-        public const string PREFS_CODETODOS_COLOR_PRI3 = "GDTB_CodeTODOs_Color3";
+        private const string PREFS_CODETODOS_COLOR_PRI3 = "GDTB_CodeTODOs_Color3";
         private static Color _priColor3 = new Color(46, 204, 113, 1); // Shamrock http://www.flatuicolorpicker.com/green
         private static Color _priColor3_default = new Color(46, 204, 113, 1);
         public static Color PriColor3
@@ -87,7 +87,7 @@ namespace GDTB.CodeTODOs
         }
 
         // Color of bar borders
-        public const string PREFS_CODETODOS_COLOR_BORDER = "GDTB_CodeTODOs_Border";
+        private const string PREFS_CODETODOS_COLOR_BORDER = "GDTB_CodeTODOs_Border";
         private static Color _borderColor = Color.gray;
         private static Color _borderColor_default = Color.gray;
         public static Color BorderColor
@@ -96,7 +96,7 @@ namespace GDTB.CodeTODOs
         }
 
         // Custom shortcut
-        public const string PREFS_CODETODOS_SHORTCUT = "GDTB_CodeTODOs_Shortcut";
+        private const string PREFS_CODETODOS_SHORTCUT = "GDTB_CodeTODOs_Shortcut";
         private static string _shortcut = "%|q";
         private static string _newShortcut;
         private static string _shortcut_default = "%|q";
@@ -122,20 +122,14 @@ namespace GDTB.CodeTODOs
             _buttonsDisplay = (ButtonsDisplayFormat)EditorGUILayout.Popup("Button style", System.Convert.ToInt16(_buttonsDisplay), _buttonsFormatsString);
             _autoRefresh = EditorGUILayout.Toggle("Auto refresh", _autoRefresh);
             _confirmationDialogs = EditorGUILayout.Toggle("Show confirmation dialogs", _confirmationDialogs);
-
             EditorGUILayout.Separator();
-
             _priColor1 = EditorGUILayout.ColorField("Urgent priority", _priColor1);
             _priColor2 = EditorGUILayout.ColorField("Normal priority", _priColor2);
             _priColor3 = EditorGUILayout.ColorField("Minor priority", _priColor3);
             _borderColor = EditorGUILayout.ColorField("Borders", _borderColor);
-
             EditorGUILayout.Separator();
-
             _newShortcut = DrawShortcutSelector();
-
             GUILayout.Space(20);
-
             DrawResetButton();
             EditorGUILayout.EndVertical();
 

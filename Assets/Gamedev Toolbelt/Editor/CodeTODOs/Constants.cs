@@ -1,4 +1,4 @@
-﻿namespace GDTB.CodeTODOs
+﻿namespace com.immortalhydra.gdtb.codetodos
 {
     public static class Constants
     {

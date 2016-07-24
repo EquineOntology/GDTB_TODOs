@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace GDTB.CodeTODOs
+namespace com.immortalhydra.gdtb.codetodos
 {
     public class WindowMain : EditorWindow
     {
@@ -13,22 +13,20 @@ namespace GDTB.CodeTODOs
             get { return Instance != null; }
         }
 
-        private GUISkin _skin, _defaultSkin;
-        private GUIStyle _priorityStyle, _taskStyle, _scriptStyle;
+        private GUISkin _skin;
+        private GUIStyle _style_priority, _style_task, _style_script;
 
         // ========================= Editor layouting =========================
         private const int IconSize = 16;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
 
-        private int _unit, _priorityWidth, _qqqWidth, _editAndDoneWidth;
+        private int _unit, _width_priority, _width_priorityLabel, _width_qqq, _width_editAndComplete;
         private int _offset = 5;
 
-        private int _priorityLabelWidth;
-
-        private float _heightIndex = 0;
+        private float _idx_height = 0;
         private Vector2 _scrollPosition = new Vector2(Screen.width - 5, Screen.height);
-        private Rect _scrollRect, _scrollViewRect, _qqqRect, _priorityRect, _rightButtonsRect;
+        private Rect _rect_scroll, _rect_scrollView, _rect_qqq, _rect_priority, _rect_editAndComplete;
 
 
         // ====================================================================
@@ -43,7 +41,7 @@ namespace GDTB.CodeTODOs
             Preferences.GetAllPrefValues();
 
             window.UpdateLayoutingSizes();
-            window._priorityLabelWidth = (int)window._priorityStyle.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
+            window._width_priorityLabel = (int)window._style_priority.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
 
             if (QQQs.Count == 0 && Preferences.AutoRefresh == true)
             {
@@ -70,12 +68,6 @@ namespace GDTB.CodeTODOs
         private void OnGUI()
         {
             UpdateLayoutingSizes();
-
-            // Save default skin (once), assign new one.
-            if (_defaultSkin == null)
-            {
-                _defaultSkin = GUI.skin;
-            }
             GUI.skin = _skin;
 
             // If the list is clean (for instance because we just recompiled) load QQQs based on preferences.
@@ -87,7 +79,6 @@ namespace GDTB.CodeTODOs
                 }
                 else
                 {
-                    Debug.Log("Blimey");
                     QQQs.Clear();
                     QQQs.AddRange(IO.LoadStoredQQQs());
                 }
@@ -100,7 +91,7 @@ namespace GDTB.CodeTODOs
             }
 
             DrawQQQs();
-            DrawARS();
+            DrawAddRefreshAndSettings();
         }
 
 
@@ -118,14 +109,14 @@ namespace GDTB.CodeTODOs
         /// Draw the list of QQQs.
         private void DrawQQQs()
         {
-            _scrollViewRect.height = _heightIndex;
-            _scrollRect.width += IconSize + 2;
-            _scrollPosition = GUI.BeginScrollView(_scrollRect, _scrollPosition, _scrollViewRect);
-            _heightIndex = _offset;
+            _rect_scrollView.height = _idx_height;
+            _rect_scroll.width += IconSize + 2;
+            _scrollPosition = GUI.BeginScrollView(_rect_scroll, _scrollPosition, _rect_scrollView);
+            _idx_height = _offset;
             for (var i = 0; i < QQQs.Count; i++)
             {
                 var taskContent = new GUIContent(QQQs[i].Task);
-                var taskHeight = _taskStyle.CalcHeight(taskContent, _qqqWidth);
+                var taskHeight = _style_task.CalcHeight(taskContent, _width_qqq);
 
                 var helpBoxHeight = taskHeight + Constants.LINE_HEIGHT + 5;
                 helpBoxHeight = helpBoxHeight < IconSize * 2.5f ? IconSize * 2.5f : helpBoxHeight;
@@ -134,22 +125,22 @@ namespace GDTB.CodeTODOs
                     helpBoxHeight += 4;
                 }
 
-                _qqqRect = new Rect(_priorityWidth, _heightIndex, _qqqWidth, helpBoxHeight);
-                _priorityRect = new Rect(0, _qqqRect.y, _priorityWidth, helpBoxHeight);
-                _rightButtonsRect = new Rect(_priorityWidth + _qqqWidth + (_offset * 2), _qqqRect.y, _editAndDoneWidth, helpBoxHeight);
+                _rect_qqq = new Rect(_width_priority, _idx_height, _width_qqq, helpBoxHeight);
+                _rect_priority = new Rect(0, _rect_qqq.y, _width_priority, helpBoxHeight);
+                _rect_editAndComplete = new Rect(_width_priority + _width_qqq + (_offset * 2), _rect_qqq.y, _width_editAndComplete, helpBoxHeight);
 
-                var helpBoxRect = _priorityRect;
+                var helpBoxRect = _rect_priority;
                 helpBoxRect.height = helpBoxHeight;
                 helpBoxRect.width = position.width - (_offset * 2) - IconSize;
                 helpBoxRect.x += _offset;
 
-                _heightIndex += (int)helpBoxHeight + _offset;
-                _scrollViewRect.height = _heightIndex;
+                _idx_height += (int)helpBoxHeight + _offset;
+                _rect_scrollView.height = _idx_height;
 
                 DrawHelpBox(helpBoxRect);
-                DrawPriority(_priorityRect, QQQs[i], helpBoxHeight);
-                DrawTaskAndScript(_qqqRect, QQQs[i], taskHeight);
-                DrawEditAndComplete(_rightButtonsRect, QQQs[i]);
+                DrawPriority(_rect_priority, QQQs[i], helpBoxHeight);
+                DrawTaskAndScript(_rect_qqq, QQQs[i], taskHeight);
+                DrawEditAndComplete(_rect_editAndComplete, QQQs[i]);
             }
             GUI.EndScrollView();
         }
@@ -180,7 +171,6 @@ namespace GDTB.CodeTODOs
         /// Draw priority for the "Bars" setting.
         private void DrawPriority_Bars(Rect aRect, QQQ aQQQ, float helpBoxHeight)
         {
-            GUI.skin = _skin;
             var borderWidth = 1;
             var priorityRect = aRect;
             var newY = 0;
@@ -211,7 +201,6 @@ namespace GDTB.CodeTODOs
         /// Draw priority for the "Icon only" setting.
         private void DrawPriority_Icon(Rect aRect, QQQ aQQQ)
         {
-            GUI.skin = _skin;
             // Prepare the rectangle for layouting. The layout is "space-icon-space".
             var priorityRect = aRect;
             var newY = 0.0f;
@@ -256,7 +245,6 @@ namespace GDTB.CodeTODOs
         /// Draw priority for the "Icon and Text" setting.
         private void DrawPriority_IconAndText(Rect aRect, QQQ aQQQ)
         {
-            GUI.skin = _skin;
             // Draw the Icon.
             var iconRect = aRect;
             iconRect.width = IconSize;
@@ -331,22 +319,21 @@ namespace GDTB.CodeTODOs
         /// Draws the "Task" and "Script" texts for QQQs.
         private void DrawTaskAndScript(Rect aRect, QQQ aQQQ, float aHeight)
         {
-            GUI.skin = _skin;
             // Task.
             var taskRect = aRect;
-            taskRect.x = _priorityWidth;
+            taskRect.x = _width_priority;
             taskRect.y += _offset;
             taskRect.height = aHeight;
-            EditorGUI.LabelField(taskRect, aQQQ.Task, _taskStyle);
+            EditorGUI.LabelField(taskRect, aQQQ.Task, _style_task);
 
             // Script.
             var scriptRect = aRect;
-            scriptRect.x = _priorityWidth;
+            scriptRect.x = _width_priority;
             scriptRect.y += (taskRect.height + 5);
             scriptRect.height = Constants.LINE_HEIGHT;
 
-            var scriptLabel = QQQOps.CreateScriptLabel(aQQQ, scriptRect.width, _scriptStyle);
-            EditorGUI.LabelField(scriptRect, scriptLabel, _scriptStyle);
+            var scriptLabel = QQQOps.CreateScriptLabel(aQQQ, scriptRect.width, _style_script);
+            EditorGUI.LabelField(scriptRect, scriptLabel, _style_script);
 
             // Open editor on click.
             EditorGUIUtility.AddCursorRect(scriptRect, MouseCursor.Link);
@@ -383,7 +370,6 @@ namespace GDTB.CodeTODOs
         /// Draw Edit and Complete with texture buttons.
         private void DrawEditAndComplete_Icon(Rect aRect, QQQ aQQQ)
         {
-            GUI.skin = _skin;
             // "Edit" button.
             var editRect = aRect;
             editRect.x = position.width - (IconSize * 2) - (_offset * 2);
@@ -432,7 +418,6 @@ namespace GDTB.CodeTODOs
         /// Draw Edit and Complete with regular buttons.
         private void DrawEditAndComplete_Default(Rect aRect, QQQ aQQQ)
         {
-            GUI.skin = _defaultSkin;
             // "Edit" button.
             var editRect = aRect;
             editRect.x = position.width - ButtonWidth - IconSize - (_offset * 2);
@@ -479,8 +464,8 @@ namespace GDTB.CodeTODOs
         #endregion
 
         #region A-R-S buttons
-        /// Draw Add, Refresh and Edit based of preferences.
-        private void DrawARS()
+        /// Draw Add, Refresh and Edit based on preferences.
+        private void DrawAddRefreshAndSettings()
         {
             switch (Preferences.ButtonsDisplay)
             {
@@ -489,6 +474,7 @@ namespace GDTB.CodeTODOs
                     DrawRefresh_Default();
                     DrawSettings_Default();
                     break;
+				case ButtonsDisplayFormat.COOL_ICONS:
                 default:
                     DrawAdd_Icon();
                     DrawRefresh_Icon();
@@ -501,7 +487,7 @@ namespace GDTB.CodeTODOs
         /// Draw the texture "Add" button.
         private void DrawAdd_Icon()
         {
-            GUI.skin = _skin;
+            //GUI.skin = _skin;
             // "Add" button.
             var addRect = new Rect((position.width / 2) - (IconSize * 1.5f) - _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
             var addButton = new GUIContent(Resources.Load(Constants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D, "Add a new task");
@@ -517,7 +503,7 @@ namespace GDTB.CodeTODOs
         /// Draw the text "Add" button.
         private void DrawAdd_Default()
         {
-            GUI.skin = _defaultSkin;
+            //GUI.skin = _defaultSkin;
             // "Add" button.
             var addRect = new Rect((position.width / 2) - ButtonWidth * 1.5f - _offset * 2, position.height - (IconSize * 1.5f), ButtonWidth, ButtonHeight);
             var addButton = new GUIContent("Add new", "Add a new task");
@@ -533,7 +519,7 @@ namespace GDTB.CodeTODOs
         /// Draw the texture "Refresh" button.
         private void DrawRefresh_Icon()
         {
-            GUI.skin = _skin;
+           // GUI.skin = _skin;
             // "Refresh" button.
             var refreshRect = new Rect((position.width / 2) - (IconSize * 0.5f), position.height - (IconSize * 1.5f), IconSize, IconSize);
             var refreshButton = new GUIContent(Resources.Load(Constants.FILE_QQQ_REFRESH, typeof(Texture2D)) as Texture2D, "Refresh list of tasks");
@@ -549,7 +535,7 @@ namespace GDTB.CodeTODOs
         /// Draw the text "Refresh" button.
         private void DrawRefresh_Default()
         {
-            GUI.skin = _defaultSkin;
+            //GUI.skin = _defaultSkin;
             // "Refesh" button.
             var refreshRect = new Rect((position.width / 2) - ButtonWidth / 2 - _offset, position.height - (IconSize * 1.5f), ButtonWidth, ButtonHeight);
             var refreshButton = new GUIContent("Refresh", "Refresh list of tasks");
@@ -565,7 +551,7 @@ namespace GDTB.CodeTODOs
         /// Draw the texture "Settings" button.
         private void DrawSettings_Icon()
         {
-            GUI.skin = _skin;
+          //  GUI.skin = _skin;
             // "Settings" button.
             var settingsRect = new Rect((position.width / 2) + (IconSize * 0.5f) + _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
             var settingsButton = new GUIContent(Resources.Load(Constants.FILE_SETTINGS, typeof(Texture2D)) as Texture2D, "Open settings window");
@@ -585,7 +571,7 @@ namespace GDTB.CodeTODOs
         /// Draw the texture "Settings" button.
         private void DrawSettings_Default()
         {
-            GUI.skin = _defaultSkin;
+            // GUI.skin = _defaultSkin;
             // "Settings" button.
             var settingsRect = new Rect((position.width / 2) + ButtonWidth / 2, position.height - (IconSize * 1.5f), ButtonWidth, ButtonHeight);
             var settingsButton = new GUIContent("Settings", "Open settings window");
@@ -608,37 +594,37 @@ namespace GDTB.CodeTODOs
         {
             var width = position.width - IconSize;
 
-            _scrollRect = new Rect(_offset, _offset, width - (_offset * 2), position.height - IconSize * 2.5f);
+            _rect_scroll = new Rect(_offset, _offset, width - (_offset * 2), position.height - IconSize * 2.5f);
 
-            _scrollViewRect = _scrollRect;
+            _rect_scrollView = _rect_scroll;
 
             _unit = (int)(width / 28) == 0 ? 1 : (int)(width / 28); // If the unit would be 0, set it to 1.
 
             // Priority rect width has different size based on preferences.
             if (Preferences.PriorityDisplay.ToString() == "ICON_ONLY")
             {
-                _priorityWidth = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize + _offset) * 2);
+                _width_priority = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize + _offset) * 2);
             }
             else if (Preferences.PriorityDisplay.ToString() == "BARS")
             {
-                _priorityWidth = IconSize * 2;
+                _width_priority = IconSize * 2;
             }
             else
             {
-                _priorityWidth = _priorityLabelWidth + _offset * 4;
+                _width_priority = _width_priorityLabel + _offset * 4;
             }
 
             // Same for buttons size
             if(Preferences.ButtonsDisplay.ToString() == "COOL_ICONS")
             {
-                _editAndDoneWidth = (IconSize * 2) + 5;
+                _width_editAndComplete = (IconSize * 2) + 5;
             }
             else
             {
-                _editAndDoneWidth = ButtonWidth + _offset;
+                _width_editAndComplete = ButtonWidth + _offset;
             }
 
-            _qqqWidth = (int)width - _priorityWidth - _editAndDoneWidth - (_offset * 2);
+            _width_qqq = (int)width - _width_priority - _width_editAndComplete - (_offset * 2);
         }
 
 
@@ -652,9 +638,9 @@ namespace GDTB.CodeTODOs
         /// Assign the GUI Styles
         private void LoadStyles()
         {
-            _priorityStyle = _skin.GetStyle("label");
-            _taskStyle = _skin.GetStyle("task");
-            _scriptStyle = _skin.GetStyle("script");
+            _style_priority = _skin.GetStyle("label");
+            _style_task = _skin.GetStyle("task");
+            _style_script = _skin.GetStyle("script");
         }
 
 

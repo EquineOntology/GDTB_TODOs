@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using System.Collections.Generic;
 
-namespace GDTB.CodeTODOs
+namespace com.immortalhydra.gdtb.codetodos
 {
     // If you don't know what an asset postprocessor is, don't worry about this class, it won't change anything.
     // If you know what an asset postprocessor is: I need to use OnPostProcessAllAssets because there's no function

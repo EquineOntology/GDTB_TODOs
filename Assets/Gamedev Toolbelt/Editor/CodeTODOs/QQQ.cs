@@ -1,4 +1,4 @@
-﻿namespace GDTB.CodeTODOs
+﻿namespace com.immortalhydra.gdtb.codetodos
 {
     [System.Serializable]
     public class QQQ: System.Object

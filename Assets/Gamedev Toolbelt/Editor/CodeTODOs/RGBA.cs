@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-namespace GDTB.CodeTODOs
+namespace com.immortalhydra.gdtb.codetodos
 {
     public class RGBA : MonoBehaviour
     {

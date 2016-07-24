@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace GDTB.CodeTODOs
+namespace com.immortalhydra.gdtb.codetodos
 {
     public class WindowAdd : EditorWindow
     {

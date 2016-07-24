@@ -2,7 +2,7 @@
 using System.IO;
 using System;
 
-namespace GDTB.CodeTODOs
+namespace com.immortalhydra.gdtb.codetodos
 {
     public static class IO
     {
