@@ -207,36 +207,12 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Format a QQQ's script.
-        public static string CreateScriptLabel(QQQ aQQQ, float aWidth, GUIStyle aStyle)
-        {
-            var scriptContent = new GUIContent(aQQQ.Script);
-            var scriptWidth = aStyle.CalcSize(scriptContent).x;
-
-            var additionalCharactersWidth = aStyle.CalcSize(new GUIContent("Line " + (aQQQ.LineNumber + 1).ToString() + " in \"\"")).x;
-
-            var formattedScript = aQQQ.Script;
-            var permittedWidth = aWidth - additionalCharactersWidth;
-            if (scriptWidth > permittedWidth)
-            {
-                formattedScript = ReduceScriptPath(aQQQ, permittedWidth, aStyle);
-                formattedScript = "Line " + (aQQQ.LineNumber + 1) + " in \"" + formattedScript + "\"";
-            }
-            else
-            {
-                formattedScript = "Line " + (aQQQ.LineNumber + 1) + " in \"" + formattedScript + "\"";
-            }
-
-            return formattedScript;
-        }
-
-
         /// If the script path is wider than its rect, cut it and insert "..."
         private static string ReduceScriptPath(QQQ aQQQ, float aWidth, GUIStyle aStyle)
         {
             var stringWidth = aStyle.CalcSize(new GUIContent(aQQQ.Script)).x;
             var surplusWidth = stringWidth - aWidth;
-            var surplusCharacters = (int)Mathf.Ceil(surplusWidth / Constants.NORMAL_CHAR_WIDTH);
+            var surplusCharacters = (int)Mathf.Ceil(surplusWidth / 7); // 7 being the character width with a normal style.
 
             int cutoffIndex = Mathf.Clamp(surplusCharacters + 4, 0, aQQQ.Script.Length - 1); // +4 because of the "..." we'll be adding.
             return "..." + aQQQ.Script.Substring(cutoffIndex);
@@ -247,8 +223,26 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void CompleteQQQ(QQQ aQQQ)
         {
             IO.RemoveLineFromFile(aQQQ.Script, aQQQ.LineNumber);
-            RefreshList();
+            RefreshQQQs();
+        }
 
+
+        /// Remove a QQQ (both from the list and from the file in which it was written).
+        public static void RemoveQQQ(QQQ aQQQ) // Different from the method above because we don't want removing to be the same as completing (for future integrations in which the concepts are different).
+        {
+            IO.RemoveLineFromFile(aQQQ.Script, aQQQ.LineNumber);
+            RefreshQQQs();
+        }
+
+
+        /// Remove all QQQs.
+        public static void RemoveAllQQQs() // Different from the method above because we don't want removing to be the same as completing (for future integrations in which the concepts are different).
+        {
+            for (var i = 0; i < WindowMain.QQQs.Count; i++)
+            {
+                RemoveQQQ(WindowMain.QQQs[i]);
+            }
+            RefreshQQQs();
         }
 
 
@@ -276,7 +270,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
 
         /// Re-import all QQQs.
-        public static void RefreshList()
+        public static void RefreshQQQs()
         {
             WindowMain.QQQs.Clear();
             QQQOps.GetQQQsFromAllScripts();
@@ -288,7 +282,7 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void AddQQQ(QQQ aQQQ)
         {
             IO.AddQQQ(aQQQ);
-            RefreshList();
+            RefreshQQQs();
             EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
         }
 

@@ -11,7 +11,7 @@ namespace com.immortalhydra.gdtb.codetodos
             get { return Instance != null; }
         }
 
-        private GUISkin _GDTBSkin;
+        private GUISkin _skin;
 
         private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
 
@@ -20,7 +20,6 @@ namespace com.immortalhydra.gdtb.codetodos
         private int _priority = 2;
         private int _lineNumber = 0;
 
-        private GUISkin _defaultSkin;
 
         private const int IconSize = 16;
         private const int ButtonWidth = 70;
@@ -40,17 +39,13 @@ namespace com.immortalhydra.gdtb.codetodos
         public void OnEnable()
         {
             Instance = this;
-            _GDTBSkin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
             _script = new MonoScript();
         }
 
 
         public void OnGUI()
         {
-            if (_defaultSkin == null)
-            {
-                _defaultSkin = GUI.skin;
-            }
             DrawScriptPicker();
             DrawTaskField();
             DrawPriorityPopup();
@@ -126,10 +121,10 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Draw icon Add.
         private void DrawAdd_Icon()
         {
-            GUI.skin = _GDTBSkin;
+            GUI.skin = _skin;
 
             var buttonRect = new Rect((position.width / 2) - IconSize / 2, position.height - IconSize * 1.5f, IconSize, IconSize);
-            var buttonContent = new GUIContent(Resources.Load(Constants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D, "Add task");
+            var buttonContent = new GUIContent(DrawingUtils.Texture_Add, "Add task");
             if (GUI.Button(buttonRect, buttonContent))
             {
                 if (_script.name == "")
@@ -165,7 +160,6 @@ namespace com.immortalhydra.gdtb.codetodos
                         EditorWindow.GetWindow(typeof(WindowAdd)).Close();
                     }
                 }
-                GUI.skin = _defaultSkin;
             }
         }
 
@@ -173,8 +167,6 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Draw default-button Add.
         private void DrawAdd_Default()
         {
-            GUI.skin = _defaultSkin;
-
             var buttonRect = new Rect((position.width / 2) - ButtonWidth / 2, position.height - ButtonHeight * 1.5f, ButtonWidth, ButtonHeight);
 
             var buttonContent = new GUIContent("Add task", "Add task");
