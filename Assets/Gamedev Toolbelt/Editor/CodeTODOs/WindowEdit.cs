@@ -18,7 +18,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private bool _prioritySetOnce = false;
 
 
-        private GUISkin _GDTBSkin, _defaultSkin;
+        private GUISkin _skin;
         private const int IconSize = 16;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
@@ -38,17 +38,13 @@ namespace com.immortalhydra.gdtb.codetodos
         public void OnEnable()
         {
             Instance = this;
-            _GDTBSkin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
         }
 
 
         private void OnGUI()
         {
-            if (_defaultSkin == null)
-            {
-                _defaultSkin = GUI.skin;
-            }
-            GUI.skin = _GDTBSkin;
+            GUI.skin = _skin;
             DrawPriority();
             DrawTask();
             DrawEdit();
@@ -141,8 +137,6 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Draw default-style Edit.
         private void DrawEdit_Default(out Rect aRect, out GUIContent aContent)
         {
-            GUI.skin = _defaultSkin;
-
             aRect = new Rect((position.width / 2) - ButtonWidth/2, position.height - ButtonHeight * 1.5f, ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Save", "Save edits");
         }
@@ -151,9 +145,8 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Draw icon Edit.
         private void DrawEdit_Icon(out Rect aRect, out GUIContent aContent)
         {
-            GUI.skin = _GDTBSkin;
             aRect = new Rect((position.width / 2) - IconSize/2, position.height - IconSize * 1.5f, IconSize, IconSize);
-            aContent = new GUIContent(Resources.Load(Constants.FILE_QQQ_EDIT, typeof(Texture2D)) as Texture2D, "Save edits");
+            aContent = new GUIContent(DrawingUtils.Texture_Edit, "Save edits");
         }
     }
 }

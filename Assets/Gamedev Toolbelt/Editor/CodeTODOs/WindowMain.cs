@@ -14,19 +14,20 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
         private GUISkin _skin;
-        private GUIStyle _style_priority, _style_task, _style_script;
+        private GUIStyle _style_priority, _style_task, _style_script, _style_buttonText;
 
         // ========================= Editor layouting =========================
-        private const int IconSize = 16;
+        private const int IconSize = Constants.ICON_SIZE;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
 
-        private int _unit, _width_priority, _width_priorityLabel, _width_qqq, _width_editAndComplete;
+        private int _unit, _width_priority, _width_priorityLabel, _width_qqq, _width_buttons;
+        private float _height_totalQQQHeight = 0;
         private int _offset = 5;
 
-        private float _idx_height = 0;
-        private Vector2 _scrollPosition = new Vector2(Screen.width - 5, Screen.height);
-        private Rect _rect_scroll, _rect_scrollView, _rect_qqq, _rect_priority, _rect_editAndComplete;
+        private Vector2 _scrollPosition = new Vector2(0.0f, 0.0f);
+        private Rect _rect_scrollArea, _rect_scrollView, _rect_qqq, _rect_priority, _rect_editAndComplete;
+        private bool _showingScrollbar = false;
 
 
         // ====================================================================
@@ -35,17 +36,16 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             // Get existing open window or if none, make a new one.
             var window = (WindowMain)EditorWindow.GetWindow(typeof(WindowMain));
-            window.titleContent = new GUIContent("Code TODOs");
-            window.minSize = new Vector2(270f, 100f);
-
-            Preferences.GetAllPrefValues();
-
+            window.SetMinSize();
+            window.LoadSkin();
+            window.LoadStyles();
             window.UpdateLayoutingSizes();
+
             window._width_priorityLabel = (int)window._style_priority.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
 
             if (QQQs.Count == 0 && Preferences.AutoRefresh == true)
             {
-                QQQOps.RefreshList();
+                QQQOps.RefreshQQQs();
             }
             else if (Preferences.AutoRefresh == false)
             {
@@ -58,24 +58,46 @@ namespace com.immortalhydra.gdtb.codetodos
 
         public void OnEnable()
         {
+            #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
+                titleContent = new GUIContent("CodeTODOs");
+            #else
+                title = "CodeTODOs";
+            #endif
+
             Instance = this;
+
+            /* Load current preferences (like colours, etc.).
+             * We do this here so that most preferences are updated as soon as they're changed.
+             */
             Preferences.GetAllPrefValues();
-            ChooseSkin();
+
+            LoadSkin();
             LoadStyles();
+        }
+
+
+        /// Called when the window is closed.
+        private void OnDestroy()
+        {
+            if (Preferences.AutoRefresh == false)
+            {
+                IO.WriteQQQsToFile();
+            }
+            Resources.UnloadUnusedAssets();
         }
 
 
         private void OnGUI()
         {
             UpdateLayoutingSizes();
-            GUI.skin = _skin;
+            GUI.skin = _skin; // Without this, almost everything will work aside from the scrollbar.
 
             // If the list is clean (for instance because we just recompiled) load QQQs based on preferences.
             if (QQQs.Count == 0)
             {
                 if (Preferences.AutoRefresh == true)
                 {
-                    QQQOps.RefreshList();
+                    QQQOps.RefreshQQQs();
                 }
                 else
                 {
@@ -84,6 +106,8 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
             }
 
+            DrawWindowBackground();
+
             // If the list is still clean after the above, then we really have no QQQs.
             if (QQQs.Count == 0)
             {
@@ -91,7 +115,15 @@ namespace com.immortalhydra.gdtb.codetodos
             }
 
             DrawQQQs();
-            DrawAddRefreshAndSettings();
+            DrawSeparator();
+            DrawBottomButtons();
+        }
+
+
+        /// Draw the background texture.
+        private void DrawWindowBackground()
+        {
+            EditorGUI.DrawRect(new Rect(0, 0, position.width, position.height), Preferences.Color_Primary);
         }
 
 
@@ -100,49 +132,113 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken + " in it.\n\nIf you see this after the project recompiled,\ntry refreshing the window!\nYour tasks should come back just fine.";
             var labelContent = new GUIContent(label);
-            var labelSize = EditorStyles.centeredGreyMiniLabel.CalcSize(labelContent);
+
+            Vector2 labelSize;
+            #if UNITY_UNITY_5_3_OR_NEWER
+                labelSize = EditorStyles.centeredGreyMiniLabel.CalcSize(labelContent);
+            #else
+                labelSize = EditorStyles.wordWrappedMiniLabel.CalcSize(labelContent);
+            #endif
+
             var labelRect = new Rect(position.width / 2 - labelSize.x / 2, position.height / 2 - labelSize.y / 2 - _offset * 2.5f, labelSize.x, labelSize.y);
-            EditorGUI.LabelField(labelRect, labelContent, EditorStyles.centeredGreyMiniLabel);
+            #if UNITY_5_3_OR_NEWER
+                EditorGUI.LabelField(labelRect, labelContent, EditorStyles.centeredGreyMiniLabel);
+            #else
+                EditorGUI.LabelField(labelRect, labelContent, EditorStyles.wordWrappedMiniLabel);
+            #endif
         }
 
 
         /// Draw the list of QQQs.
         private void DrawQQQs()
         {
-            _rect_scrollView.height = _idx_height;
-            _rect_scroll.width += IconSize + 2;
-            _scrollPosition = GUI.BeginScrollView(_rect_scroll, _scrollPosition, _rect_scrollView);
-            _idx_height = _offset;
+            _rect_scrollView.height = _height_totalQQQHeight - _offset;
+
+            // Diminish the width of scrollview and scroll area so that the scollbar is offset from the right edge of the window.
+            _rect_scrollArea.width += IconSize - _offset;
+            _rect_scrollView.width -= _offset;
+
+            // Change size of the scroll area so that it fills the window when there's no scrollbar.
+            if (_showingScrollbar == false)
+            {
+                _rect_scrollView.width += IconSize;
+            }
+
+            _scrollPosition = GUI.BeginScrollView(_rect_scrollArea, _scrollPosition, _rect_scrollView);
+
+            _height_totalQQQHeight = _offset; // This includes all prefs, not just a single one.
+
             for (var i = 0; i < QQQs.Count; i++)
             {
                 var taskContent = new GUIContent(QQQs[i].Task);
+                var scriptContent = new GUIContent(CreateScriptLabelText(QQQs[i]));
                 var taskHeight = _style_task.CalcHeight(taskContent, _width_qqq);
+                var scriptHeight = _style_script.CalcHeight(scriptContent, _width_qqq);
 
-                var helpBoxHeight = taskHeight + Constants.LINE_HEIGHT + 5;
-                helpBoxHeight = helpBoxHeight < IconSize * 2.5f ? IconSize * 2.5f : helpBoxHeight;
+                var height_qqqBackground = taskHeight + scriptHeight + _offset * 2 + 4;
+                height_qqqBackground = height_qqqBackground < IconSize * 2.5f ? IconSize * 2.5f : height_qqqBackground;
+
                 if (Preferences.ButtonsDisplay.ToString() == "REGULAR_BUTTONS")
                 {
-                    helpBoxHeight += 4;
+                    height_qqqBackground -= 4;
                 }
 
-                _rect_qqq = new Rect(_width_priority, _idx_height, _width_qqq, helpBoxHeight);
-                _rect_priority = new Rect(0, _rect_qqq.y, _width_priority, helpBoxHeight);
-                _rect_editAndComplete = new Rect(_width_priority + _width_qqq + (_offset * 2), _rect_qqq.y, _width_editAndComplete, helpBoxHeight);
+                _rect_qqq = new Rect(_width_priority, _height_totalQQQHeight, _width_qqq, height_qqqBackground);
+                _rect_priority = new Rect(0, _rect_qqq.y, _width_priority, height_qqqBackground);
+                _rect_editAndComplete = new Rect(_width_priority + _width_qqq + (_offset * 2), _rect_qqq.y, _width_buttons, height_qqqBackground);
 
-                var helpBoxRect = _rect_priority;
-                helpBoxRect.height = helpBoxHeight;
-                helpBoxRect.width = position.width - (_offset * 2) - IconSize;
-                helpBoxRect.x += _offset;
+                var rect_qqqBackground = _rect_priority;
+                rect_qqqBackground.height = height_qqqBackground + _offset / 2;
 
-                _idx_height += (int)helpBoxHeight + _offset;
-                _rect_scrollView.height = _idx_height;
+                if (_showingScrollbar == true) // If we're not showing the scrollbar, QQQs need to be larger too.
+                {
+                    rect_qqqBackground.width = position.width - _offset - IconSize;
+                }
+                else
+                {
+                    rect_qqqBackground.width = position.width - _offset * 2.5f;
+                }
 
-                DrawHelpBox(helpBoxRect);
-                DrawPriority(_rect_priority, QQQs[i], helpBoxHeight);
-                DrawTaskAndScript(_rect_qqq, QQQs[i], taskHeight);
-                DrawEditAndComplete(_rect_editAndComplete, QQQs[i]);
+                rect_qqqBackground.x += _offset;
+
+                _height_totalQQQHeight += rect_qqqBackground.height + _offset;
+
+                // If the user removes a QQQ from the list in the middle of a draw call, the index in the for loop stays the same but QQQs.Count diminishes.
+                // I couldn't find a way around it, so what we do is swallow the exception and wait for the next draw call.
+                try
+                {
+                    DrawQQQBackground(rect_qqqBackground);
+                    DrawPriority(_rect_priority, QQQs[i], height_qqqBackground);
+                    DrawTaskAndScript(_rect_qqq, QQQs[i], taskHeight, scriptHeight);
+                    DrawEditAndComplete(_rect_editAndComplete, QQQs[i]);
+                }
+                catch (System.Exception) { }
             }
+
+            // Are we showing the scrollbar?
+            if (_rect_scrollArea.height < _rect_scrollView.height)
+            {
+                _showingScrollbar = true;
+            }
+            else
+            {
+                _showingScrollbar = false;
+            }
+
             GUI.EndScrollView();
+        }
+
+
+        /// Draw the "Help box" style rectangle that separates the QQQs visually.
+        private void DrawQQQBackground(Rect aRect)
+        {
+            EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
+            EditorGUI.DrawRect(new Rect(
+                    aRect.x + Constants.BUTTON_BORDER_THICKNESS,
+                    aRect.y + Constants.BUTTON_BORDER_THICKNESS,
+                    aRect.width - Constants.BUTTON_BORDER_THICKNESS * 2,
+                    aRect.height - Constants.BUTTON_BORDER_THICKNESS * 2),
+                Preferences.Color_Quaternary);
         }
 
 
@@ -167,6 +263,7 @@ namespace com.immortalhydra.gdtb.codetodos
                     break;
             }
         }
+
 
         /// Draw priority for the "Bars" setting.
         private void DrawPriority_Bars(Rect aRect, QQQ aQQQ, float helpBoxHeight)
@@ -197,6 +294,7 @@ namespace com.immortalhydra.gdtb.codetodos
             EditorGUI.DrawRect(leftBorder, Color.gray);
             EditorGUI.DrawRect(rightBorder, Color.gray);
         }
+
 
         /// Draw priority for the "Icon only" setting.
         private void DrawPriority_Icon(Rect aRect, QQQ aQQQ)
@@ -266,7 +364,7 @@ namespace com.immortalhydra.gdtb.codetodos
             labelRect.position = new Vector2(labelNewX, labelNewY);
 
             var priority = aQQQ.Priority.ToString();
-            priority = priority == "MINOR" ? " MINOR" : priority;
+            priority = priority == "MINOR" ? " MINOR" : priority; // Label looks better with a space before.
 
             EditorGUI.LabelField(labelRect, priority);
         }
@@ -317,22 +415,22 @@ namespace com.immortalhydra.gdtb.codetodos
 
 
         /// Draws the "Task" and "Script" texts for QQQs.
-        private void DrawTaskAndScript(Rect aRect, QQQ aQQQ, float aHeight)
+        private void DrawTaskAndScript(Rect aRect, QQQ aQQQ, float aTaskHeight, float aScriptHeight)
         {
             // Task.
             var taskRect = aRect;
             taskRect.x = _width_priority;
             taskRect.y += _offset;
-            taskRect.height = aHeight;
+            taskRect.height = aTaskHeight;
             EditorGUI.LabelField(taskRect, aQQQ.Task, _style_task);
 
             // Script.
             var scriptRect = aRect;
             scriptRect.x = _width_priority;
             scriptRect.y += (taskRect.height + 5);
-            scriptRect.height = Constants.LINE_HEIGHT;
+            scriptRect.height = aScriptHeight;
+            var scriptLabel = CreateScriptLabelText(aQQQ);
 
-            var scriptLabel = QQQOps.CreateScriptLabel(aQQQ, scriptRect.width, _style_script);
             EditorGUI.LabelField(scriptRect, scriptLabel, _style_script);
 
             // Open editor on click.
@@ -344,10 +442,10 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Draw the "Help box" style rectangle that separates the QQQs visually.
-        private void DrawHelpBox(Rect aRect)
+        /// Create the text that indicates where the task is.
+        private string CreateScriptLabelText (QQQ aQQQ)
         {
-            EditorGUI.LabelField(aRect, "", EditorStyles.helpBox);
+            return "Line " + (aQQQ.LineNumber + 1) + " in \"" + aQQQ.Script + "\"";
         }
 
 
@@ -355,248 +453,286 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Select which format to use based on the user preference.
         private void DrawEditAndComplete(Rect aRect, QQQ aQQQ)
         {
+            Rect editRect, completeRect;
+            GUIContent editContent, completeContent;
+
+            aRect.x = position.width - _offset * 2;
+            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.REGULAR_BUTTONS)
+            {
+                aRect.x = aRect.x - ButtonWidth - _offset * 0.5f;
+            }
+            else
+            {
+                aRect.x = aRect.x - IconSize - _offset * 0.5f;
+            }
+
+            if (_showingScrollbar == true)
+            {
+                aRect.x -= _offset * 2.5f;
+            }
+
             switch (Preferences.ButtonsDisplay)
             {
                 case ButtonsDisplayFormat.REGULAR_BUTTONS:
-                    DrawEditAndComplete_Default(aRect, aQQQ);
+                    Button_Edit_default(aRect, out editRect, out editContent);
+                    Button_Delete_default(aRect, out completeRect, out completeContent);
                     break;
                 default:
-                    DrawEditAndComplete_Icon(aRect, aQQQ);
+                    Button_Edit_icon(aRect, out editRect, out editContent);
+                    Button_Delete_icon(aRect, out completeRect, out completeContent);
                     break;
             }
-        }
 
-
-        /// Draw Edit and Complete with texture buttons.
-        private void DrawEditAndComplete_Icon(Rect aRect, QQQ aQQQ)
-        {
-            // "Edit" button.
-            var editRect = aRect;
-            editRect.x = position.width - (IconSize * 2) - (_offset * 2);
-            editRect.y += 3;
-            editRect.width = IconSize;
-            editRect.height = IconSize;
-            var editButton = new GUIContent(Resources.Load(Constants.FILE_QQQ_EDIT, typeof(Texture2D)) as Texture2D, "Edit this task");
-
-            // Open edit window on click.
-            if (GUI.Button(editRect, editButton))
+            if (GUI.Button(editRect, editContent))
             {
                 WindowEdit.Init(aQQQ);
             }
-
-            // "Complete" button.
-            var completeRect = editRect;
-            completeRect.y = editRect.y + editRect.height + 2;
-            var completeButton = new GUIContent(Resources.Load(Constants.FILE_QQQ_DONE, typeof(Texture2D)) as Texture2D, "Complete this task");
-
-            // Complete QQQ on click.
-            if (GUI.Button(completeRect, completeButton))
+            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                // Get confirmation (through confirmation dialog or automatically if conf. dialogs are off).
-                var execute = false;
+                DrawingUtils.DrawTextureButton(editRect, DrawingUtils.Texture_Edit);
+            }
+            else
+            {
+                DrawingUtils.DrawTextButton(editRect, editContent.text, _style_buttonText);
+            }
+
+            if (GUI.Button(completeRect, completeContent))
+            {
+                // Get confirmation through dialog (or not if the user doesn't want to).
+                var canExecute = false;
                 if (Preferences.ShowConfirmationDialogs == true)
                 {
-                    if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
+                    var token = Preferences.TODOToken;
+                    if (EditorUtility.DisplayDialog("Delete " + token, "Are you sure you want to delete this " + token + "?", "Delete " + token, "Cancel"))
                     {
-                        QQQOps.CompleteQQQ(aQQQ);
+                        canExecute = true;
                     }
                 }
                 else
                 {
-                    execute = true;
+                    canExecute = true;
                 }
 
-                // Do the thing.
-                if (execute == true)
+                // Actually do the thing.
+                if (canExecute == true)
                 {
                     QQQOps.CompleteQQQ(aQQQ);
                 }
+            }
+            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
+            {
+                DrawingUtils.DrawTextureButton(completeRect, DrawingUtils.Texture_Delete);
+            }
+            else
+            {
+                DrawingUtils.DrawTextButton(completeRect, completeContent.text, _style_buttonText);
             }
         }
-
-
-        /// Draw Edit and Complete with regular buttons.
-        private void DrawEditAndComplete_Default(Rect aRect, QQQ aQQQ)
+        private void Button_Edit_default(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
         {
-            // "Edit" button.
-            var editRect = aRect;
-            editRect.x = position.width - ButtonWidth - IconSize - (_offset * 2);
-            editRect.height = ButtonHeight;
-            editRect.y += 3;
-            editRect.width = ButtonWidth;
-            var editButton = new GUIContent("Edit", "Edit this task");
+            anEditRect = aRect;
+            anEditRect.y += _offset;
+            anEditRect.width = ButtonWidth;
+            anEditRect.height = ButtonHeight;
 
-            // Open edit window on click.
-            if (GUI.Button(editRect, editButton))
-            {
-                WindowEdit.Init(aQQQ);
-            }
+            anEditContent = new GUIContent("Edit", "Edit this task");
+        }
+        private void Button_Delete_default(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
+        {
+            aCompleteRect = aRect;
+            aCompleteRect.y += ButtonHeight + _offset + 2;
+            aCompleteRect.width = ButtonWidth;
+            aCompleteRect.height = ButtonHeight;
 
-            // "Complete" button.
-            var completeRect = editRect;
-            completeRect.y = editRect.y + editRect.height + 2;
-            var completeButton = new GUIContent("Complete", "Complete this task");
+            aCompleteContent = new GUIContent("Complete", "Complete this task");
+        }
 
-            // Complete QQQ on click.
-            if (GUI.Button(completeRect, completeButton))
-            {
-                // Get confirmation (through confirmation dialog or automatically if conf. dialogs are off).
-                var execute = false;
-                if (Preferences.ShowConfirmationDialogs == true)
-                {
-                    if (EditorUtility.DisplayDialog("Mark task as complete", "Are you sure you want to mark this task as done?\nThis will IRREVERSIBLY remove the comment from the script!", "Complete task", "Cancel"))
-                    {
-                        execute = true;
-                    }
-                }
-                else
-                {
-                    execute = true;
-                }
+        private void Button_Edit_icon(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
+        {
+            anEditRect = aRect;
+            anEditRect.y += _offset;
+            anEditRect.width = IconSize;
+            anEditRect.height = IconSize;
+            anEditContent = new GUIContent("", "Edit this EditorPref");
+        }
+        private void Button_Delete_icon(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
+        {
+            aCompleteRect = aRect;
+            aCompleteRect.y += IconSize + _offset + 2;
+            aCompleteRect.width = IconSize;
+            aCompleteRect.height = IconSize;
 
-                // Do the thing.
-                if (execute == true)
-                {
-                    QQQOps.CompleteQQQ(aQQQ);
-                }
-            }
+            aCompleteContent = new GUIContent("", "Complete this task");
         }
         #endregion
 
-        #region A-R-S buttons
-        /// Draw Add, Refresh and Edit based on preferences.
-        private void DrawAddRefreshAndSettings()
+
+        #region A-R-S-N buttons
+        /// Draw Add, Refresh, Settings and Nuke based on preferences.
+        private void DrawBottomButtons()
         {
+            Rect addRect, refreshRect, settingsRect, nukeRect;
+            GUIContent addContent, refreshContent, settingsContent, nukeContent;
+
             switch (Preferences.ButtonsDisplay)
             {
                 case ButtonsDisplayFormat.REGULAR_BUTTONS:
-                    DrawAdd_Default();
-                    DrawRefresh_Default();
-                    DrawSettings_Default();
+                    Button_Add_default(out addRect, out addContent);
+                    Button_Refresh_default(out refreshRect, out refreshContent);
+                    Button_Settings_default(out settingsRect, out settingsContent);
+                    Button_Nuke_default(out nukeRect, out nukeContent);
                     break;
 				case ButtonsDisplayFormat.COOL_ICONS:
                 default:
-                    DrawAdd_Icon();
-                    DrawRefresh_Icon();
-                    DrawSettings_Icon();
+                    Button_Add_icon(out addRect, out addContent);
+                    Button_Refresh_icon(out refreshRect, out refreshContent);
+                    Button_Settings_icon(out settingsRect, out settingsContent);
+                    Button_Nuke_icon(out nukeRect, out nukeContent);
                     break;
             }
-        }
 
-
-        /// Draw the texture "Add" button.
-        private void DrawAdd_Icon()
-        {
-            //GUI.skin = _skin;
-            // "Add" button.
-            var addRect = new Rect((position.width / 2) - (IconSize * 1.5f) - _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
-            var addButton = new GUIContent(Resources.Load(Constants.FILE_QQQ_ADD, typeof(Texture2D)) as Texture2D, "Add a new task");
-
-            // Add QQQ on click.
-            if (GUI.Button(addRect, addButton))
+             // Add new QQQ.
+            if (GUI.Button(addRect, addContent))
             {
                 WindowAdd.Init();
             }
-        }
-
-
-        /// Draw the text "Add" button.
-        private void DrawAdd_Default()
-        {
-            //GUI.skin = _defaultSkin;
-            // "Add" button.
-            var addRect = new Rect((position.width / 2) - ButtonWidth * 1.5f - _offset * 2, position.height - (IconSize * 1.5f), ButtonWidth, ButtonHeight);
-            var addButton = new GUIContent("Add new", "Add a new task");
-
-            // Add QQQ on click.
-            if (GUI.Button(addRect, addButton))
+            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                WindowAdd.Init();
+                DrawingUtils.DrawTextureButton(addRect, DrawingUtils.Texture_Add);
             }
-        }
-
-
-        /// Draw the texture "Refresh" button.
-        private void DrawRefresh_Icon()
-        {
-           // GUI.skin = _skin;
-            // "Refresh" button.
-            var refreshRect = new Rect((position.width / 2) - (IconSize * 0.5f), position.height - (IconSize * 1.5f), IconSize, IconSize);
-            var refreshButton = new GUIContent(Resources.Load(Constants.FILE_QQQ_REFRESH, typeof(Texture2D)) as Texture2D, "Refresh list of tasks");
-
-            // Refresh on click.
-            if (GUI.Button(refreshRect, refreshButton))
+            else
             {
-                QQQOps.RefreshList();
+                DrawingUtils.DrawTextButton(addRect, addContent.text, _style_buttonText);
             }
-        }
 
 
-        /// Draw the text "Refresh" button.
-        private void DrawRefresh_Default()
-        {
-            //GUI.skin = _defaultSkin;
-            // "Refesh" button.
-            var refreshRect = new Rect((position.width / 2) - ButtonWidth / 2 - _offset, position.height - (IconSize * 1.5f), ButtonWidth, ButtonHeight);
-            var refreshButton = new GUIContent("Refresh", "Refresh list of tasks");
-
-            // Refresh on click.
-            if (GUI.Button(refreshRect, refreshButton))
+            // Refresh list of QQQs.
+            if (GUI.Button(refreshRect, refreshContent))
             {
-                QQQOps.RefreshList();
+                QQQOps.RefreshQQQs();
             }
-        }
-
-
-        /// Draw the texture "Settings" button.
-        private void DrawSettings_Icon()
-        {
-          //  GUI.skin = _skin;
-            // "Settings" button.
-            var settingsRect = new Rect((position.width / 2) + (IconSize * 0.5f) + _offset, position.height - (IconSize * 1.5f), IconSize, IconSize);
-            var settingsButton = new GUIContent(Resources.Load(Constants.FILE_SETTINGS, typeof(Texture2D)) as Texture2D, "Open settings window");
-
-            // Open settings on click.
-            if (GUI.Button(settingsRect, settingsButton))
+            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
+                DrawingUtils.DrawTextureButton(refreshRect, DrawingUtils.Texture_Refresh);
+            }
+            else
+            {
+                DrawingUtils.DrawTextButton(refreshRect, refreshContent.text, _style_buttonText);
+            }
+
+            // Open settings.
+            if (GUI.Button(settingsRect, settingsContent))
+            {
+                CloseOtherWindows();
                 // Unfortunately EditorApplication.ExecuteMenuItem(...) doesn't work, so we have to rely on a bit of reflection.
-                var asm = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
-                var T = asm.GetType("UnityEditor.PreferencesWindow");
-                var M = T.GetMethod("ShowPreferencesWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-                M.Invoke(null, null);
+                var assembly = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
+                var type = assembly.GetType("UnityEditor.PreferencesWindow");
+                var method = type.GetMethod("ShowPreferencesWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                method.Invoke(null, null);
+            }
+
+            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
+            {
+                DrawingUtils.DrawTextureButton(settingsRect, DrawingUtils.Texture_Settings);
+            }
+            else
+            {
+                DrawingUtils.DrawTextButton(settingsRect, settingsContent.text, _style_buttonText);
+            }
+
+
+            // Nuke QQQs.
+            if (GUI.Button(nukeRect, nukeContent))
+            {
+                var canExecute = false;
+                if (Preferences.ShowConfirmationDialogs == true)
+                {
+                    var token = Preferences.TODOToken;
+                    if (EditorUtility.DisplayDialog("Remove ALL " + token + "s", "Are you sure ABSOLUTELY sure you want to remove ALL " + token + "s currently saved?\nThis is IRREVERSIBLE, only do this if you know what you're doing.", "Nuke " + token + "s", "Cancel"))
+                    {
+                        canExecute = true;
+                    }
+                }
+                else
+                {
+                    canExecute = true;
+                }
+
+                if (canExecute == true)
+                {
+                    QQQOps.RemoveAllQQQs();
+                }
+            }
+            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
+            {
+                DrawingUtils.DrawTextureButton(nukeRect, DrawingUtils.Texture_Nuke);
+            }
+            else
+            {
+                DrawingUtils.DrawTextButton(nukeRect, nukeContent.text, _style_buttonText);
             }
         }
 
 
-        /// Draw the texture "Settings" button.
-        private void DrawSettings_Default()
+        private void Button_Add_default(out Rect aRect, out GUIContent aContent)
         {
-            // GUI.skin = _defaultSkin;
-            // "Settings" button.
-            var settingsRect = new Rect((position.width / 2) + ButtonWidth / 2, position.height - (IconSize * 1.5f), ButtonWidth, ButtonHeight);
-            var settingsButton = new GUIContent("Settings", "Open settings window");
+            aRect = new Rect((position.width / 2 - ButtonWidth * 2 - 6), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aContent = new GUIContent("Add", "Add a new QQQ");
+        }
+        private void Button_Refresh_default(out Rect aRect, out GUIContent aContent)
+        {
+            aRect = new Rect((position.width / 2 - ButtonWidth - 2 ), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aContent = new GUIContent("Refresh", "Refresh list");
+        }
+        private void Button_Settings_default(out Rect aRect, out GUIContent aContent)
+        {
+            aRect = new Rect((position.width / 2 + 2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aContent = new GUIContent("Settings", "Open Settings");
+        }
+        private void Button_Nuke_default(out Rect aRect, out GUIContent aContent)
+        {
+            aRect = new Rect((position.width / 2 + ButtonWidth + 6), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aContent = new GUIContent("Nuke all", "Delete ALL prefs from EditorPrefs");
+        }
 
-            // Open settings on click.
-            if (GUI.Button(settingsRect, settingsButton))
-            {
-                // Unfortunately EditorApplication.ExecuteMenuItem(...) doesn't work, so we have to rely on a bit of reflection.
-                var asm = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
-                var T = asm.GetType("UnityEditor.PreferencesWindow");
-                var M = T.GetMethod("ShowPreferencesWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-                M.Invoke(null, null);
-            }
+
+        private void Button_Add_icon(out Rect aRect, out GUIContent aContent)
+        {
+            aRect = new Rect((position.width / 2 - IconSize * 2 - 10), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aContent = new GUIContent("", "Add a new QQQ");
+        }
+        private void Button_Refresh_icon(out Rect aRect, out GUIContent aContent)
+        {
+            aRect = new Rect((position.width / 2 - IconSize - 3), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aContent = new GUIContent("", "Refresh list");
+        }
+        private void Button_Settings_icon(out Rect aRect, out GUIContent aContent)
+        {
+            aRect = new Rect((position.width / 2 + 3), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aContent = new GUIContent("", "Open Settings");
+        }
+        private void Button_Nuke_icon(out Rect aRect, out GUIContent aContent)
+        {
+            aRect = new Rect((position.width / 2 + IconSize + 10), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aContent = new GUIContent("", "Delete ALL QQQs");
         }
         #endregion
+
+
+        /// Draw a line separating scrollview and lower buttons.
+        private void DrawSeparator()
+        {
+            var separator = new Rect(0, position.height - (_offset * 7), position.width, 1);
+            EditorGUI.DrawRect(separator, Preferences.Color_Secondary);
+        }
 
 
         /// Update sizes used in layouting based on the window size.
         private void UpdateLayoutingSizes()
         {
-            var width = position.width - IconSize;
-
-            _rect_scroll = new Rect(_offset, _offset, width - (_offset * 2), position.height - IconSize * 2.5f);
-
-            _rect_scrollView = _rect_scroll;
+            var width = position.width - _offset * 2;
+            _rect_scrollArea = new Rect(_offset, _offset, width - _offset * 2, position.height - IconSize - _offset * 4);
+            _rect_scrollView = _rect_scrollArea;
 
             _unit = (int)(width / 28) == 0 ? 1 : (int)(width / 28); // If the unit would be 0, set it to 1.
 
@@ -615,41 +751,108 @@ namespace com.immortalhydra.gdtb.codetodos
             }
 
             // Same for buttons size
-            if(Preferences.ButtonsDisplay.ToString() == "COOL_ICONS")
+            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                _width_editAndComplete = (IconSize * 2) + 5;
+                if (_showingScrollbar)
+                {
+                    _width_buttons = IconSize + _offset * 3;
+                }
+                else
+                {
+                    _width_buttons = IconSize + _offset;
+                }
             }
             else
             {
-                _width_editAndComplete = ButtonWidth + _offset;
+                if (_showingScrollbar)
+                {
+                    _width_buttons = ButtonWidth + _offset * 3;
+                }
+                else
+                {
+                    _width_buttons = ButtonWidth + _offset * 1;
+                }
             }
 
-            _width_qqq = (int)width - _width_priority - _width_editAndComplete - (_offset * 2);
+            _width_qqq = (int)width - _width_priority - _width_buttons - _offset * 3;
         }
 
 
-        /// Load the CodeTODOs skin.
-        private void ChooseSkin()
+        /// Load CodeTODOs custom skin.
+        public void LoadSkin()
         {
             _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
         }
 
 
-        /// Assign the GUI Styles
-        private void LoadStyles()
+        /// Load custom styles and apply colors from preferences.
+        public void LoadStyles()
         {
-            _style_priority = _skin.GetStyle("label");
-            _style_task = _skin.GetStyle("task");
-            _style_script = _skin.GetStyle("script");
+            _style_script = _skin.GetStyle("GDTB_CodeTODOs_script");
+            _style_script.active.textColor = Preferences.Color_Tertiary;
+            _style_script.normal.textColor = Preferences.Color_Tertiary;
+            _style_task = _skin.GetStyle("GDTB_CodeTODOs_task");
+            _style_task.active.textColor = Preferences.Color_Secondary;
+            _style_task.normal.textColor = Preferences.Color_Secondary;
+            _style_priority = _skin.GetStyle("GDTB_CodeTODOs_priority");
+            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
+            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
+            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
+
+            _skin.settings.selectionColor = Preferences.Color_Secondary;
+
+            // Change scrollbar color.
+            var scrollbar = Resources.Load(Constants.TEX_SCROLLBAR, typeof(Texture2D)) as Texture2D;
+            #if UNITY_5 || UNITY_5_3_OR_NEWER
+                scrollbar.SetPixel(0,0, Preferences.Color_Secondary);
+            #else
+				var pixels = scrollbar.GetPixels();
+				// We do it like this because minimum texture size in older versions of Unity is 2x2.
+				for(var i = 0; i < pixels.GetLength(0); i++)
+				{
+					scrollbar.SetPixel(i, 0, Preferences.Color_Secondary);
+					scrollbar.SetPixel(i, 1, Preferences.Color_Secondary);
+				}
+            #endif
+
+            scrollbar.Apply();
+            _skin.verticalScrollbarThumb.normal.background = scrollbar;
+            _skin.verticalScrollbarThumb.fixedWidth = 6;
+
+            /*
+            style_bold = skin_custom.GetStyle("GDTB_CodeTODOs_key");
+            style_bold.normal.textColor = Preferences.Color_Secondary;
+            style_bold.active.textColor = Preferences.Color_Secondary;
+            style_customGrid = skin_custom.GetStyle("GDTB_CodeTODOs_selectionGrid");
+            */
         }
 
 
-        /// Called when the window is closed.
-        private void OnDestroy()
+        /// Set the minSize of the window based on preferences.
+        public void SetMinSize()
         {
-            if (Preferences.AutoRefresh == false)
+            var window = GetWindow(typeof(WindowMain)) as WindowMain;
+            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                IO.WriteQQQsToFile();
+                window.minSize = new Vector2(222f, 150f);
+            }
+            else
+            {
+                window.minSize = new Vector2(322f, 150f);
+            }
+        }
+
+
+        /// Close open sub-windows (add, edit) when opening prefs.
+        private void CloseOtherWindows()
+        {
+            if (WindowAdd.IsOpen)
+            {
+                EditorWindow.GetWindow(typeof(WindowAdd)).Close();
+            }
+            if (WindowEdit.IsOpen)
+            {
+                EditorWindow.GetWindow(typeof(WindowEdit)).Close();
             }
         }
     }
