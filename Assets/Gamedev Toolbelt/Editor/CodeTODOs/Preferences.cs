@@ -169,12 +169,13 @@ namespace com.immortalhydra.gdtb.codetodos
         #endregion fields
 
 
+        private static Vector2 _scrollPosition = new Vector2(0, 0);
         [PreferenceItem("Code TODOs")]
         public static void PreferencesGUI()
         {
             GetAllPrefValues();
 
-            EditorGUILayout.BeginVertical();
+            _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, false, false);
             EditorGUILayout.LabelField("General Settings", EditorStyles.boldLabel);
             _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
             _autoRefresh = EditorGUILayout.Toggle("Auto refresh", _autoRefresh);
@@ -198,7 +199,7 @@ namespace com.immortalhydra.gdtb.codetodos
             _newShortcut = DrawShortcutSelector();
             GUILayout.Space(20);
             DrawResetButton();
-            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndScrollView();
 
             if (GUI.changed)
             {
