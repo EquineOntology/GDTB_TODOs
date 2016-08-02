@@ -281,18 +281,12 @@ namespace com.immortalhydra.gdtb.codetodos
             priorityRect.position = new Vector2(newX, newY);
 
             var color = GetQQQPriorityColor((int)aQQQ.Priority);
-            EditorGUI.DrawRect(priorityRect, color);
 
-            // Draw bodrers
-            var topBorder = new Rect(priorityRect.x, priorityRect.y, priorityRect.width, borderWidth);
-            var bottomBorder = new Rect(priorityRect.x, (priorityRect.y + priorityRect.height - borderWidth), priorityRect.width, borderWidth);
-            var leftBorder = new Rect(priorityRect.x, priorityRect.y, borderWidth, priorityRect.height);
-            var rightBorder = new Rect((priorityRect.x + priorityRect.width - borderWidth), priorityRect.y, borderWidth, priorityRect.height);
+            // Draw border rectangle.
+            EditorGUI.DrawRect(priorityRect, Preferences.BorderColor);
 
-            EditorGUI.DrawRect(topBorder, Color.gray);
-            EditorGUI.DrawRect(bottomBorder, Color.gray);
-            EditorGUI.DrawRect(leftBorder, Color.gray);
-            EditorGUI.DrawRect(rightBorder, Color.gray);
+            // Draw the priority bar.
+            EditorGUI.DrawRect(new Rect(priorityRect.x + 1, priorityRect.y + 1, priorityRect.width - 2, priorityRect.height - 2), color);
         }
 
 
