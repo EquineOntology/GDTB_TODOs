@@ -244,7 +244,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
         #region QQQPriorityMethods
         /// Select which priority format to use based on the user preference.
-        private void DrawPriority(Rect aRect, QQQ aQQQ, float helpBoxHeight = 30)
+        private void DrawPriority(Rect aRect, QQQ aQQQ, float aBackgroundHeight = 30)
         {
             switch (Preferences.PriorityDisplay)
             {
@@ -259,16 +259,15 @@ namespace com.immortalhydra.gdtb.codetodos
                     break;
                 case PriorityDisplayFormat.BARS:
                 default:
-                    DrawPriority_Bars(aRect, aQQQ, helpBoxHeight);
+                    DrawPriority_Bars(aRect, aQQQ, aBackgroundHeight);
                     break;
             }
         }
 
 
         /// Draw priority for the "Bars" setting.
-        private void DrawPriority_Bars(Rect aRect, QQQ aQQQ, float helpBoxHeight)
+        private void DrawPriority_Bars(Rect aRect, QQQ aQQQ, float aBackgroundHeight)
         {
-            var borderWidth = 1;
             var priorityRect = aRect;
             var newY = 0;
             var newX = 0;
@@ -277,7 +276,7 @@ namespace com.immortalhydra.gdtb.codetodos
             newY = (int)priorityRect.y + _offset;
 
             priorityRect.width = IconSize;
-            priorityRect.height = helpBoxHeight - (_offset * 2);
+            priorityRect.height = aBackgroundHeight - (_offset * 2);
             priorityRect.position = new Vector2(newX, newY);
 
             var color = GetQQQPriorityColor((int)aQQQ.Priority);
@@ -469,11 +468,11 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 case ButtonsDisplayFormat.REGULAR_BUTTONS:
                     Button_Edit_default(aRect, out editRect, out editContent);
-                    Button_Delete_default(aRect, out completeRect, out completeContent);
+                    Button_Complete_default(aRect, out completeRect, out completeContent);
                     break;
                 default:
                     Button_Edit_icon(aRect, out editRect, out editContent);
-                    Button_Delete_icon(aRect, out completeRect, out completeContent);
+                    Button_Complete_icon(aRect, out completeRect, out completeContent);
                     break;
             }
 
@@ -531,7 +530,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
             anEditContent = new GUIContent("Edit", "Edit this task");
         }
-        private void Button_Delete_default(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
+        private void Button_Complete_default(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
         {
             aCompleteRect = aRect;
             aCompleteRect.y += ButtonHeight + _offset + 2;
@@ -549,7 +548,7 @@ namespace com.immortalhydra.gdtb.codetodos
             anEditRect.height = IconSize;
             anEditContent = new GUIContent("", "Edit this EditorPref");
         }
-        private void Button_Delete_icon(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
+        private void Button_Complete_icon(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
         {
             aCompleteRect = aRect;
             aCompleteRect.y += IconSize + _offset + 2;
