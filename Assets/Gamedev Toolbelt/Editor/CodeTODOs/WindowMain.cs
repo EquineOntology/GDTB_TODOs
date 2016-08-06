@@ -175,12 +175,12 @@ namespace com.immortalhydra.gdtb.codetodos
                 var taskHeight = _style_task.CalcHeight(taskContent, _width_qqq);
                 var scriptHeight = _style_script.CalcHeight(scriptContent, _width_qqq);
 
-                var height_qqqBackground = taskHeight + scriptHeight + _offset * 2 + 4;
-                height_qqqBackground = height_qqqBackground < IconSize * 2.5f ? IconSize * 2.5f : height_qqqBackground;
+                var height_qqqBackground = taskHeight + scriptHeight + _offset * 2;
+                height_qqqBackground = height_qqqBackground < IconSize * 2.7f ? IconSize * 2.7f : height_qqqBackground;
 
-                if (Preferences.ButtonsDisplay.ToString() == "REGULAR_BUTTONS")
+                if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
                 {
-                    height_qqqBackground -= 4;
+                    height_qqqBackground += 4;
                 }
 
                 _rect_qqq = new Rect(_width_priority, _height_totalQQQHeight, _width_qqq, height_qqqBackground);
@@ -229,7 +229,7 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Draw the "Help box" style rectangle that separates the QQQs visually.
+        /// Draw the background that separates the QQQs visually.
         private void DrawQQQBackground(Rect aRect)
         {
             EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
@@ -420,7 +420,7 @@ namespace com.immortalhydra.gdtb.codetodos
             // Script.
             var scriptRect = aRect;
             scriptRect.x = _width_priority;
-            scriptRect.y += (taskRect.height + 5);
+            scriptRect.y += (taskRect.height + 10);
             scriptRect.height = aScriptHeight;
             var scriptLabel = CreateScriptLabelText(aQQQ);
 
@@ -524,7 +524,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void Button_Edit_default(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
         {
             anEditRect = aRect;
-            anEditRect.y += _offset;
+            anEditRect.y += _offset + 2;
             anEditRect.width = ButtonWidth;
             anEditRect.height = ButtonHeight;
 
@@ -533,7 +533,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void Button_Complete_default(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
         {
             aCompleteRect = aRect;
-            aCompleteRect.y += ButtonHeight + _offset + 2;
+            aCompleteRect.y += ButtonHeight + _offset + 8;
             aCompleteRect.width = ButtonWidth;
             aCompleteRect.height = ButtonHeight;
 
@@ -543,7 +543,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void Button_Edit_icon(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
         {
             anEditRect = aRect;
-            anEditRect.y += _offset;
+            anEditRect.y += _offset + 2;
             anEditRect.width = IconSize;
             anEditRect.height = IconSize;
             anEditContent = new GUIContent("", "Edit this EditorPref");
@@ -551,7 +551,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void Button_Complete_icon(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
         {
             aCompleteRect = aRect;
-            aCompleteRect.y += IconSize + _offset + 2;
+            aCompleteRect.y += IconSize + _offset + 8;
             aCompleteRect.width = IconSize;
             aCompleteRect.height = IconSize;
 
