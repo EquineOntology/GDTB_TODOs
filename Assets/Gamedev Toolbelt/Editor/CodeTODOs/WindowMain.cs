@@ -420,7 +420,7 @@ namespace com.immortalhydra.gdtb.codetodos
             // Script.
             var scriptRect = aRect;
             scriptRect.x = _width_priority;
-            scriptRect.y += (taskRect.height + 10);
+            scriptRect.y += (taskRect.height + 8);
             scriptRect.height = aScriptHeight;
             var scriptLabel = CreateScriptLabelText(aQQQ);
 
@@ -496,7 +496,7 @@ namespace com.immortalhydra.gdtb.codetodos
                 if (Preferences.ShowConfirmationDialogs == true)
                 {
                     var token = Preferences.TODOToken;
-                    if (EditorUtility.DisplayDialog("Delete " + token, "Are you sure you want to delete this " + token + "?", "Delete " + token, "Cancel"))
+                    if (EditorUtility.DisplayDialog("Complete " + token, "Are you sure you're done with this " + token + "?\nIt will be removed from the code too.", "Complete " + token, "Cancel"))
                     {
                         canExecute = true;
                     }
