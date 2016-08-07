@@ -14,19 +14,19 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
         private GUISkin _skin;
-        private GUIStyle _style_priority, _style_task, _style_script, _style_buttonText;
+        private GUIStyle _style_task, _style_script, _style_buttonText;
 
         // ========================= Editor layouting =========================
         private const int IconSize = Constants.ICON_SIZE;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
 
-        private int _unit, _width_priority, _width_priorityLabel, _width_qqq, _width_buttons;
+        private int _width_qqq, _width_buttons;
         private float _height_totalQQQHeight = 0;
         private int _offset = 5;
 
         private Vector2 _scrollPosition = new Vector2(0.0f, 0.0f);
-        private Rect _rect_scrollArea, _rect_scrollView, _rect_qqq, _rect_priority, _rect_editAndComplete;
+        private Rect _rect_scrollArea, _rect_scrollView, _rect_qqq, _rect_editAndComplete;
         private bool _showingScrollbar = false;
 
 
@@ -40,8 +40,6 @@ namespace com.immortalhydra.gdtb.codetodos
             window.LoadSkin();
             window.LoadStyles();
             window.UpdateLayoutingSizes();
-
-            window._width_priorityLabel = (int)window._style_priority.CalcSize(new GUIContent("URGENT")).x; // Not with the other layouting sizes because it only needs to be done once.
 
             if (QQQs.Count == 0 && Preferences.AutoRefresh == true)
             {
@@ -183,11 +181,10 @@ namespace com.immortalhydra.gdtb.codetodos
                     height_qqqBackground += 4;
                 }
 
-                _rect_qqq = new Rect(_width_priority, _height_totalQQQHeight, _width_qqq, height_qqqBackground);
-                _rect_priority = new Rect(0, _rect_qqq.y, _width_priority, height_qqqBackground);
-                _rect_editAndComplete = new Rect(_width_priority + _width_qqq + (_offset * 2), _rect_qqq.y, _width_buttons, height_qqqBackground);
+                _rect_qqq = new Rect(0, _height_totalQQQHeight, _width_qqq, height_qqqBackground);
+                _rect_editAndComplete = new Rect(_width_qqq + (_offset * 2), _rect_qqq.y, _width_buttons, height_qqqBackground);
 
-                var rect_qqqBackground = _rect_priority;
+                var rect_qqqBackground = _rect_qqq;
                 rect_qqqBackground.height = height_qqqBackground + _offset / 2;
 
                 if (_showingScrollbar == true) // If we're not showing the scrollbar, QQQs need to be larger too.
@@ -207,8 +204,7 @@ namespace com.immortalhydra.gdtb.codetodos
                 // I couldn't find a way around it, so what we do is swallow the exception and wait for the next draw call.
                 try
                 {
-                    DrawQQQBackground(rect_qqqBackground);
-                    DrawPriority(_rect_priority, QQQs[i], height_qqqBackground);
+                    DrawQQQBackground(rect_qqqBackground,  GetQQQPriorityColor((int)QQQs[i].Priority));
                     DrawTaskAndScript(_rect_qqq, QQQs[i], taskHeight, scriptHeight);
                     DrawEditAndComplete(_rect_editAndComplete, QQQs[i]);
                 }
@@ -230,157 +226,15 @@ namespace com.immortalhydra.gdtb.codetodos
 
 
         /// Draw the background that separates the QQQs visually.
-        private void DrawQQQBackground(Rect aRect)
+        private void DrawQQQBackground(Rect aRect, Color aColor)
         {
-            EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
+            EditorGUI.DrawRect(aRect, aColor);
             EditorGUI.DrawRect(new Rect(
                     aRect.x + Constants.BUTTON_BORDER_THICKNESS,
                     aRect.y + Constants.BUTTON_BORDER_THICKNESS,
                     aRect.width - Constants.BUTTON_BORDER_THICKNESS * 2,
                     aRect.height - Constants.BUTTON_BORDER_THICKNESS * 2),
                 Preferences.Color_Quaternary);
-        }
-
-
-        #region QQQPriorityMethods
-        /// Select which priority format to use based on the user preference.
-        private void DrawPriority(Rect aRect, QQQ aQQQ, float aBackgroundHeight = 30)
-        {
-            switch (Preferences.PriorityDisplay)
-            {
-                case PriorityDisplayFormat.TEXT_ONLY:
-                    DrawPriority_Text(aRect, aQQQ);
-                    break;
-                case PriorityDisplayFormat.ICON_ONLY:
-                    DrawPriority_Icon(aRect, aQQQ);
-                    break;
-                case PriorityDisplayFormat.ICON_AND_TEXT:
-                    DrawPriority_IconAndText(aRect, aQQQ);
-                    break;
-                case PriorityDisplayFormat.BARS:
-                default:
-                    DrawPriority_Bars(aRect, aQQQ, aBackgroundHeight);
-                    break;
-            }
-        }
-
-
-        /// Draw priority for the "Bars" setting.
-        private void DrawPriority_Bars(Rect aRect, QQQ aQQQ, float aBackgroundHeight)
-        {
-            var priorityRect = aRect;
-            var newY = 0;
-            var newX = 0;
-
-            newX = (int)priorityRect.x + (_offset * 2);
-            newY = (int)priorityRect.y + _offset;
-
-            priorityRect.width = IconSize;
-            priorityRect.height = aBackgroundHeight - (_offset * 2);
-            priorityRect.position = new Vector2(newX, newY);
-
-            var color = GetQQQPriorityColor((int)aQQQ.Priority);
-
-            // Draw border rectangle.
-            EditorGUI.DrawRect(priorityRect, Preferences.BorderColor);
-
-            // Draw the priority bar.
-            EditorGUI.DrawRect(new Rect(priorityRect.x + 1, priorityRect.y + 1, priorityRect.width - 2, priorityRect.height - 2), color);
-        }
-
-
-        /// Draw priority for the "Icon only" setting.
-        private void DrawPriority_Icon(Rect aRect, QQQ aQQQ)
-        {
-            // Prepare the rectangle for layouting. The layout is "space-icon-space".
-            var priorityRect = aRect;
-            var newY = 0.0f;
-            var newX = 0.0f;
-            if (aRect.width > IconSize + (_offset * 2))
-            {
-                newX = priorityRect.x + IconSize / 2 + _offset;
-                newY = priorityRect.y + IconSize / 2 + _offset;
-            }
-            else
-            {
-                newX = priorityRect.x + IconSize / 2;
-                newY = priorityRect.y + IconSize / 2;
-            }
-
-            priorityRect.width = IconSize;
-            priorityRect.height = IconSize;
-            priorityRect.position = new Vector2(newX, newY);
-
-            Texture2D tex = GetQQQPriorityTexture((int)aQQQ.Priority);
-            EditorGUI.DrawPreviewTexture(priorityRect, tex);
-        }
-
-
-        /// Draw priority for the "Text only" setting.
-        private void DrawPriority_Text(Rect aRect, QQQ aQQQ)
-        {
-            var priorityRect = aRect;
-            priorityRect.width -= _offset;
-            priorityRect.height -= (IconSize / 2 + _offset);
-
-            var newX = priorityRect.x + _offset * 2;
-            var newY = priorityRect.y + _offset - 1;
-            priorityRect.position = new Vector2(newX, newY);
-
-            var priority = aQQQ.Priority.ToString();
-            priority = priority == "MINOR" ? " MINOR" : priority;
-            EditorGUI.LabelField(priorityRect, priority);
-        }
-
-
-        /// Draw priority for the "Icon and Text" setting.
-        private void DrawPriority_IconAndText(Rect aRect, QQQ aQQQ)
-        {
-            // Draw the Icon.
-            var iconRect = aRect;
-            iconRect.width = IconSize;
-            iconRect.height = IconSize;
-
-            var iconNewX = iconRect.x + IconSize + _offset * 2;//iconRect.x + Mathf.Clamp(_unit, 1, IconSize + (int)(_priorityLabelWidth / 2));
-            var iconNewY = iconRect.y + _offset;
-            iconRect.position = new Vector2(iconNewX, iconNewY);
-
-            Texture2D tex = GetQQQPriorityTexture((int)aQQQ.Priority);
-            EditorGUI.DrawPreviewTexture(iconRect, tex);
-
-            // Draw the label.
-            var labelRect = aRect;
-            labelRect.width -= _offset;
-
-            var labelNewX = labelRect.x + _offset * 2;
-            var labelNewY = iconRect.y + iconRect.height;
-            labelRect.position = new Vector2(labelNewX, labelNewY);
-
-            var priority = aQQQ.Priority.ToString();
-            priority = priority == "MINOR" ? " MINOR" : priority; // Label looks better with a space before.
-
-            EditorGUI.LabelField(labelRect, priority);
-        }
-
-
-        /// Get the correct texture for a priority.
-        private Texture2D GetQQQPriorityTexture(int aPriority)
-        {
-            Texture2D tex;
-            switch (aPriority)
-            {
-                case 1:
-                    tex = Resources.Load<Texture2D>(Constants.FILE_QQQ_URGENT);
-                    break;
-                case 3:
-                    tex = Resources.Load<Texture2D>(Constants.FILE_QQQ_MINOR);
-                    break;
-                case 2:
-                default:
-                    tex = Resources.Load<Texture2D>(Constants.FILE_QQQ_NORMAL);
-                    break;
-            }
-            return tex;
         }
 
 
@@ -404,22 +258,20 @@ namespace com.immortalhydra.gdtb.codetodos
             return col;
         }
 
-        #endregion
-
 
         /// Draws the "Task" and "Script" texts for QQQs.
         private void DrawTaskAndScript(Rect aRect, QQQ aQQQ, float aTaskHeight, float aScriptHeight)
         {
             // Task.
             var taskRect = aRect;
-            taskRect.x = _width_priority;
+            taskRect.x = _offset * 2;
             taskRect.y += _offset;
             taskRect.height = aTaskHeight;
             EditorGUI.LabelField(taskRect, aQQQ.Task, _style_task);
 
             // Script.
             var scriptRect = aRect;
-            scriptRect.x = _width_priority;
+            scriptRect.x = _offset * 2;
             scriptRect.y += (taskRect.height + 8);
             scriptRect.height = aScriptHeight;
             var scriptLabel = CreateScriptLabelText(aQQQ);
@@ -514,7 +366,7 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                DrawingUtils.DrawTextureButton(completeRect, DrawingUtils.Texture_Delete);
+                DrawingUtils.DrawTextureButton(completeRect, DrawingUtils.Texture_Complete);
             }
             else
             {
@@ -598,7 +450,7 @@ namespace com.immortalhydra.gdtb.codetodos
                 DrawingUtils.DrawTextButton(addRect, addContent.text, _style_buttonText);
             }
 
-
+            
             // Refresh list of QQQs.
             if (GUI.Button(refreshRect, refreshContent))
             {
@@ -613,10 +465,12 @@ namespace com.immortalhydra.gdtb.codetodos
                 DrawingUtils.DrawTextButton(refreshRect, refreshContent.text, _style_buttonText);
             }
 
+
             // Open settings.
             if (GUI.Button(settingsRect, settingsContent))
             {
                 CloseOtherWindows();
+
                 // Unfortunately EditorApplication.ExecuteMenuItem(...) doesn't work, so we have to rely on a bit of reflection.
                 var assembly = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
                 var type = assembly.GetType("UnityEditor.PreferencesWindow");
@@ -726,24 +580,8 @@ namespace com.immortalhydra.gdtb.codetodos
             var width = position.width - _offset * 2;
             _rect_scrollArea = new Rect(_offset, _offset, width - _offset * 2, position.height - IconSize - _offset * 4);
             _rect_scrollView = _rect_scrollArea;
-
-            _unit = (int)(width / 28) == 0 ? 1 : (int)(width / 28); // If the unit would be 0, set it to 1.
-
-            // Priority rect width has different size based on preferences.
-            if (Preferences.PriorityDisplay.ToString() == "ICON_ONLY")
-            {
-                _width_priority = Mathf.Clamp((_unit * 2) + IconSize, IconSize, (IconSize + _offset) * 2);
-            }
-            else if (Preferences.PriorityDisplay.ToString() == "BARS")
-            {
-                _width_priority = IconSize * 2;
-            }
-            else
-            {
-                _width_priority = _width_priorityLabel + _offset * 4;
-            }
-
-            // Same for buttons size
+            
+            // Buttons have different sizes based on preferences.
             if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
                 if (_showingScrollbar)
@@ -767,7 +605,7 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
             }
 
-            _width_qqq = (int)width - _width_priority - _width_buttons - _offset * 3;
+            _width_qqq = (int)width - _width_buttons - _offset * 3;
         }
 
 
@@ -787,7 +625,6 @@ namespace com.immortalhydra.gdtb.codetodos
             _style_task = _skin.GetStyle("GDTB_CodeTODOs_task");
             _style_task.active.textColor = Preferences.Color_Secondary;
             _style_task.normal.textColor = Preferences.Color_Secondary;
-            _style_priority = _skin.GetStyle("GDTB_CodeTODOs_priority");
             _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
             _style_buttonText.active.textColor = Preferences.Color_Tertiary;
             _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
@@ -811,13 +648,6 @@ namespace com.immortalhydra.gdtb.codetodos
             scrollbar.Apply();
             _skin.verticalScrollbarThumb.normal.background = scrollbar;
             _skin.verticalScrollbarThumb.fixedWidth = 6;
-
-            /*
-            style_bold = skin_custom.GetStyle("GDTB_CodeTODOs_key");
-            style_bold.normal.textColor = Preferences.Color_Secondary;
-            style_bold.active.textColor = Preferences.Color_Secondary;
-            style_customGrid = skin_custom.GetStyle("GDTB_CodeTODOs_selectionGrid");
-            */
         }
 
 

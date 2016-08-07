@@ -16,17 +16,6 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        // Priority displayed as text, icon, text + icon.
-        private const string PREFS_CODETODOS_PRIORITY_DISPLAY = "GDTB_CodeTODOs_PriorityDisplay";
-        private static PriorityDisplayFormat _priorityDisplay = PriorityDisplayFormat.BARS;
-        private static int _priorityDisplay_default = 3;
-        public static PriorityDisplayFormat PriorityDisplay
-        {
-            get { return _priorityDisplay; }
-        }
-        private static string[] _displayFormatsString = { "Text only", "Icon only", "Icon and Text", "Bars" };
-
-
         // Buttons displayed as normal buttons or smaller icons.
         private const string PREFS_CODETODOS_BUTTONS_DISPLAY = "GDTB_CodeTODOs_ButtonDisplay";
         private static ButtonsDisplayFormat _buttonsDisplay = ButtonsDisplayFormat.COOL_ICONS;
@@ -131,15 +120,6 @@ namespace com.immortalhydra.gdtb.codetodos
             get { return _priColor3; }
         }
 
-        // Color of bar borders
-        private const string PREFS_CODETODOS_COLOR_BORDER = "GDTB_CodeTODOs_Border";
-        private static Color _borderColor = Color.gray;
-        private static Color _borderColor_default = Color.gray;
-        public static Color BorderColor
-        {
-            get { return _borderColor; }
-        }
-
         #endregion
 
 
@@ -152,6 +132,7 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             get { return _autoRefresh; }
         }
+
 
         // Custom shortcut
         private const string PREFS_CODETODOS_SHORTCUT = "GDTB_CodeTODOs_Shortcut";
@@ -169,7 +150,7 @@ namespace com.immortalhydra.gdtb.codetodos
         #endregion fields
 
 
-        private static Vector2 _scrollPosition = new Vector2(0, 0);
+        private static Vector2 _scrollPosition = new Vector2(-1, 0);
         [PreferenceItem("Code TODOs")]
         public static void PreferencesGUI()
         {
@@ -183,11 +164,10 @@ namespace com.immortalhydra.gdtb.codetodos
             GUILayout.Space(20);
             EditorGUILayout.LabelField("UI", EditorStyles.boldLabel);
             _buttonsDisplay = (ButtonsDisplayFormat)EditorGUILayout.Popup("Button style", System.Convert.ToInt16(_buttonsDisplay), _buttonsFormatsString);
-            _priorityDisplay = (PriorityDisplayFormat)EditorGUILayout.Popup("Priority style", System.Convert.ToInt16(_priorityDisplay), _displayFormatsString);
+            _iconStyle = (IconStyle)EditorGUILayout.Popup("Icon style", (int)_iconStyle, arr_iconStyle);
             _priColor1 = EditorGUILayout.ColorField("Urgent priority", _priColor1);
             _priColor2 = EditorGUILayout.ColorField("Normal priority", _priColor2);
             _priColor3 = EditorGUILayout.ColorField("Minor priority", _priColor3);
-            _borderColor = EditorGUILayout.ColorField("Borders", _borderColor);
             EditorGUILayout.Separator();
             _primary = EditorGUILayout.ColorField("Background and button color", _primary);
             _secondary = EditorGUILayout.ColorField("Accent color", _secondary);
@@ -239,7 +219,6 @@ namespace com.immortalhydra.gdtb.codetodos
         private static void SetPrefValues()
         {
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, _todoToken);
-            EditorPrefs.SetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, System.Convert.ToInt16(_priorityDisplay));
             EditorPrefs.SetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, System.Convert.ToInt16(_buttonsDisplay));
             EditorPrefs.SetBool(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh);
             EditorPrefs.SetBool(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs);
@@ -268,7 +247,6 @@ namespace com.immortalhydra.gdtb.codetodos
             EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI1, RGBA.ColorToString(_priColor1));
             EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI2, RGBA.ColorToString(_priColor2));
             EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI3, RGBA.ColorToString(_priColor3));
-            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_BORDER, RGBA.ColorToString(_borderColor));
         }
 
 
@@ -372,7 +350,6 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void GetAllPrefValues()
         {
             _todoToken = GetPrefValue(PREFS_CODETODOS_TOKEN, _todoToken_default); // TODO token.
-            _priorityDisplay = (PriorityDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_PRIORITY_DISPLAY, _priorityDisplay_default); // QQQ Priority display.
             _buttonsDisplay = (ButtonsDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, _buttonsDisplay_default); // Buttons display.
             _oldDisplayFormat = _buttonsDisplay;
             _autoRefresh = GetPrefValue(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh.
@@ -404,7 +381,6 @@ namespace com.immortalhydra.gdtb.codetodos
             _priColor1 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, _priColor1_default); // URGENT priority color.
             _priColor2 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, _priColor2_default); // NORMAL priority color.
             _priColor3 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, _priColor3_default); // MINOR priority color.
-            _borderColor = GetPrefValue(PREFS_CODETODOS_COLOR_BORDER, _borderColor_default); // Priority bar border color.
         }
 
 
@@ -548,7 +524,6 @@ namespace com.immortalhydra.gdtb.codetodos
         private static void ResetPrefsToDefault()
         {
             _todoToken = _todoToken_default;
-            _priorityDisplay = (PriorityDisplayFormat)_priorityDisplay_default;
             _buttonsDisplay = (ButtonsDisplayFormat)_buttonsDisplay_default;
             _autoRefresh = _autoRefresh_default;
             _primary = new Color(_primary_default.r / 255, _primary_default.g / 255, _primary_default.b / 255, _primary_default.a);
@@ -558,7 +533,6 @@ namespace com.immortalhydra.gdtb.codetodos
             _priColor1 = new Color(_priColor1_default.r / 255, _priColor1_default.g / 255, _priColor1_default.b / 255, _priColor1_default.a);
             _priColor2 = new Color(_priColor2_default.r / 255, _priColor2_default.g / 255, _priColor2_default.b / 255, _priColor2_default.a);
             _priColor3 = new Color(_priColor3_default.r / 255, _priColor3_default.g / 255, _priColor3_default.b / 255, _priColor3_default.a);
-            _borderColor = _borderColor_default;
             _shortcut = _shortcut_default;
 
             SetPrefValues();
@@ -603,15 +577,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 EditorWindow.GetWindow(typeof(WindowEdit)).Repaint();
             }
         }
-    }
-
-
-    public enum PriorityDisplayFormat
-    {
-        TEXT_ONLY,
-        ICON_ONLY,
-        ICON_AND_TEXT,
-        BARS
     }
 
 
