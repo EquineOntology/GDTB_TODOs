@@ -13,7 +13,7 @@ namespace com.immortalhydra.gdtb.codetodos
         public static Texture2D Texture_Edit = Resources.Load(Constants.TEX_EDIT_DARK, typeof(Texture2D)) as Texture2D;
         public static Texture2D Texture_Complete = Resources.Load(Constants.TEX_COMPLETE_DARK, typeof(Texture2D)) as Texture2D;
 
-        public static IconStyle CurrentIconStyle = IconStyle.DARK;
+        public static IconStyle CurrentIconStyle = IconStyle.LIGHT;
 
 
         /// Draw "fake" texture button.

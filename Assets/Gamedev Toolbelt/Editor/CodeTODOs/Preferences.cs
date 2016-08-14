@@ -352,6 +352,7 @@ namespace com.immortalhydra.gdtb.codetodos
             _todoToken = GetPrefValue(PREFS_CODETODOS_TOKEN, _todoToken_default); // TODO token.
             _buttonsDisplay = (ButtonsDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, _buttonsDisplay_default); // Buttons display.
             _oldDisplayFormat = _buttonsDisplay;
+            GetIconStyle();
             _autoRefresh = GetPrefValue(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh.
             _oldAutoRefresh = _autoRefresh;
             _confirmationDialogs = GetPrefValue(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs_default);
