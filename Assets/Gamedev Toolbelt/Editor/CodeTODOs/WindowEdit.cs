@@ -28,7 +28,6 @@ namespace com.immortalhydra.gdtb.codetodos
             // Get existing open window or if none, make a new one.
             WindowEdit window = (WindowEdit)EditorWindow.GetWindow(typeof(WindowEdit));
             window.minSize = new Vector2(208f, 140f);
-            window.titleContent = new GUIContent("Edit task");
             _oldQQQ = aQQQ;
             _newQQQ = new QQQ((int)aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);
             window.Show();
@@ -37,6 +36,11 @@ namespace com.immortalhydra.gdtb.codetodos
 
         public void OnEnable()
         {
+            #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
+                titleContent = new GUIContent("Edit task");
+            #else
+                title = "Edit task";
+            #endif
             Instance = this;
             _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
         }

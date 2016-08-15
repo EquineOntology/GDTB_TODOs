@@ -30,7 +30,6 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void Init()
         {
             WindowAdd window = (WindowAdd)EditorWindow.GetWindow(typeof(WindowAdd));
-            window.titleContent = new GUIContent("Add task");
             window.minSize = new Vector2(208f, 230f);
             window.ShowUtility();
         }
@@ -38,6 +37,12 @@ namespace com.immortalhydra.gdtb.codetodos
 
         public void OnEnable()
         {
+            #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
+                titleContent = new GUIContent("Add task");
+            #else
+                title = "Add task";
+            #endif
+            
             Instance = this;
             _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
             _script = new MonoScript();

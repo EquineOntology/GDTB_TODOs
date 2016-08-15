@@ -132,7 +132,7 @@ namespace com.immortalhydra.gdtb.codetodos
             var labelContent = new GUIContent(label);
 
             Vector2 labelSize;
-            #if UNITY_UNITY_5_3_OR_NEWER
+            #if UNITY_5_3_OR_NEWER
                 labelSize = EditorStyles.centeredGreyMiniLabel.CalcSize(labelContent);
             #else
                 labelSize = EditorStyles.wordWrappedMiniLabel.CalcSize(labelContent);
