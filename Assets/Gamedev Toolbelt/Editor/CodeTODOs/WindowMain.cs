@@ -332,14 +332,8 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 WindowEdit.Init(aQQQ);
             }
-            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
-            {
-                DrawingUtils.DrawIconButton(editRect, DrawingUtils.Texture_Edit);
-            }
-            else
-            {
-                DrawingUtils.DrawTextButton(editRect, editContent.text, _style_buttonText);
-            }
+            DrawingUtils.DrawButton(editRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Edit, editContent.text, _style_buttonText);
+
 
             if (GUI.Button(completeRect, completeContent))
             {
@@ -364,14 +358,7 @@ namespace com.immortalhydra.gdtb.codetodos
                     QQQOps.CompleteQQQ(aQQQ);
                 }
             }
-            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
-            {
-                DrawingUtils.DrawIconButton(completeRect, DrawingUtils.Texture_Complete);
-            }
-            else
-            {
-                DrawingUtils.DrawTextButton(completeRect, completeContent.text, _style_buttonText);
-            }
+            DrawingUtils.DrawButton(completeRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Complete, completeContent.text, _style_buttonText);
         }
         private void Button_Edit_default(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
         {
@@ -441,14 +428,7 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 WindowAdd.Init();
             }
-            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
-            {
-                DrawingUtils.DrawIconButton(addRect, DrawingUtils.Texture_Add);
-            }
-            else
-            {
-                DrawingUtils.DrawTextButton(addRect, addContent.text, _style_buttonText);
-            }
+            DrawingUtils.DrawButton(addRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Add, addContent.text, _style_buttonText);
 
             
             // Refresh list of QQQs.
@@ -456,14 +436,7 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 QQQOps.RefreshQQQs();
             }
-            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
-            {
-                DrawingUtils.DrawIconButton(refreshRect, DrawingUtils.Texture_Refresh);
-            }
-            else
-            {
-                DrawingUtils.DrawTextButton(refreshRect, refreshContent.text, _style_buttonText);
-            }
+            DrawingUtils.DrawButton(refreshRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Refresh, refreshContent.text, _style_buttonText);
 
 
             // Open settings.
@@ -477,15 +450,7 @@ namespace com.immortalhydra.gdtb.codetodos
                 var method = type.GetMethod("ShowPreferencesWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
                 method.Invoke(null, null);
             }
-
-            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
-            {
-                DrawingUtils.DrawIconButton(settingsRect, DrawingUtils.Texture_Settings);
-            }
-            else
-            {
-                DrawingUtils.DrawTextButton(settingsRect, settingsContent.text, _style_buttonText);
-            }
+            DrawingUtils.DrawButton(settingsRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Settings, settingsContent.text, _style_buttonText);
 
 
             // Nuke QQQs.
@@ -510,14 +475,7 @@ namespace com.immortalhydra.gdtb.codetodos
                     QQQOps.RemoveAllQQQs();
                 }
             }
-            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
-            {
-                DrawingUtils.DrawIconButton(nukeRect, DrawingUtils.Texture_Nuke);
-            }
-            else
-            {
-                DrawingUtils.DrawTextButton(nukeRect, nukeContent.text, _style_buttonText);
-            }
+            DrawingUtils.DrawButton(nukeRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Nuke, nukeContent.text, _style_buttonText);
         }
 
 

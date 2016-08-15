@@ -137,16 +137,8 @@ namespace com.immortalhydra.gdtb.codetodos
             if (GUI.Button(buttonRect, buttonContent))
             {
                 ButtonPressed();
-            }            
-
-            if(Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
-            {
-                DrawingUtils.DrawIconButton(buttonRect, DrawingUtils.Texture_Add);
             }
-            else
-            {
-                DrawingUtils.DrawTextButton(buttonRect, buttonContent.text, _style_buttonText);
-            }
+            DrawingUtils.DrawButton(buttonRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Add, buttonContent.text, _style_buttonText);
         }
 
 

@@ -122,15 +122,7 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 PressedEdit();
             }
-
-            if(Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
-            {
-                DrawingUtils.DrawIconButton(buttonRect, DrawingUtils.Texture_Edit);
-            }
-            else
-            {
-                DrawingUtils.DrawTextButton(buttonRect, buttonContent.text, _style_buttonText);
-            }
+            DrawingUtils.DrawButton(buttonRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Edit, buttonContent.text, _style_buttonText);
         }
 
 
