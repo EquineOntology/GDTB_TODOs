@@ -249,15 +249,11 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Open the script associated with the qqq in question.
         public static void OpenScript(QQQ aQQQ)
         {
-            #if UNITY_4
-            var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script, typeof(UnityEngine.TextAsset)) as UnityEngine.TextAsset;
-            AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
-
-            #elif UNITY_5_3_OR_NEWER
+            #if UNITY_5_3_OR_NEWER
             var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script) as UnityEngine.TextAsset;
             AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
 
-            #elif UNITY_5
+            #elif UNITY_4 || UNITY_5
             var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script, typeof(UnityEngine.TextAsset)) as UnityEngine.TextAsset;
             AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
 
