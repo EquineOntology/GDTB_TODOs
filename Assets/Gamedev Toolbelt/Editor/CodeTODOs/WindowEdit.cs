@@ -19,6 +19,8 @@ namespace com.immortalhydra.gdtb.codetodos
 
 
         private GUISkin _skin;
+        private GUIStyle _style_bold, _style_buttonText;
+
         private const int IconSize = 16;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
@@ -42,16 +44,25 @@ namespace com.immortalhydra.gdtb.codetodos
                 title = "Edit task";
             #endif
             Instance = this;
-            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+            LoadSkin();
+            LoadStyles();
         }
 
 
         private void OnGUI()
         {
             GUI.skin = _skin;
+            DrawWindowBackground();
             DrawPriority();
             DrawTask();
             DrawEdit();
+        }
+
+
+        /// Draw the background texture.
+        private void DrawWindowBackground()
+        {
+            EditorGUI.DrawRect(new Rect(0, 0, position.width, position.height), Preferences.Color_Primary);
         }
 
 
@@ -151,6 +162,27 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             aRect = new Rect((position.width / 2) - IconSize/2, position.height - IconSize * 1.5f, IconSize, IconSize);
             aContent = new GUIContent(DrawingUtils.Texture_Edit, "Save edits");
+        }
+
+
+        /// Load CodeTODOs custom skin.
+        public void LoadSkin()
+        {
+            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+        }
+
+
+        /// Load custom styles and apply colors from preferences.
+        public void LoadStyles()
+        {
+            _style_bold = _skin.GetStyle("GDTB_CodeTODOs_task");
+            _style_bold.active.textColor = Preferences.Color_Secondary;
+            _style_bold.normal.textColor = Preferences.Color_Secondary;
+            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
+            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
+            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
+
+            _skin.settings.selectionColor = Preferences.Color_Secondary;
         }
     }
 }

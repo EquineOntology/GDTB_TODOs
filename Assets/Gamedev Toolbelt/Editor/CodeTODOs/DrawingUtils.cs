@@ -16,8 +16,22 @@ namespace com.immortalhydra.gdtb.codetodos
         public static IconStyle CurrentIconStyle = IconStyle.LIGHT;
 
 
+        /// Draw the button, based on the type, not pressed.
+        public static void DrawButton(Rect aRect, ButtonsDisplayFormat aButtonType, Texture2D aTexture, string aText, GUIStyle aStyle)
+        {
+            if(aButtonType == ButtonsDisplayFormat.COOL_ICONS)
+            {
+                DrawIconButton(aRect, aTexture);
+            }
+            else
+            {
+                DrawTextButton(aRect, aText, aStyle);
+            }
+        }
+
+
         /// Draw "fake" texture button.
-        public static void DrawTextureButton(Rect aRect, Texture2D aTexture)
+        public static void DrawIconButton(Rect aRect, Texture2D aTexture)
         {
             EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
             var bgRect = new Rect(aRect.x + Constants.BUTTON_BORDER_THICKNESS, aRect.y + Constants.BUTTON_BORDER_THICKNESS, aRect.width - Constants.BUTTON_BORDER_THICKNESS * 2, aRect.height - Constants.BUTTON_BORDER_THICKNESS * 2);

@@ -334,7 +334,7 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                DrawingUtils.DrawTextureButton(editRect, DrawingUtils.Texture_Edit);
+                DrawingUtils.DrawIconButton(editRect, DrawingUtils.Texture_Edit);
             }
             else
             {
@@ -366,7 +366,7 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                DrawingUtils.DrawTextureButton(completeRect, DrawingUtils.Texture_Complete);
+                DrawingUtils.DrawIconButton(completeRect, DrawingUtils.Texture_Complete);
             }
             else
             {
@@ -443,7 +443,7 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                DrawingUtils.DrawTextureButton(addRect, DrawingUtils.Texture_Add);
+                DrawingUtils.DrawIconButton(addRect, DrawingUtils.Texture_Add);
             }
             else
             {
@@ -458,7 +458,7 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                DrawingUtils.DrawTextureButton(refreshRect, DrawingUtils.Texture_Refresh);
+                DrawingUtils.DrawIconButton(refreshRect, DrawingUtils.Texture_Refresh);
             }
             else
             {
@@ -480,7 +480,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
             if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                DrawingUtils.DrawTextureButton(settingsRect, DrawingUtils.Texture_Settings);
+                DrawingUtils.DrawIconButton(settingsRect, DrawingUtils.Texture_Settings);
             }
             else
             {
@@ -512,7 +512,7 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
-                DrawingUtils.DrawTextureButton(nukeRect, DrawingUtils.Texture_Nuke);
+                DrawingUtils.DrawIconButton(nukeRect, DrawingUtils.Texture_Nuke);
             }
             else
             {
