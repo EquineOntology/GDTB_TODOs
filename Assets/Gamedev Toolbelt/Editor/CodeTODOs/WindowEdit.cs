@@ -21,7 +21,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private GUISkin _skin;
         private GUIStyle _style_bold, _style_buttonText;
 
-        private const int IconSize = 16;
+        private const int IconSize = Constants.ICON_SIZE;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
 
@@ -70,7 +70,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawPriority()
         {
             var labelRect = new Rect(10, 10, position.width, 16);
-            EditorGUI.LabelField(labelRect, "Choose a priority:", EditorStyles.boldLabel);
+            EditorGUI.LabelField(labelRect, "Choose a priority:", _style_bold);
 
             int priorityIndex;
             if (!_prioritySetOnce)
@@ -94,7 +94,7 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             // Label.
             var labelRect = new Rect(10, 53, position.width, 16);
-            EditorGUI.LabelField(labelRect, "Task:", EditorStyles.boldLabel);
+            EditorGUI.LabelField(labelRect, "Task:", _style_bold);
 
             // The task itself.
             var fieldRect = new Rect(10, 71, position.width - 20, 32);
@@ -120,31 +120,16 @@ namespace com.immortalhydra.gdtb.codetodos
 
             if (GUI.Button(buttonRect, buttonContent))
             {
-                // Get confirmation (through confirmation dialog or automatically if conf. is off).
-                var execute = false;
+                PressedEdit();
+            }
 
-                if (Preferences.ShowConfirmationDialogs == true)
-                {
-                    if (EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
-                    {
-                        execute = true;
-                    }
-                }
-                else
-                {
-                    execute = true;
-                }
-
-                // Do the thing.
-                if (execute == true)
-                {
-                    QQQOps.UpdateTask(_oldQQQ, _newQQQ);
-                    if (WindowMain.IsOpen)
-                    {
-                        EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
-                    }
-                    EditorWindow.GetWindow(typeof(WindowEdit)).Close();
-                }
+            if(Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
+            {
+                DrawingUtils.DrawIconButton(buttonRect, DrawingUtils.Texture_Edit);
+            }
+            else
+            {
+                DrawingUtils.DrawTextButton(buttonRect, buttonContent.text, _style_buttonText);
             }
         }
 
@@ -161,7 +146,38 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawEdit_Icon(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2) - IconSize/2, position.height - IconSize * 1.5f, IconSize, IconSize);
-            aContent = new GUIContent(DrawingUtils.Texture_Edit, "Save edits");
+            aContent = new GUIContent("", "Save edits");
+        }
+
+
+        /// Action to take when the edit button is pressed.
+        private void PressedEdit() 
+        {
+            // Get confirmation (through confirmation dialog or automatically if conf. is off).
+            var execute = false;
+
+            if (Preferences.ShowConfirmationDialogs == true)
+            {
+                if (EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
+                {
+                    execute = true;
+                }
+            }
+            else
+            {
+                execute = true;
+            }
+
+            // Do the thing.
+            if (execute == true)
+            {
+                QQQOps.UpdateTask(_oldQQQ, _newQQQ);
+                if (WindowMain.IsOpen)
+                {
+                    EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
+                }
+                EditorWindow.GetWindow(typeof(WindowEdit)).Close();
+            }
         }
 
 
