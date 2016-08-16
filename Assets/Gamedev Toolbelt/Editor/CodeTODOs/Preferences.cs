@@ -97,6 +97,8 @@ namespace com.immortalhydra.gdtb.codetodos
         private const string PREFS_CODETODOS_COLOR_PRI1 = "GDTB_CodeTODOs_Urgent";
         private static Color _priColor1 = new Color(246, 71, 71, 1);  // Sunset orange http://www.flatuicolorpicker.com/pink
         private static Color _priColor1_default = new Color(246, 71, 71, 1);
+        private static Color _priColor1_dark = new Color(246, 71, 71, 1);
+        private static Color _priColor1_light = new Color(246, 71, 71, 1);
         public static Color PriColor1
         {
             get { return _priColor1; }
@@ -106,6 +108,8 @@ namespace com.immortalhydra.gdtb.codetodos
         private const string PREFS_CODETODOS_COLOR_PRI2 = "GDTB_CodeTODOs_Normal";
         private static Color _priColor2 = new Color(244, 208, 63, 1); // Saffron http://www.flatuicolorpicker.com/yellow
         private static Color _priColor2_default = new Color(244, 208, 63, 1);
+        private static Color _priColor2_dark = new Color(244, 208, 63, 1);
+        private static Color _priColor2_light = new Color(244, 208, 63, 1);
         public static Color PriColor2
         {
             get { return _priColor2; }
@@ -115,6 +119,8 @@ namespace com.immortalhydra.gdtb.codetodos
         private const string PREFS_CODETODOS_COLOR_PRI3 = "GDTB_CodeTODOs_Minor";
         private static Color _priColor3 = new Color(46, 204, 113, 1); // Shamrock http://www.flatuicolorpicker.com/green
         private static Color _priColor3_default = new Color(46, 204, 113, 1);
+        private static Color _priColor3_dark = new Color(46, 204, 113, 1);
+        private static Color _priColor3_light = new Color(46, 204, 113, 1);
         public static Color PriColor3
         {
             get { return _priColor3; }
@@ -283,6 +289,9 @@ namespace com.immortalhydra.gdtb.codetodos
                     _secondary = new Color(_secondary_dark.r / 255.0f, _secondary_dark.g / 255.0f, _secondary_dark.b / 255.0f, 1.0f);
                     _tertiary = new Color(_tertiary_dark.r / 255.0f, _tertiary_dark.g / 255.0f, _tertiary_dark.b / 255.0f, 1.0f);
                     _quaternary = new Color(_quaternary_dark.r / 255.0f, _quaternary_dark.g / 255.0f, _quaternary_dark.b / 255.0f, 1.0f);
+                    _priColor1 = new Color(_priColor1_dark.r / 255.0f, _priColor1_dark.g / 255.0f, _priColor1_dark.b / 255.0f, 1.0f);
+                    _priColor2 = new Color(_priColor2_dark.r / 255.0f, _priColor2_dark.g / 255.0f, _priColor2_dark.b / 255.0f, 1.0f);
+                    _priColor3 = new Color(_priColor3_dark.r / 255.0f, _priColor3_dark.g / 255.0f, _priColor3_dark.b / 255.0f, 1.0f);
                     SetColorPrefs();
                     GetColorPrefs();
 
@@ -317,6 +326,9 @@ namespace com.immortalhydra.gdtb.codetodos
                     _secondary = new Color(_secondary_light.r / 255.0f, _secondary_light.g / 255.0f, _secondary_light.b / 255.0f, 1.0f);
                     _tertiary = new Color(_tertiary_light.r / 255.0f, _tertiary_light.g / 255.0f, _tertiary_light.b / 255.0f, 1.0f);
                     _quaternary = new Color(_quaternary_light.r / 255.0f, _quaternary_light.g / 255.0f, _quaternary_light.b / 255.0f, 1.0f);
+                    _priColor1 = new Color(_priColor1_light.r / 255.0f, _priColor1_light.g / 255.0f, _priColor1_light.b / 255.0f, 1.0f);
+                    _priColor2 = new Color(_priColor2_light.r / 255.0f, _priColor2_light.g / 255.0f, _priColor2_light.b / 255.0f, 1.0f);
+                    _priColor3 = new Color(_priColor3_light.r / 255.0f, _priColor3_light.g / 255.0f, _priColor3_light.b / 255.0f, 1.0f);
                     SetColorPrefs();
                     GetColorPrefs();
 
