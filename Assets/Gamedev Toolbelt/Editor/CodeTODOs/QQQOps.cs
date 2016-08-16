@@ -253,7 +253,11 @@ namespace com.immortalhydra.gdtb.codetodos
             var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script) as UnityEngine.TextAsset;
             AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
 
-            #elif UNITY_4 || UNITY_5
+            #elif UNITY_5
+            var script = AssetDatabase.LoadAssetAtPath(aQQQ.Script, typeof(UnityEngine.TextAsset)) as UnityEngine.TextAsset;
+            AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
+
+            #elif UNITY_4
             var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script, typeof(UnityEngine.TextAsset)) as UnityEngine.TextAsset;
             AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
 
