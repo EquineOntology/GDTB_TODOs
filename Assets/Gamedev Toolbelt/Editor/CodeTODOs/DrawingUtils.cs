@@ -9,7 +9,6 @@ namespace com.immortalhydra.gdtb.codetodos
         public static Texture2D Texture_Get = Resources.Load(Constants.TEX_GET_DARK, typeof(Texture2D)) as Texture2D;
         public static Texture2D Texture_Refresh = Resources.Load(Constants.TEX_REFRESH_DARK, typeof(Texture2D)) as Texture2D;
         public static Texture2D Texture_Settings = Resources.Load(Constants.TEX_SETTINGS_DARK, typeof(Texture2D)) as Texture2D;
-        public static Texture2D Texture_Nuke = Resources.Load(Constants.TEX_DELETEALL_DARK, typeof(Texture2D)) as Texture2D;
         public static Texture2D Texture_Edit = Resources.Load(Constants.TEX_EDIT_DARK, typeof(Texture2D)) as Texture2D;
         public static Texture2D Texture_Complete = Resources.Load(Constants.TEX_COMPLETE_DARK, typeof(Texture2D)) as Texture2D;
 
@@ -90,7 +89,6 @@ namespace com.immortalhydra.gdtb.codetodos
             Texture_Get = null;
             Texture_Refresh = null;
             Texture_Settings = null;
-            Texture_Nuke = null;
             Texture_Edit = null;
             Texture_Complete = null;
 
@@ -100,7 +98,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 Texture_Get = Resources.Load(Constants.TEX_GET_DARK, typeof(Texture2D)) as Texture2D;
                 Texture_Refresh = Resources.Load(Constants.TEX_REFRESH_DARK, typeof(Texture2D)) as Texture2D;
                 Texture_Settings = Resources.Load(Constants.TEX_SETTINGS_DARK, typeof(Texture2D)) as Texture2D;
-                Texture_Nuke = Resources.Load(Constants.TEX_DELETEALL_DARK, typeof(Texture2D)) as Texture2D;
                 Texture_Edit = Resources.Load(Constants.TEX_EDIT_DARK, typeof(Texture2D)) as Texture2D;
                 Texture_Complete = Resources.Load(Constants.TEX_COMPLETE_DARK, typeof(Texture2D)) as Texture2D;
                 CurrentIconStyle = IconStyle.DARK;
@@ -111,7 +108,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 Texture_Get = Resources.Load(Constants.TEX_GET_LIGHT, typeof(Texture2D)) as Texture2D;
                 Texture_Refresh = Resources.Load(Constants.TEX_REFRESH_LIGHT, typeof(Texture2D)) as Texture2D;
                 Texture_Settings = Resources.Load(Constants.TEX_SETTINGS_LIGHT, typeof(Texture2D)) as Texture2D;
-                Texture_Nuke = Resources.Load(Constants.TEX_DELETEALL_LIGHT, typeof(Texture2D)) as Texture2D;
                 Texture_Edit = Resources.Load(Constants.TEX_EDIT_LIGHT, typeof(Texture2D)) as Texture2D;
                 Texture_Complete = Resources.Load(Constants.TEX_COMPLETE_LIGHT, typeof(Texture2D)) as Texture2D;
                 CurrentIconStyle = IconStyle.LIGHT;

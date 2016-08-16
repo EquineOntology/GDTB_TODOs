@@ -399,12 +399,12 @@ namespace com.immortalhydra.gdtb.codetodos
         #endregion
 
 
-        #region A-R-S-N buttons
-        /// Draw Add, Refresh, Settings and Nuke based on preferences.
+        #region A-R-S buttons
+        /// Draw Add, Refresh and Settings based on preferences.
         private void DrawBottomButtons()
         {
-            Rect addRect, refreshRect, settingsRect, nukeRect;
-            GUIContent addContent, refreshContent, settingsContent, nukeContent;
+            Rect addRect, refreshRect, settingsRect;
+            GUIContent addContent, refreshContent, settingsContent;
 
             switch (Preferences.ButtonsDisplay)
             {
@@ -412,14 +412,12 @@ namespace com.immortalhydra.gdtb.codetodos
                     Button_Add_default(out addRect, out addContent);
                     Button_Refresh_default(out refreshRect, out refreshContent);
                     Button_Settings_default(out settingsRect, out settingsContent);
-                    Button_Nuke_default(out nukeRect, out nukeContent);
                     break;
 				case ButtonsDisplayFormat.COOL_ICONS:
                 default:
                     Button_Add_icon(out addRect, out addContent);
                     Button_Refresh_icon(out refreshRect, out refreshContent);
                     Button_Settings_icon(out settingsRect, out settingsContent);
-                    Button_Nuke_icon(out nukeRect, out nukeContent);
                     break;
             }
 
@@ -451,75 +449,40 @@ namespace com.immortalhydra.gdtb.codetodos
                 method.Invoke(null, null);
             }
             DrawingUtils.DrawButton(settingsRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Settings, settingsContent.text, _style_buttonText);
-
-
-            // Nuke QQQs.
-            if (GUI.Button(nukeRect, nukeContent))
-            {
-                var canExecute = false;
-                if (Preferences.ShowConfirmationDialogs == true)
-                {
-                    var token = Preferences.TODOToken;
-                    if (EditorUtility.DisplayDialog("Remove ALL " + token + "s", "Are you sure ABSOLUTELY sure you want to remove ALL " + token + "s currently saved?\nThis is IRREVERSIBLE, only do this if you know what you're doing.", "Nuke " + token + "s", "Cancel"))
-                    {
-                        canExecute = true;
-                    }
-                }
-                else
-                {
-                    canExecute = true;
-                }
-
-                if (canExecute == true)
-                {
-                    QQQOps.RemoveAllQQQs();
-                }
-            }
-            DrawingUtils.DrawButton(nukeRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Nuke, nukeContent.text, _style_buttonText);
         }
 
 
         private void Button_Add_default(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 - ButtonWidth * 2 - 6), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect((position.width / 2 - ButtonWidth - IconSize * 2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Add", "Add a new QQQ");
         }
         private void Button_Refresh_default(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 - ButtonWidth - 2 ), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect((position.width / 2 - ButtonWidth/2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Refresh", "Refresh list");
         }
         private void Button_Settings_default(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 + 2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect((position.width / 2 + ButtonWidth / 2 + _offset), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Settings", "Open Settings");
-        }
-        private void Button_Nuke_default(out Rect aRect, out GUIContent aContent)
-        {
-            aRect = new Rect((position.width / 2 + ButtonWidth + 6), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
-            aContent = new GUIContent("Nuke all", "Delete ALL prefs from EditorPrefs");
         }
 
 
         private void Button_Add_icon(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 - IconSize * 2 - 10), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aRect = new Rect((position.width / 2 - IconSize * 2), position.height - (IconSize * 1.4f), IconSize, IconSize);
             aContent = new GUIContent("", "Add a new QQQ");
         }
         private void Button_Refresh_icon(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 - IconSize - 3), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aRect = new Rect((position.width / 2 - IconSize/2), position.height - (IconSize * 1.4f), IconSize, IconSize);
             aContent = new GUIContent("", "Refresh list");
         }
         private void Button_Settings_icon(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 + 3), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aRect = new Rect((position.width / 2 + IconSize), position.height - (IconSize * 1.4f), IconSize, IconSize);
             aContent = new GUIContent("", "Open Settings");
-        }
-        private void Button_Nuke_icon(out Rect aRect, out GUIContent aContent)
-        {
-            aRect = new Rect((position.width / 2 + IconSize + 10), position.height - (IconSize * 1.4f), IconSize, IconSize);
-            aContent = new GUIContent("", "Delete ALL QQQs");
         }
         #endregion
 
