@@ -53,7 +53,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private const string PREFS_CODETODOS_COLOR_PRIMARY = "GDTB_CodeTODOs_Primary";
         private static Color _primary = new Color(56, 56, 56, 1);
         private static Color _primary_dark = new Color(56, 56, 56, 1);
-        private static Color _primary_light = new Color(233, 233, 233, 1);
+        private static Color _primary_light = new Color(255, 255, 255, 1);
         private static Color _primary_default = new Color(56, 56, 56, 1);
         public static Color Color_Primary
         {
@@ -86,7 +86,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private const string PREFS_CODETODOS_COLOR_QUATERNARY = "GDTB_CodeTODOs_Quaternary";
         private static Color _quaternary = new Color(70, 70, 70, 1);
         private static Color _quaternary_dark = new Color(70, 70, 70, 1);
-        private static Color _quaternary_light = new Color(220, 220, 220, 1);
+        private static Color _quaternary_light = new Color(242, 242, 242, 1);
         private static Color _quaternary_default = new Color(70, 70, 70, 1);
         public static Color Color_Quaternary
         {
@@ -98,7 +98,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private static Color _priColor1 = new Color(246, 71, 71, 1);  // Sunset orange http://www.flatuicolorpicker.com/pink
         private static Color _priColor1_default = new Color(246, 71, 71, 1);
         private static Color _priColor1_dark = new Color(246, 71, 71, 1);
-        private static Color _priColor1_light = new Color(246, 71, 71, 1);
+        private static Color _priColor1_light = new Color(197, 0, 0, 1);
         public static Color PriColor1
         {
             get { return _priColor1; }
@@ -109,7 +109,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private static Color _priColor2 = new Color(244, 208, 63, 1); // Saffron http://www.flatuicolorpicker.com/yellow
         private static Color _priColor2_default = new Color(244, 208, 63, 1);
         private static Color _priColor2_dark = new Color(244, 208, 63, 1);
-        private static Color _priColor2_light = new Color(244, 208, 63, 1);
+        private static Color _priColor2_light = new Color(234, 188, 0, 1);
         public static Color PriColor2
         {
             get { return _priColor2; }
@@ -120,7 +120,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private static Color _priColor3 = new Color(46, 204, 113, 1); // Shamrock http://www.flatuicolorpicker.com/green
         private static Color _priColor3_default = new Color(46, 204, 113, 1);
         private static Color _priColor3_dark = new Color(46, 204, 113, 1);
-        private static Color _priColor3_light = new Color(46, 204, 113, 1);
+        private static Color _priColor3_light = new Color(0, 189, 80, 1);
         public static Color PriColor3
         {
             get { return _priColor3; }
