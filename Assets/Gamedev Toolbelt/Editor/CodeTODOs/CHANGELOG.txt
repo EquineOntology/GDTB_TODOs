@@ -1,0 +1,16 @@
+==============
+===== 1.1 ====
+==============
+
+Bugfixes
+* All preferences are now reset properly when clicking "Reset" in CodeTODOs's settings
+
+Misc 
+* Add changelog
+* Add other assets in the Gamedev Toolbelt family to exclude path.
+
+
+==============
+===== 1.0 ====
+==============
+* Initial release
