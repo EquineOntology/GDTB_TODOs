@@ -538,7 +538,9 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             _todoToken = _todoToken_default;
             _buttonsDisplay = (ButtonsDisplayFormat)_buttonsDisplay_default;
+            _iconStyle = (IconStyle)_iconStyle_default;
             _autoRefresh = _autoRefresh_default;
+            _confirmationDialogs = _confirmationDialogs_default;
             _primary = new Color(_primary_default.r / 255, _primary_default.g / 255, _primary_default.b / 255, _primary_default.a);
             _secondary = new Color(_secondary_default.r / 255, _secondary_default.g / 255, _secondary_default.b / 255, _secondary_default.a);
             _tertiary = new Color(_tertiary_default.r / 255, _tertiary_default.g / 255, _tertiary_default.b / 255, _tertiary_default.a);
