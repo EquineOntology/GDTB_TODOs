@@ -1,4 +1,4 @@
---██████╗-██████╗-██████╗-███████╗----████████╗-██████╗-██████╗--██████╗-███████╗-
+﻿--██████╗-██████╗-██████╗-███████╗----████████╗-██████╗-██████╗--██████╗-███████╗-
 -██╔════╝██╔═══██╗██╔══██╗██╔════╝----╚══██╔══╝██╔═══██╗██╔══██╗██╔═══██╗██╔════╝-
 -██║-----██║---██║██║--██║█████╗---------██║---██║---██║██║--██║██║---██║███████╗-
 -██║-----██║---██║██║--██║██╔══╝---------██║---██║---██║██║--██║██║---██║╚════██║-
@@ -42,6 +42,9 @@ again, and save the file and its line number.
 
 When you have some tasks filed, just open the main CodeTODOs window, click on the link,
 and you'll even be brought to that script in your editor of choice!
+
+Additionally, you can also exclude files or entire folders from the task list! You can
+find more information in the exclude.txt file.
 
 There's quite a bit to discover when it comes to what CodeTODOs can do, I suggest going
 to http://immortalhydra.com/gamedev-toolbelt/code-todos/ to see everything the extension
