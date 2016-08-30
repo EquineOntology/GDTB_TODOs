@@ -65,5 +65,4 @@ quick email at support@immortalhydra.com
 
 ASCII titles realized with http://patorjk.com/software/taag/ ("ASCII Shadow" and
 "Calvin S" styles).
-Icons:
-Edit box thin by Icons Bazaar from the Noun Project
+Icons courtesy of https://icons8.com
