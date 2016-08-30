@@ -118,11 +118,10 @@ namespace com.immortalhydra.gdtb.codetodos
                     break;
             }
 
-            if (GUI.Button(buttonRect, buttonContent))
+            if (Controls.Button(buttonRect, buttonContent))
             {
                 PressedEdit();
             }
-            DrawingUtils.DrawButton(buttonRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Edit, buttonContent.text, _style_buttonText);
         }
 
 
@@ -138,12 +137,12 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawEdit_Icon(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2) - IconSize/2, position.height - IconSize * 1.5f, IconSize, IconSize);
-            aContent = new GUIContent("", "Save edits");
+            aContent = new GUIContent(DrawingUtils.Texture_Edit, "Save edits");
         }
 
 
         /// Action to take when the edit button is pressed.
-        private void PressedEdit() 
+        private void PressedEdit()
         {
             // Get confirmation (through confirmation dialog or automatically if conf. is off).
             var execute = false;
@@ -191,6 +190,13 @@ namespace com.immortalhydra.gdtb.codetodos
             _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
 
             _skin.settings.selectionColor = Preferences.Color_Secondary;
+        }
+
+
+        public void Update()
+        {
+            // We repaint every frame for the same reason we do so in WindowMain.
+            Repaint();
         }
     }
 }
