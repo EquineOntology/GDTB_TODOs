@@ -16,14 +16,14 @@ namespace com.immortalhydra.gdtb.codetodos
 				case EventType.Repaint:
 				{
 					// Draw base rectangle (will be visible as the "border").
-					EditorGUI.DrawRect(controlRect, Preferences.Color_Secondary);
+					//EditorGUI.DrawRect(controlRect, Preferences.Color_Secondary);
 
-					// Calc the rectangle for the contentRectvar contentRect = new Rect (
+					// Calc the rectangle for the content.
 					var contentRect = new Rect(
-						controlRect.x +  Constants.BUTTON_BORDER_THICKNESS * 2,
-						controlRect.y +  Constants.BUTTON_BORDER_THICKNESS * 2,
-						controlRect.width - Constants.BUTTON_BORDER_THICKNESS * 4,
-						controlRect.height - Constants.BUTTON_BORDER_THICKNESS * 4
+						controlRect.x,
+						controlRect.y,
+						controlRect.width,
+						controlRect.height
 					);
 
 					// If mouse over button
@@ -33,7 +33,6 @@ namespace com.immortalhydra.gdtb.codetodos
 					}
 					else
 					{
-						DrawUnpressedBG(controlRect, controlContent);
 						DrawUnpressedButton(contentRect, controlContent);
 					}
 					break;
@@ -60,6 +59,7 @@ namespace com.immortalhydra.gdtb.codetodos
 			switch (Event.current.GetTypeForControl(controlID))
 			{
 				case EventType.Repaint:
+
 				break;
 				case EventType.MouseDown:
 				break;
@@ -78,7 +78,7 @@ namespace com.immortalhydra.gdtb.codetodos
 				aRect.width - Constants.BUTTON_BORDER_THICKNESS * 2,
 				aRect.height - Constants.BUTTON_BORDER_THICKNESS * 2
 			);
-			EditorGUI.DrawRect(primaryRect, Preferences.Color_Primary);
+			EditorGUI.DrawRect(aRect, Preferences.Color_Primary);
 		}
 
 
@@ -110,6 +110,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
 		private static void DrawPressedButton(Rect aRect, GUIContent aContent)
 		{
+			EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
 			var style = new GUIStyle();
 			// If text buttons:
 			if(Preferences.ButtonsDisplay == ButtonsDisplayFormat.REGULAR_BUTTONS)
@@ -118,7 +119,7 @@ namespace com.immortalhydra.gdtb.codetodos
 				style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Primary;
 				style.imagePosition = ImagePosition.TextOnly;
 				style.alignment = TextAnchor.MiddleCenter;
-				
+
 				EditorGUI.LabelField(aRect, aContent.text, style);
 			}
 			// If image buttons:
