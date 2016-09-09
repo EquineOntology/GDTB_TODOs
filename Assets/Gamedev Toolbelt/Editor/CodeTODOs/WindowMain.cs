@@ -34,6 +34,12 @@ namespace com.immortalhydra.gdtb.codetodos
         [MenuItem("Window/Gamedev Toolbelt/CodeTODOs %q")]
         public static void Init()
         {
+            // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default.
+            if(!EditorPrefs.HasKey("GDTB_CodeTODOs_initialized") || EditorPrefs.GetBool("GDTB_CodeTODOs_initialized", false) == false)
+            {
+                Preferences.InitPrefs();
+            }
+
             // Get existing open window or if none, make a new one.
             var window = (WindowMain)EditorWindow.GetWindow(typeof(WindowMain));
             window.SetMinSize();
