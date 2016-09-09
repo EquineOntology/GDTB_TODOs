@@ -1,4 +1,9 @@
-================
+====== 1.1 =====
+
+ * FIX: EditorPrefs were not being initialized correctly on first start.
+ * New icons and button style!
+ * Buttons are now highlighted when hovered over.
+
 ====== 1.0 =====
-================
+
 * Initial release
