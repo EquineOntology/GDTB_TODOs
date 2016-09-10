@@ -47,15 +47,9 @@ namespace com.immortalhydra.gdtb.codetodos
             window.LoadStyles();
             window.UpdateLayoutingSizes();
 
-            if (QQQs.Count == 0 && Preferences.AutoRefresh == true)
-            {
-                QQQOps.RefreshQQQs();
-            }
-            else if (Preferences.AutoRefresh == false)
-            {
-                QQQs.Clear();
-                QQQs.AddRange(IO.LoadStoredQQQs());
-            }
+            QQQs.Clear();
+            QQQs.AddRange(IO.LoadStoredQQQs());
+
             window.Show();
         }
 
@@ -83,10 +77,7 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Called when the window is closed.
         private void OnDestroy()
         {
-            if (Preferences.AutoRefresh == false)
-            {
-                IO.WriteQQQsToFile();
-            }
+            IO.WriteQQQsToFile();
             Resources.UnloadUnusedAssets();
         }
 
@@ -99,15 +90,8 @@ namespace com.immortalhydra.gdtb.codetodos
             // If the list is clean (for instance because we just recompiled) load QQQs based on preferences.
             if (QQQs.Count == 0)
             {
-                if (Preferences.AutoRefresh == true)
-                {
-                    QQQOps.RefreshQQQs();
-                }
-                else
-                {
-                    QQQs.Clear();
-                    QQQs.AddRange(IO.LoadStoredQQQs());
-                }
+                QQQs.Clear();
+                QQQs.AddRange(IO.LoadStoredQQQs());
             }
 
             DrawWindowBackground();

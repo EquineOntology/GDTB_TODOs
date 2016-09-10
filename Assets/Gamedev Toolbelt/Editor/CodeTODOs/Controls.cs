@@ -15,9 +15,6 @@ namespace com.immortalhydra.gdtb.codetodos
 			{
 				case EventType.Repaint:
 				{
-					// Draw base rectangle (will be visible as the "border").
-					//EditorGUI.DrawRect(controlRect, Preferences.Color_Secondary);
-
 					// Calc the rectangle for the content.
 					var contentRect = new Rect(
 						controlRect.x,
@@ -49,36 +46,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
 			}
 			return shouldFire;
-		}
-
-
-		public static int SelectionGrid(int selectedIndex, string[] options)
-		{
-			var controlID = GUIUtility.GetControlID (FocusType.Passive);
-
-			switch (Event.current.GetTypeForControl(controlID))
-			{
-				case EventType.Repaint:
-
-				break;
-				case EventType.MouseDown:
-				break;
-				case EventType.MouseUp:
-				break;
-			}
-			return selectedIndex;
-		}
-
-
-		private static void DrawUnpressedBG(Rect aRect, GUIContent aContent)
-		{
-			var primaryRect = new Rect (
-				aRect.x + Constants.BUTTON_BORDER_THICKNESS,
-				aRect.y + Constants.BUTTON_BORDER_THICKNESS,
-				aRect.width - Constants.BUTTON_BORDER_THICKNESS * 2,
-				aRect.height - Constants.BUTTON_BORDER_THICKNESS * 2
-			);
-			EditorGUI.DrawRect(aRect, Preferences.Color_Primary);
 		}
 
 
