@@ -128,18 +128,6 @@ namespace com.immortalhydra.gdtb.codetodos
 
         #endregion
 
-
-        // Auto-update QQQs.
-        private const string PREFS_CODETODOS_AUTO_REFRESH = "GDTB_CodeTODOs_AutoUpdate";
-        private static bool _autoRefresh = true;
-        private static bool _autoRefresh_default = true;
-        private static bool _oldAutoRefresh;
-        public static bool AutoRefresh
-        {
-            get { return _autoRefresh; }
-        }
-
-
         // Custom shortcut
         private const string PREFS_CODETODOS_SHORTCUT = "GDTB_CodeTODOs_Shortcut";
         private static string _shortcut = "%|q";
@@ -165,7 +153,6 @@ namespace com.immortalhydra.gdtb.codetodos
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, false, false);
             EditorGUILayout.LabelField("General Settings", EditorStyles.boldLabel);
             _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
-            _autoRefresh = EditorGUILayout.Toggle("Auto refresh", _autoRefresh);
             _confirmationDialogs = EditorGUILayout.Toggle("Show confirmation dialogs", _confirmationDialogs);
             GUILayout.Space(20);
             EditorGUILayout.LabelField("UI", EditorStyles.boldLabel);
@@ -198,13 +185,6 @@ namespace com.immortalhydra.gdtb.codetodos
                     shouldReopenWindowMain = true;
                 }
 
-                // Save QQQs when switching off autorefresh.
-                if (_autoRefresh != _oldAutoRefresh)
-                {
-                    _oldAutoRefresh = _autoRefresh;
-                    IO.WriteQQQsToFile();
-                }
-
                 SetPrefValues();
 
                 if (shouldReopenWindowMain)
@@ -227,14 +207,13 @@ namespace com.immortalhydra.gdtb.codetodos
             ResetPrefsToDefault();
             EditorPrefs.SetBool("GDTB_CodeTODOs_initialized", true);
         }
-        
+
 
         /// Set the value of all preferences.
         private static void SetPrefValues()
         {
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, _todoToken);
             EditorPrefs.SetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, System.Convert.ToInt16(_buttonsDisplay));
-            EditorPrefs.SetBool(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh);
             EditorPrefs.SetBool(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs);
             SetIconStyle();
             SetColorPrefs();
@@ -373,8 +352,6 @@ namespace com.immortalhydra.gdtb.codetodos
             _buttonsDisplay = (ButtonsDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, _buttonsDisplay_default); // Buttons display.
             _oldDisplayFormat = _buttonsDisplay;
             GetIconStyle();
-            _autoRefresh = GetPrefValue(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh.
-            _oldAutoRefresh = _autoRefresh;
             _confirmationDialogs = GetPrefValue(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs_default);
             GetColorPrefs();
             _shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut.
@@ -557,7 +534,6 @@ namespace com.immortalhydra.gdtb.codetodos
             _todoToken = _todoToken_default;
             _buttonsDisplay = (ButtonsDisplayFormat)_buttonsDisplay_default;
             _iconStyle = (IconStyle)_iconStyle_default;
-            _autoRefresh = _autoRefresh_default;
             _confirmationDialogs = _confirmationDialogs_default;
             _primary = RGBA.GetNormalizedColor(_primary_default);
             _secondary = RGBA.GetNormalizedColor(_secondary_default);
