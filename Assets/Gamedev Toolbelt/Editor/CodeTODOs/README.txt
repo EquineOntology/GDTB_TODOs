@@ -37,8 +37,7 @@ you were doing, or of leaving the hack untouched altogether!
 
 You can simply write something like
 "//QQQ This gameobject should be grabbed by the code instead of dragged and dropped"
-in your code, and CodeTODOs will automatically pick it up when the script is imported
-again, and save the file and its line number.
+in your code and press Refresh in the window, and CodeTODOs will automatically pick it up, and save the file and its line number.
 
 When you have some tasks filed, just open the main CodeTODOs window, click on the link,
 and you'll even be brought to that script in your editor of choice!
