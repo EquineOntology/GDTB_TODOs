@@ -3,6 +3,7 @@
  * FIX: EditorPrefs were not being initialized correctly on first start.
  * New icons and button style!
  * Buttons are now highlighted when hovered over.
+ * FIX: Unity could freeze on very large projects due to auto-updating of the task list.
 
 ====== 1.0 =====
 

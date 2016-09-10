@@ -6,6 +6,7 @@ namespace com.immortalhydra.gdtb.codetodos
 {
 	public static class Controls
 	{
+		public static float TooltipTime = 0.3f;
 		public static bool Button(Rect controlRect, GUIContent controlContent)
 		{
 			var shouldFire = false;
