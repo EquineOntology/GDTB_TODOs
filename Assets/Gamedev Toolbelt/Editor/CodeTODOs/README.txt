@@ -1,4 +1,4 @@
---██████╗-██████╗-██████╗-███████╗----████████╗-██████╗-██████╗--██████╗-███████╗-
+﻿--██████╗-██████╗-██████╗-███████╗----████████╗-██████╗-██████╗--██████╗-███████╗-
 -██╔════╝██╔═══██╗██╔══██╗██╔════╝----╚══██╔══╝██╔═══██╗██╔══██╗██╔═══██╗██╔════╝-
 -██║-----██║---██║██║--██║█████╗---------██║---██║---██║██║--██║██║---██║███████╗-
 -██║-----██║---██║██║--██║██╔══╝---------██║---██║---██║██║--██║██║---██║╚════██║-
@@ -37,11 +37,13 @@ you were doing, or of leaving the hack untouched altogether!
 
 You can simply write something like
 "//QQQ This gameobject should be grabbed by the code instead of dragged and dropped"
-in your code, and CodeTODOs will automatically pick it up when the script is imported
-again, and save the file and its line number.
+in your code and press Refresh in the window, and CodeTODOs will automatically pick it up, and save the file and its line number.
 
 When you have some tasks filed, just open the main CodeTODOs window, click on the link,
 and you'll even be brought to that script in your editor of choice!
+
+Additionally, you can also exclude files or entire folders from the task list! You can
+find more information in the exclude.txt file.
 
 There's quite a bit to discover when it comes to what CodeTODOs can do, I suggest going
 to http://immortalhydra.com/gamedev-toolbelt/code-todos/ to see everything the extension
@@ -62,3 +64,4 @@ quick email at support@immortalhydra.com
 
 ASCII titles realized with http://patorjk.com/software/taag/ ("ASCII Shadow" and
 "Calvin S" styles).
+Icons courtesy of https://icons8.com

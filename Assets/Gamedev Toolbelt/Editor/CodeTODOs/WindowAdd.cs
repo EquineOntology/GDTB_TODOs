@@ -43,7 +43,7 @@ namespace com.immortalhydra.gdtb.codetodos
             #else
                 title = "Add task";
             #endif
-            
+
             Instance = this;
             LoadSkin();
             LoadStyles();
@@ -134,11 +134,10 @@ namespace com.immortalhydra.gdtb.codetodos
                     break;
             }
 
-            if (GUI.Button(buttonRect, buttonContent))
+            if (Controls.Button(buttonRect, buttonContent))
             {
                 ButtonPressed();
             }
-            DrawingUtils.DrawButton(buttonRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Add, buttonContent.text, _style_buttonText);
         }
 
 
@@ -153,12 +152,12 @@ namespace com.immortalhydra.gdtb.codetodos
         private void Button_Add_icon(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2) - IconSize / 2, position.height - IconSize * 1.5f, IconSize, IconSize);
-            aContent = new GUIContent("", "Add task");
+            aContent = new GUIContent(DrawingUtils.Texture_Add, "Add task");
         }
 
 
         /// What to do when the add button is pressed.
-        private void ButtonPressed() 
+        private void ButtonPressed()
         {
             if (_script.name == "")
                 {
@@ -213,6 +212,13 @@ namespace com.immortalhydra.gdtb.codetodos
             _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
 
             _skin.settings.selectionColor = Preferences.Color_Secondary;
+        }
+
+
+        public void Update()
+        {
+            // We repaint every frame for the same reason we do so in WindowMain.
+            Repaint();
         }
     }
 }

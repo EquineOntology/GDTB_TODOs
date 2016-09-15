@@ -34,6 +34,12 @@ namespace com.immortalhydra.gdtb.codetodos
         [MenuItem("Window/Gamedev Toolbelt/CodeTODOs %q")]
         public static void Init()
         {
+            // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default.
+            if(!EditorPrefs.HasKey("GDTB_CodeTODOs_initialized") || EditorPrefs.GetBool("GDTB_CodeTODOs_initialized", false) == false)
+            {
+                Preferences.InitPrefs();
+            }
+
             // Get existing open window or if none, make a new one.
             var window = (WindowMain)EditorWindow.GetWindow(typeof(WindowMain));
             window.SetMinSize();
@@ -41,15 +47,9 @@ namespace com.immortalhydra.gdtb.codetodos
             window.LoadStyles();
             window.UpdateLayoutingSizes();
 
-            if (QQQs.Count == 0 && Preferences.AutoRefresh == true)
-            {
-                QQQOps.RefreshQQQs();
-            }
-            else if (Preferences.AutoRefresh == false)
-            {
-                QQQs.Clear();
-                QQQs.AddRange(IO.LoadStoredQQQs());
-            }
+            QQQs.Clear();
+            QQQs.AddRange(IO.LoadStoredQQQs());
+
             window.Show();
         }
 
@@ -77,10 +77,7 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Called when the window is closed.
         private void OnDestroy()
         {
-            if (Preferences.AutoRefresh == false)
-            {
-                IO.WriteQQQsToFile();
-            }
+            IO.WriteQQQsToFile();
             Resources.UnloadUnusedAssets();
         }
 
@@ -93,15 +90,8 @@ namespace com.immortalhydra.gdtb.codetodos
             // If the list is clean (for instance because we just recompiled) load QQQs based on preferences.
             if (QQQs.Count == 0)
             {
-                if (Preferences.AutoRefresh == true)
-                {
-                    QQQOps.RefreshQQQs();
-                }
-                else
-                {
-                    QQQs.Clear();
-                    QQQs.AddRange(IO.LoadStoredQQQs());
-                }
+                QQQs.Clear();
+                QQQs.AddRange(IO.LoadStoredQQQs());
             }
 
             DrawWindowBackground();
@@ -328,14 +318,13 @@ namespace com.immortalhydra.gdtb.codetodos
                     break;
             }
 
-            if (GUI.Button(editRect, editContent))
+            if (Controls.Button(editRect, editContent))
             {
                 WindowEdit.Init(aQQQ);
             }
-            DrawingUtils.DrawButton(editRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Edit, editContent.text, _style_buttonText);
 
 
-            if (GUI.Button(completeRect, completeContent))
+            if (Controls.Button(completeRect, completeContent))
             {
                 // Get confirmation through dialog (or not if the user doesn't want to).
                 var canExecute = false;
@@ -358,7 +347,6 @@ namespace com.immortalhydra.gdtb.codetodos
                     QQQOps.CompleteQQQ(aQQQ);
                 }
             }
-            DrawingUtils.DrawButton(completeRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Complete, completeContent.text, _style_buttonText);
         }
         private void Button_Edit_default(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
         {
@@ -385,7 +373,7 @@ namespace com.immortalhydra.gdtb.codetodos
             anEditRect.y += _offset + 2;
             anEditRect.width = IconSize;
             anEditRect.height = IconSize;
-            anEditContent = new GUIContent("", "Edit this EditorPref");
+            anEditContent = new GUIContent(DrawingUtils.Texture_Edit, "Edit this EditorPref");
         }
         private void Button_Complete_icon(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
         {
@@ -394,7 +382,7 @@ namespace com.immortalhydra.gdtb.codetodos
             aCompleteRect.width = IconSize;
             aCompleteRect.height = IconSize;
 
-            aCompleteContent = new GUIContent("", "Complete this task");
+            aCompleteContent = new GUIContent(DrawingUtils.Texture_Complete, "Complete this task");
         }
         #endregion
 
@@ -422,23 +410,22 @@ namespace com.immortalhydra.gdtb.codetodos
             }
 
              // Add new QQQ.
-            if (GUI.Button(addRect, addContent))
+            if (Controls.Button(addRect, addContent))
             {
                 WindowAdd.Init();
             }
-            DrawingUtils.DrawButton(addRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Add, addContent.text, _style_buttonText);
+            //DrawingUtils.DrawButton(addRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Add, addContent.text, _style_buttonText);
 
-            
+
             // Refresh list of QQQs.
-            if (GUI.Button(refreshRect, refreshContent))
+            if (Controls.Button(refreshRect, refreshContent))
             {
                 QQQOps.RefreshQQQs();
             }
-            DrawingUtils.DrawButton(refreshRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Refresh, refreshContent.text, _style_buttonText);
 
 
             // Open settings.
-            if (GUI.Button(settingsRect, settingsContent))
+            if (Controls.Button(settingsRect, settingsContent))
             {
                 CloseOtherWindows();
 
@@ -448,7 +435,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 var method = type.GetMethod("ShowPreferencesWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
                 method.Invoke(null, null);
             }
-            DrawingUtils.DrawButton(settingsRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Settings, settingsContent.text, _style_buttonText);
         }
 
 
@@ -472,17 +458,17 @@ namespace com.immortalhydra.gdtb.codetodos
         private void Button_Add_icon(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2 - IconSize * 2), position.height - (IconSize * 1.4f), IconSize, IconSize);
-            aContent = new GUIContent("", "Add a new QQQ");
+            aContent = new GUIContent(DrawingUtils.Texture_Add, "Add a new QQQ");
         }
         private void Button_Refresh_icon(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2 - IconSize/2), position.height - (IconSize * 1.4f), IconSize, IconSize);
-            aContent = new GUIContent("", "Refresh list");
+            aContent = new GUIContent(DrawingUtils.Texture_Refresh, "Refresh list");
         }
         private void Button_Settings_icon(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2 + IconSize), position.height - (IconSize * 1.4f), IconSize, IconSize);
-            aContent = new GUIContent("", "Open Settings");
+            aContent = new GUIContent(DrawingUtils.Texture_Settings, "Open Settings");
         }
         #endregion
 
@@ -501,7 +487,7 @@ namespace com.immortalhydra.gdtb.codetodos
             var width = position.width - _offset * 2;
             _rect_scrollArea = new Rect(_offset, _offset, width - _offset * 2, position.height - IconSize - _offset * 4);
             _rect_scrollView = _rect_scrollArea;
-            
+
             // Buttons have different sizes based on preferences.
             if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
             {
@@ -598,6 +584,15 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 EditorWindow.GetWindow(typeof(WindowEdit)).Close();
             }
+        }
+
+
+        private void Update()
+        {
+            // Unfortunately, IMGUI is not really responsive to events, e.g. changing the style of a button
+            // (like when you press it) shows some pretty abysmal delays in the GUI, the button will light up
+            // and down too late after the actual click. We force the UI to update more often instead.
+            Repaint();
         }
     }
 }

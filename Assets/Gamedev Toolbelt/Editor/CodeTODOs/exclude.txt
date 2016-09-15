@@ -7,3 +7,5 @@
 # You can include both folders and files.
 
 /Gamedev Toolbelt/Editor/CodeTODOs/
+/Gamedev Toolbelt/Editor/EditorPrefs Editor/
+/Gamedev Toolbelt/Editor/AnimationTester/

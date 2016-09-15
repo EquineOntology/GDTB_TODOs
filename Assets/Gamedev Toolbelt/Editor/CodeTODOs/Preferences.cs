@@ -128,18 +128,6 @@ namespace com.immortalhydra.gdtb.codetodos
 
         #endregion
 
-
-        // Auto-update QQQs.
-        private const string PREFS_CODETODOS_AUTO_REFRESH = "GDTB_CodeTODOs_AutoUpdate";
-        private static bool _autoRefresh = true;
-        private static bool _autoRefresh_default = true;
-        private static bool _oldAutoRefresh;
-        public static bool AutoRefresh
-        {
-            get { return _autoRefresh; }
-        }
-
-
         // Custom shortcut
         private const string PREFS_CODETODOS_SHORTCUT = "GDTB_CodeTODOs_Shortcut";
         private static string _shortcut = "%|q";
@@ -165,7 +153,6 @@ namespace com.immortalhydra.gdtb.codetodos
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, false, false);
             EditorGUILayout.LabelField("General Settings", EditorStyles.boldLabel);
             _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
-            _autoRefresh = EditorGUILayout.Toggle("Auto refresh", _autoRefresh);
             _confirmationDialogs = EditorGUILayout.Toggle("Show confirmation dialogs", _confirmationDialogs);
             GUILayout.Space(20);
             EditorGUILayout.LabelField("UI", EditorStyles.boldLabel);
@@ -198,13 +185,6 @@ namespace com.immortalhydra.gdtb.codetodos
                     shouldReopenWindowMain = true;
                 }
 
-                // Save QQQs when switching off autorefresh.
-                if (_autoRefresh != _oldAutoRefresh)
-                {
-                    _oldAutoRefresh = _autoRefresh;
-                    IO.WriteQQQsToFile();
-                }
-
                 SetPrefValues();
 
                 if (shouldReopenWindowMain)
@@ -221,12 +201,19 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
+        /// If EditorPrefs have been lost or have never been initialized, we want to set them to their default values.
+        public static void InitPrefs()
+        {
+            ResetPrefsToDefault();
+            EditorPrefs.SetBool("GDTB_CodeTODOs_initialized", true);
+        }
+
+
         /// Set the value of all preferences.
         private static void SetPrefValues()
         {
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, _todoToken);
             EditorPrefs.SetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, System.Convert.ToInt16(_buttonsDisplay));
-            EditorPrefs.SetBool(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh);
             EditorPrefs.SetBool(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs);
             SetIconStyle();
             SetColorPrefs();
@@ -348,7 +335,7 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Set the value of the shortcut preference.
         private static void SetShortcutPrefs()
         {
-            if (_newShortcut != _shortcut)
+            if (_newShortcut != _shortcut && _newShortcut != null)
             {
                 _shortcut = _newShortcut;
                 EditorPrefs.SetString(PREFS_CODETODOS_SHORTCUT, _shortcut);
@@ -365,8 +352,6 @@ namespace com.immortalhydra.gdtb.codetodos
             _buttonsDisplay = (ButtonsDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, _buttonsDisplay_default); // Buttons display.
             _oldDisplayFormat = _buttonsDisplay;
             GetIconStyle();
-            _autoRefresh = GetPrefValue(PREFS_CODETODOS_AUTO_REFRESH, _autoRefresh_default); // Auto refresh.
-            _oldAutoRefresh = _autoRefresh;
             _confirmationDialogs = GetPrefValue(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs_default);
             GetColorPrefs();
             _shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut.
@@ -386,14 +371,24 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Load color preferences.
         private static void GetColorPrefs()
         {
-            _primary = GetPrefValue(PREFS_CODETODOS_COLOR_PRIMARY, _primary_default); // PRIMARY color.
-            _secondary = GetPrefValue(PREFS_CODETODOS_COLOR_SECONDARY, _secondary_default); // SECONDARY color.
-            _tertiary = GetPrefValue(PREFS_CODETODOS_COLOR_TERTIARY, _tertiary_default); // TERTIARY color.
-            _quaternary = GetPrefValue(PREFS_CODETODOS_COLOR_QUATERNARY, _quaternary_default); // QUATERNARY color.
+            _primary = GetPrefValue(PREFS_CODETODOS_COLOR_PRIMARY, RGBA.GetNormalizedColor(_primary_default));
+            _secondary = GetPrefValue(PREFS_CODETODOS_COLOR_SECONDARY, RGBA.GetNormalizedColor(_secondary_default));
+            _tertiary = GetPrefValue(PREFS_CODETODOS_COLOR_TERTIARY, RGBA.GetNormalizedColor(_tertiary_default));
+            _quaternary = GetPrefValue(PREFS_CODETODOS_COLOR_QUATERNARY, RGBA.GetNormalizedColor(_quaternary_default));
 
-            _priColor1 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, _priColor1_default); // URGENT priority color.
-            _priColor2 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, _priColor2_default); // NORMAL priority color.
-            _priColor3 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, _priColor3_default); // MINOR priority color.
+            _priColor1 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, RGBA.GetNormalizedColor(_priColor1_default));
+            _priColor2 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, RGBA.GetNormalizedColor(_priColor2_default));
+            _priColor3 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, RGBA.GetNormalizedColor(_priColor3_default));
+
+            // If all colors are the same, there's been some issue. Revert to initial dark scheme.
+            if(_primary == _secondary && _primary == _tertiary && _primary == _quaternary)
+            {
+                _primary = RGBA.GetNormalizedColor(_primary_default);
+                _secondary = RGBA.GetNormalizedColor(_secondary_default);
+                _tertiary = RGBA.GetNormalizedColor(_tertiary_default);
+                _quaternary = RGBA.GetNormalizedColor(_quaternary_default);
+                _iconStyle = (IconStyle)_iconStyle_default;
+            }
         }
 
 
@@ -538,14 +533,15 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             _todoToken = _todoToken_default;
             _buttonsDisplay = (ButtonsDisplayFormat)_buttonsDisplay_default;
-            _autoRefresh = _autoRefresh_default;
-            _primary = new Color(_primary_default.r / 255, _primary_default.g / 255, _primary_default.b / 255, _primary_default.a);
-            _secondary = new Color(_secondary_default.r / 255, _secondary_default.g / 255, _secondary_default.b / 255, _secondary_default.a);
-            _tertiary = new Color(_tertiary_default.r / 255, _tertiary_default.g / 255, _tertiary_default.b / 255, _tertiary_default.a);
-            _quaternary = new Color(_quaternary_default.r / 255, _quaternary_default.g / 255, _quaternary_default.b / 255, _quaternary_default.a);
-            _priColor1 = new Color(_priColor1_default.r / 255, _priColor1_default.g / 255, _priColor1_default.b / 255, _priColor1_default.a);
-            _priColor2 = new Color(_priColor2_default.r / 255, _priColor2_default.g / 255, _priColor2_default.b / 255, _priColor2_default.a);
-            _priColor3 = new Color(_priColor3_default.r / 255, _priColor3_default.g / 255, _priColor3_default.b / 255, _priColor3_default.a);
+            _iconStyle = (IconStyle)_iconStyle_default;
+            _confirmationDialogs = _confirmationDialogs_default;
+            _primary = RGBA.GetNormalizedColor(_primary_default);
+            _secondary = RGBA.GetNormalizedColor(_secondary_default);
+            _tertiary = RGBA.GetNormalizedColor(_tertiary_default);
+            _quaternary = RGBA.GetNormalizedColor(_quaternary_default);
+            _priColor1 = RGBA.GetNormalizedColor(_priColor1_default);
+            _priColor2 = RGBA.GetNormalizedColor(_priColor2_default);
+            _priColor3 = RGBA.GetNormalizedColor(_priColor3_default);
             _shortcut = _shortcut_default;
 
             SetPrefValues();

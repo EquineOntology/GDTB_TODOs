@@ -1,16 +1,10 @@
-==============
-===== 1.1 ====
-==============
+====== 1.1 =====
 
-Bugfixes
-* All preferences are now reset properly when clicking "Reset" in CodeTODOs's settings
+ * FIX: EditorPrefs were not being initialized correctly on first start.
+ * New icons and button style!
+ * Buttons are now highlighted when hovered over.
+ * FIX: Unity could freeze on very large projects due to auto-updating of the task list.
 
-Misc 
-* Add changelog
-* Add other assets in the Gamedev Toolbelt family to exclude path.
+====== 1.0 =====
 
-
-==============
-===== 1.0 ====
-==============
 * Initial release
