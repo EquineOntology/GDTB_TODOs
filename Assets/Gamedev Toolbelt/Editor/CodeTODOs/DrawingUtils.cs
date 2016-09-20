@@ -11,6 +11,7 @@ namespace com.immortalhydra.gdtb.codetodos
         public static Texture2D Texture_Settings = Resources.Load(Constants.TEX_SETTINGS_DARK, typeof(Texture2D)) as Texture2D;
         public static Texture2D Texture_Edit = Resources.Load(Constants.TEX_EDIT_DARK, typeof(Texture2D)) as Texture2D;
         public static Texture2D Texture_Complete = Resources.Load(Constants.TEX_COMPLETE_DARK, typeof(Texture2D)) as Texture2D;
+        public static Texture2D Texture_Process = Resources.Load(Constants.TEX_PROCESS_DARK, typeof(Texture2D)) as Texture2D;
 
         public static IconStyle CurrentIconStyle = IconStyle.LIGHT;
 
@@ -91,6 +92,7 @@ namespace com.immortalhydra.gdtb.codetodos
             Texture_Settings = null;
             Texture_Edit = null;
             Texture_Complete = null;
+            Texture_Process = null;
 
             if (aStyle == IconStyle.DARK)
             {
@@ -100,6 +102,7 @@ namespace com.immortalhydra.gdtb.codetodos
                 Texture_Settings = Resources.Load(Constants.TEX_SETTINGS_DARK, typeof(Texture2D)) as Texture2D;
                 Texture_Edit = Resources.Load(Constants.TEX_EDIT_DARK, typeof(Texture2D)) as Texture2D;
                 Texture_Complete = Resources.Load(Constants.TEX_COMPLETE_DARK, typeof(Texture2D)) as Texture2D;
+                Texture_Process = Resources.Load(Constants.TEX_PROCESS_DARK, typeof(Texture2D)) as Texture2D;
                 CurrentIconStyle = IconStyle.DARK;
             }
             else
@@ -110,6 +113,7 @@ namespace com.immortalhydra.gdtb.codetodos
                 Texture_Settings = Resources.Load(Constants.TEX_SETTINGS_LIGHT, typeof(Texture2D)) as Texture2D;
                 Texture_Edit = Resources.Load(Constants.TEX_EDIT_LIGHT, typeof(Texture2D)) as Texture2D;
                 Texture_Complete = Resources.Load(Constants.TEX_COMPLETE_LIGHT, typeof(Texture2D)) as Texture2D;
+                Texture_Process = Resources.Load(Constants.TEX_PROCESS_LIGHT, typeof(Texture2D)) as Texture2D;
                 CurrentIconStyle = IconStyle.LIGHT;
             }
         }
