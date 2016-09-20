@@ -60,10 +60,10 @@ namespace com.immortalhydra.gdtb.codetodos
             GUILayout.Label("That will analyse your project and locate all scripts.\n\nAfter that, any time you want to update your list of tasks you can click on the 'Refresh' button, which will look through the scripts and pick up on pending tasks.", GUILayout.ExpandWidth(true));
             GUILayout.Space(50);
             DrawRefreshButtons();
-            GUILayout.Label("To define a task, you just need to start a comment with the appropriate token (your currently set token is '" + Preferences.TODOToken + "'.\n\nRemeber to take a look at the Preferences, a section has been added for CodeTODOs!", GUILayout.ExpandWidth(true));
+            GUILayout.Label("To define a task, you just need to start a comment with the appropriate token (your currently set token is '" + Preferences.TODOToken + "'.\n\nRemeber to take a look at the Preferences, a section has been added for CodeTODOs, and to the README for additional features and info!", GUILayout.ExpandWidth(true));
             EditorGUILayout.EndVertical();
 
-            
+
 
         }
 
