@@ -1,3 +1,8 @@
+====== 1.2 =====
+
+ * Completely redesigned how scripts were collected/processed, as autoupdating was slowing Unity to a crawl on sizeable projects.
+   Users can now process scripts and tasks on demand through buttons on the main interface (new workflow described in README).
+
 ====== 1.1 =====
 
  * FIX: EditorPrefs were not being initialized correctly on first start.

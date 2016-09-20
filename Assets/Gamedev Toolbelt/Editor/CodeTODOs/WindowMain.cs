@@ -37,7 +37,7 @@ namespace com.immortalhydra.gdtb.codetodos
             // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default.
             if(!EditorPrefs.HasKey("GDTB_CodeTODOs_initialized") || EditorPrefs.GetBool("GDTB_CodeTODOs_initialized", false) == false)
             {
-                Preferences.InitPrefs();
+                Preferences.InitExtension();
             }
 
             // Get existing open window or if none, make a new one.
@@ -46,6 +46,8 @@ namespace com.immortalhydra.gdtb.codetodos
             window.LoadSkin();
             window.LoadStyles();
             window.UpdateLayoutingSizes();
+
+            IO.LoadScripts();
 
             QQQs.Clear();
             QQQs.AddRange(IO.LoadStoredQQQs());
@@ -86,14 +88,7 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             UpdateLayoutingSizes();
             GUI.skin = _skin; // Without this, almost everything will work aside from the scrollbar.
-
-            // If the list is clean (for instance because we just recompiled) load QQQs based on preferences.
-            if (QQQs.Count == 0)
-            {
-                QQQs.Clear();
-                QQQs.AddRange(IO.LoadStoredQQQs());
-            }
-
+            
             DrawWindowBackground();
 
             // If the list is still clean after the above, then we really have no QQQs.

@@ -313,12 +313,49 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
+        /// Load scripts stored in the "script db".
+        public static void LoadScripts()
+        {
+            if(QQQOps.AllScripts != null)
+            {
+                QQQOps.AllScripts.Clear();
+            }
+            else
+            {
+                QQQOps.AllScripts = new List<string>();
+            }
+
+            var scriptsFile = GetPathRelativeToExtension("scripts.gdtb");
+
+            if (File.Exists(scriptsFile))
+            {
+                // Parse the document for exclusions.
+                string line;
+                var reader = new StreamReader(scriptsFile);
+                try
+                {
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        QQQOps.AllScripts.Add(line);
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    UnityEngine.Debug.Log(ex.Message);
+                    UnityEngine.Debug.Log(ex.Data);
+                    UnityEngine.Debug.Log(ex.StackTrace);
+                    reader.Dispose();
+                }
+            }
+        }
+
+
         /// Load the QQQs saved in qqqs.bak.
         public static List<QQQ> LoadStoredQQQs()
         {
             var backedQQQs = new List<QQQ>();
-
-            var bakFile = GetFirstInstanceOfFolder("CodeTODOs") + "/bak.gdtb";
+            var bakFile = GetPathRelativeToExtension("bak.gdtb");
 
             if (File.Exists(bakFile))
             {
@@ -383,7 +420,7 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void WriteQQQsToFile()
         {
             var tempFile = Path.GetTempFileName();
-            var bakFile = GetFirstInstanceOfFolder("CodeTODOs") + "/bak.gdtb";
+            var bakFile = GetPathRelativeToExtension("bak.gdtb");
 
             var writer = new StreamWriter(tempFile, false);
             try
@@ -413,6 +450,8 @@ namespace com.immortalhydra.gdtb.codetodos
             }
         }
 
+
+        /// Overwrite the shortcut flag in WindowMain.cs to use the provided one.
         public static void OverwriteShortcut(string aShortcut)
         {
             var tempFile = Path.GetTempFileName();
@@ -451,6 +490,50 @@ namespace com.immortalhydra.gdtb.codetodos
                 reader.Dispose();
                 writer.Dispose();
             }
+        }
+
+
+        /// Write to file the list of scripts in the extension.
+        public static void SaveScriptList()
+        {
+            var tempFile = Path.GetTempFileName();
+            var scriptsFile = GetPathRelativeToExtension("scripts.gdtb");
+
+            if(QQQOps.AllScripts == null)
+            {
+                QQQOps.AllScripts = new List<string>();
+            }
+
+            var writer = new StreamWriter(tempFile, false);
+            try
+            {
+                foreach (var script in QQQOps.AllScripts)
+                {
+                    writer.WriteLine(script);
+                }
+                writer.Close();
+
+                // Overwrite the old file with the temp file.
+                if (File.Exists(scriptsFile))
+                {
+                    File.Delete(scriptsFile);
+                }
+                File.Move(tempFile, scriptsFile);
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.Log(ex.Message);
+                UnityEngine.Debug.Log(ex.Data);
+                UnityEngine.Debug.Log(ex.StackTrace);
+                writer.Dispose();
+            }
+        }
+
+
+        /// Create a path relative to the Extension root.
+        public static string GetPathRelativeToExtension(string aName)
+        {
+            return GetFirstInstanceOfFolder("CodeTODOs") + "/" + aName;
         }
     }
 }

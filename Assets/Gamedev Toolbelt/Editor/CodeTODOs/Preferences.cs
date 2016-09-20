@@ -171,7 +171,8 @@ namespace com.immortalhydra.gdtb.codetodos
             GUILayout.Space(20);
             _newShortcut = DrawShortcutSelector();
             GUILayout.Space(20);
-            DrawResetButton();
+            DrawResetButtons();
+            GUILayout.Space(30);
             EditorGUILayout.EndScrollView();
 
             if (GUI.changed)
@@ -202,9 +203,10 @@ namespace com.immortalhydra.gdtb.codetodos
 
 
         /// If EditorPrefs have been lost or have never been initialized, we want to set them to their default values.
-        public static void InitPrefs()
+        public static void InitExtension()
         {
             ResetPrefsToDefault();
+            QQQOps.FindAllScripts();
             EditorPrefs.SetBool("GDTB_CodeTODOs_initialized", true);
         }
 
@@ -514,17 +516,36 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Draw reset button.
-        private static void DrawResetButton()
+        /// Draw buttons to rebuild the scripts list and reset preferences.
+        private static void DrawResetButtons()
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.Space();
+            DrawRebuildScriptListButton();
+            GUILayout.Space(10);
+            DrawResetButton();
+            EditorGUILayout.Space();
+            EditorGUILayout.EndHorizontal();
+        }
+
+
+        /// Draw button to rebuild the scripts list.
+        private static void DrawRebuildScriptListButton()
+        {
+            if (GUILayout.Button("Rebuild list of scripts", GUILayout.Width(140)))
+            {
+                QQQOps.FindAllScripts();
+            }
+        }
+
+
+        /// Draw reset button.
+        private static void DrawResetButton()
+        {
             if (GUILayout.Button("Reset preferences", GUILayout.Width(120)))
             {
                 ResetPrefsToDefault();
             }
-            EditorGUILayout.Space();
-            EditorGUILayout.EndHorizontal();
         }
 
 
