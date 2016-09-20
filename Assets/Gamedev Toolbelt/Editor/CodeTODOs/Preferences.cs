@@ -207,7 +207,7 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             ResetPrefsToDefault();
             QQQOps.FindAllScripts();
-            EditorPrefs.SetBool("GDTB_CodeTODOs_initialized", true);
+            EditorPrefs.SetBool("GDTB_CodeTODOs_firsttime", true);
         }
 
 

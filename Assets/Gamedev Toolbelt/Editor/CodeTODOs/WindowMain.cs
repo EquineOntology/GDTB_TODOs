@@ -34,8 +34,8 @@ namespace com.immortalhydra.gdtb.codetodos
         [MenuItem("Window/Gamedev Toolbelt/CodeTODOs %q")]
         public static void Init()
         {
-            // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default.
-            if(!EditorPrefs.HasKey("GDTB_CodeTODOs_initialized") || EditorPrefs.GetBool("GDTB_CodeTODOs_initialized", false) == false)
+            // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default, and show the first start window.
+            if(!EditorPrefs.HasKey("GDTB_CodeTODOs_firsttime") || EditorPrefs.GetBool("GDTB_CodeTODOs_firsttime", false) == false)
             {
                 Preferences.InitExtension();
             }
@@ -53,6 +53,9 @@ namespace com.immortalhydra.gdtb.codetodos
             QQQs.AddRange(IO.LoadStoredQQQs());
 
             window.Show();
+
+
+            WindowWelcome.Init();   
         }
 
 
@@ -88,7 +91,7 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             UpdateLayoutingSizes();
             GUI.skin = _skin; // Without this, almost everything will work aside from the scrollbar.
-            
+
             DrawWindowBackground();
 
             // If the list is still clean after the above, then we really have no QQQs.
@@ -113,7 +116,7 @@ namespace com.immortalhydra.gdtb.codetodos
         /// If there are no QQQs, tell the user.
         private void DrawNoQQQsMessage()
         {
-            var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken + " in it.\n\nIf you see this after the project recompiled,\ntry refreshing the window!\nYour tasks should come back just fine.";
+            var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken + " in it.\n\nIf it's the first time you open CodeTODOs,\npress the 'Process scripts' button.\n\nIf you want to refresh the list,\npress the 'Refresh tasks' button.";
             var labelContent = new GUIContent(label);
 
             Vector2 labelSize;
