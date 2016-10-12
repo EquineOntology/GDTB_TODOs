@@ -36,7 +36,7 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default, and show the first start window.
             if(!EditorPrefs.HasKey("GDTB_CodeTODOs_firsttime") || EditorPrefs.GetBool("GDTB_CodeTODOs_firsttime", false) == false)
-            {
+            {   
                 Preferences.InitExtension();
             }
 
@@ -55,7 +55,10 @@ namespace com.immortalhydra.gdtb.codetodos
             window.Show();
 
 
-            WindowWelcome.Init();   
+            if(Preferences.ShowWelcome == true)
+            {
+                WindowWelcome.Init();
+            }
         }
 
 

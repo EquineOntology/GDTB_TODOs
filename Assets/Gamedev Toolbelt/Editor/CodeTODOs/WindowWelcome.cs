@@ -11,6 +11,7 @@ namespace com.immortalhydra.gdtb.codetodos
             get { return Instance != null; }
         }
         private GUISkin _skin;
+        private GUIStyle _wordWrappedColoredLabel;
         private int _offset = 5;
 
 
@@ -37,6 +38,7 @@ namespace com.immortalhydra.gdtb.codetodos
             Preferences.GetAllPrefValues();
 
             LoadSkin();
+            LoadStyle();
         }
 
 
@@ -53,18 +55,27 @@ namespace com.immortalhydra.gdtb.codetodos
 
             DrawWindowBackground();
 
-            EditorGUILayout.BeginVertical();
-            GUILayout.Label("Hello!\n\nUsing CodeTODOs is easy. The first time you run it, press the 'Process scripts' button.\n\nDepending on your settings, it will look like one of these two:", GUILayout.ExpandWidth(true));
+            var label1Content = new GUIContent("Hello!\n\nUsing CodeTODOs is easy. The first time you run it, press the 'Process scripts' button.\n\nDepending on your settings, it will look like one of these two:");
+            var label1Height = _wordWrappedColoredLabel.CalcHeight(label1Content, position.width - _offset * 2);
+            var label1Rect = new Rect(_offset * 2, _offset * 2, position.width - _offset * 4, label1Height);
+            EditorGUI.LabelField(label1Rect, label1Content, _wordWrappedColoredLabel);
+
             DrawProcessButtons();
-            GUILayout.Space(50);
-            GUILayout.Label("That will analyse your project and locate all scripts.\n\nAfter that, any time you want to update your list of tasks you can click on the 'Refresh' button, which will look through the scripts and pick up on pending tasks.", GUILayout.ExpandWidth(true));
-            GUILayout.Space(50);
+
+            var label2Content = new GUIContent("That will analyse your project and locate all scripts.\n\nAfter that, any time you want to update your list of tasks you can click on the 'Refresh' button, which will look through the scripts and pick up on pending tasks.");
+            var label2Height = _wordWrappedColoredLabel.CalcHeight(label2Content, position.width - _offset * 2);
+            var label2Rect = new Rect(_offset * 2, _offset * 2 + 40, position.width - _offset * 4, label2Height);
+            label2Rect.y += 100;
+            EditorGUI.LabelField(label2Rect, label2Content, _wordWrappedColoredLabel);
+
             DrawRefreshButtons();
-            GUILayout.Label("To define a task, you just need to start a comment with the appropriate token (your currently set token is '" + Preferences.TODOToken + "'.\n\nRemeber to take a look at the Preferences, a section has been added for CodeTODOs, and to the README for additional features and info!", GUILayout.ExpandWidth(true));
-            EditorGUILayout.EndVertical();
 
+            var label3Content = new GUIContent("To define a task, you just need to start a comment with the appropriate token (your currently set token is '" + Preferences.TODOToken + ")'.\n\nRemeber to take a look at the Preferences, a section has been added for CodeTODOs, and to the README for additional features and info!");
+            var label3Rect = new Rect(_offset * 2, _offset * 2 + 260, position.width - _offset * 4, label2Height);;
+            label3Rect.height = _wordWrappedColoredLabel.CalcHeight(label3Content, position.width - _offset * 2);
+            EditorGUI.LabelField(label3Rect, label3Content, _wordWrappedColoredLabel);
 
-
+            DrawToggle();
         }
 
 
@@ -78,7 +89,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawProcessButtons()
         {
             // Text.
-            var rect_text = new Rect(60, 105, 100, 20);
+            var rect_text = new Rect(60, 110, 100, 20);
             var style = new GUIStyle();
             style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Tertiary;
 			style.imagePosition = ImagePosition.TextOnly;
@@ -94,7 +105,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawRefreshButtons()
         {
             // Text.
-            var rect_text = new Rect(60, 225, 100, 20);
+            var rect_text = new Rect(60, 230, 100, 20);
             var style = new GUIStyle();
             style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Tertiary;
 			style.imagePosition = ImagePosition.TextOnly;
@@ -107,10 +118,28 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
+        private void DrawToggle()
+        {
+            var rect = new Rect(_offset * 2, position.height - 20 - _offset, position.width, 20);
+            Preferences.ShowWelcome = EditorGUI.ToggleLeft(rect, " Show this window every time CodeTODOs is opened", Preferences.ShowWelcome, _wordWrappedColoredLabel);
+            //TODO: Why is the window showing up every time codetodos is closed? Is Preferences.ShowWelcome not being set correctly or reset somehow?
+        }
+
+
         /// Load CodeTODOs custom skin.
         public void LoadSkin()
         {
             _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+        }
+
+
+        /// Load label styles.
+        public void LoadStyle()
+        {
+            _wordWrappedColoredLabel = _skin.GetStyle("GDTB_CodeTODOs_script");
+            _wordWrappedColoredLabel.active.textColor = Preferences.Color_Tertiary;
+            _wordWrappedColoredLabel.normal.textColor = Preferences.Color_Tertiary;
+            _wordWrappedColoredLabel.wordWrap = true;
         }
 
 
