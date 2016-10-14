@@ -13,6 +13,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private GUISkin _skin;
         private GUIStyle _wordWrappedColoredLabel;
         private int _offset = 5;
+        private bool _welcomeValue;
 
 
         public static void Init()
@@ -35,10 +36,10 @@ namespace com.immortalhydra.gdtb.codetodos
 
             Instance = this;
 
-            Preferences.GetAllPrefValues();
-
             LoadSkin();
             LoadStyle();
+
+            _welcomeValue = Preferences.ShowWelcome;
         }
 
 
@@ -121,8 +122,11 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawToggle()
         {
             var rect = new Rect(_offset * 2, position.height - 20 - _offset, position.width, 20);
-            Preferences.ShowWelcome = EditorGUI.ToggleLeft(rect, " Show this window every time CodeTODOs is opened", Preferences.ShowWelcome, _wordWrappedColoredLabel);
-            //TODO: Why is the window showing up every time codetodos is closed? Is Preferences.ShowWelcome not being set correctly or reset somehow?
+            _welcomeValue = EditorGUI.ToggleLeft(rect, " Show this window every time CodeTODOs is opened", _welcomeValue, _wordWrappedColoredLabel);
+            if (_welcomeValue != Preferences.ShowWelcome)
+            {
+                Preferences.SetWelcome(_welcomeValue);
+            }
         }
 
 
