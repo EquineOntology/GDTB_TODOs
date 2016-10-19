@@ -11,9 +11,10 @@ namespace com.immortalhydra.gdtb.codetodos
             get { return Instance != null; }
         }
         private GUISkin _skin;
-        private GUIStyle _wordWrappedColoredLabel;
+        private GUIStyle _wordWrappedColoredLabel, _headerLabel;
         private int _offset = 5;
         private bool _welcomeValue;
+        private float _usableWidth = 0;
 
 
         public static void Init()
@@ -52,29 +53,39 @@ namespace com.immortalhydra.gdtb.codetodos
 
         private void OnGUI()
         {
-            GUI.skin = _skin; // Without this, almost everything will work aside from the scrollbar.
+            _usableWidth = position.width - _offset * 2;
+            GUI.skin = _skin;
 
             DrawWindowBackground();
-
-            var label1Content = new GUIContent("Hello!\n\nUsing CodeTODOs is easy. The first time you run it, press the 'Process scripts' button.\n\nDepending on your settings, it will look like one of these two:");
-            var label1Height = _wordWrappedColoredLabel.CalcHeight(label1Content, position.width - _offset * 2);
-            var label1Rect = new Rect(_offset * 2, _offset * 2, position.width - _offset * 4, label1Height);
+            var label1Content = new GUIContent("Hello! Using CodeTODOs is easy.");
+            var label1Height = _wordWrappedColoredLabel.CalcHeight(label1Content, _usableWidth);
+            var label1Rect = new Rect(_offset * 2, _offset * 2, _usableWidth - _offset * 2, label1Height);
             EditorGUI.LabelField(label1Rect, label1Content, _wordWrappedColoredLabel);
+
+            var header1Content = new GUIContent("1. Press the 'Process scripts' button to analyze your project and find the script files.");
+            var header1Height = _headerLabel.CalcHeight(header1Content, _usableWidth);
+            var header1Rect = new Rect(_offset * 2, _offset * 2 + 30, _usableWidth - _offset * 2, header1Height);
+            EditorGUI.LabelField(header1Rect, header1Content, _headerLabel);
 
             DrawProcessButtons();
 
-            var label2Content = new GUIContent("That will analyse your project and locate all scripts.\n\nAfter that, any time you want to update your list of tasks you can click on the 'Refresh' button, which will look through the scripts and pick up on pending tasks.");
-            var label2Height = _wordWrappedColoredLabel.CalcHeight(label2Content, position.width - _offset * 2);
-            var label2Rect = new Rect(_offset * 2, _offset * 2 + 40, position.width - _offset * 4, label2Height);
-            label2Rect.y += 100;
-            EditorGUI.LabelField(label2Rect, label2Content, _wordWrappedColoredLabel);
+            var header2Content = new GUIContent("2. Click on the 'Refresh tasks' button, which will look through the scripts and find pending tasks.");
+            var header2Height = _headerLabel.CalcHeight(header2Content, _usableWidth);
+            var header2Rect = new Rect(_offset * 2, _offset * 2 + 80, _usableWidth - _offset * 2, header2Height);
+            header2Rect.y += 25;
+            EditorGUI.LabelField(header2Rect, header2Content, _headerLabel);
 
             DrawRefreshButtons();
 
-            var label3Content = new GUIContent("To define a task, you just need to start a comment with the appropriate token (your currently set token is '" + Preferences.TODOToken + ")'.\n\nRemeber to take a look at the Preferences, a section has been added for CodeTODOs, and to the README for additional features and info!");
-            var label3Rect = new Rect(_offset * 2, _offset * 2 + 260, position.width - _offset * 4, label2Height);;
-            label3Rect.height = _wordWrappedColoredLabel.CalcHeight(label3Content, position.width - _offset * 2);
-            EditorGUI.LabelField(label3Rect, label3Content, _wordWrappedColoredLabel);
+            var header3Content = new GUIContent("3. Define a task by starting a comment with your token.");
+            var header3Rect = new Rect(_offset * 2, _offset * 2 + 200, _usableWidth - _offset * 2, 0);;
+            header3Rect.height = _headerLabel.CalcHeight(header3Content, _usableWidth);
+            EditorGUI.LabelField(header3Rect, header3Content, _headerLabel);
+
+            var label2Content =  new GUIContent("Your currently set token is '" + Preferences.TODOToken + "'.\nYou can change that and much more in the Preferences, where a section has been added for CodeTODOs.\n\nDon't forget to check the README for advanced features and info!");
+            var label2Rect = new Rect(_offset * 2, _offset + 2 + 220, _usableWidth - _offset * 2, 0);
+            label2Rect.height = _wordWrappedColoredLabel.CalcHeight(label2Content, _usableWidth);
+            EditorGUI.LabelField(label2Rect, label2Content, _wordWrappedColoredLabel);
 
             DrawToggle();
         }
@@ -90,7 +101,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawProcessButtons()
         {
             // Text.
-            var rect_text = new Rect(60, 110, 100, 20);
+            var rect_text = new Rect(60, 80, 100, 20);
             var style = new GUIStyle();
             style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Tertiary;
 			style.imagePosition = ImagePosition.TextOnly;
@@ -99,14 +110,14 @@ namespace com.immortalhydra.gdtb.codetodos
 			EditorGUI.LabelField(rect_text, "Process", style);
 
             // Icon
-            GUI.DrawTexture(new Rect(160, 109, Constants.BUTTON_TEXTURE_SIZE, Constants.BUTTON_TEXTURE_SIZE), DrawingUtils.Texture_Process);
+            GUI.DrawTexture(new Rect(160, 84, Constants.BUTTON_TEXTURE_SIZE, Constants.BUTTON_TEXTURE_SIZE), DrawingUtils.Texture_Process);
         }
 
 
         private void DrawRefreshButtons()
         {
             // Text.
-            var rect_text = new Rect(60, 230, 100, 20);
+            var rect_text = new Rect(60, 160, 100, 20);
             var style = new GUIStyle();
             style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Tertiary;
 			style.imagePosition = ImagePosition.TextOnly;
@@ -115,7 +126,7 @@ namespace com.immortalhydra.gdtb.codetodos
 			EditorGUI.LabelField(rect_text, "Refresh", style);
 
             // Icon
-            GUI.DrawTexture(new Rect(160, 229, Constants.BUTTON_TEXTURE_SIZE, Constants.BUTTON_TEXTURE_SIZE), DrawingUtils.Texture_Refresh);
+            GUI.DrawTexture(new Rect(160, 164, Constants.BUTTON_TEXTURE_SIZE, Constants.BUTTON_TEXTURE_SIZE), DrawingUtils.Texture_Refresh);
         }
 
 
@@ -144,6 +155,8 @@ namespace com.immortalhydra.gdtb.codetodos
             _wordWrappedColoredLabel.active.textColor = Preferences.Color_Tertiary;
             _wordWrappedColoredLabel.normal.textColor = Preferences.Color_Tertiary;
             _wordWrappedColoredLabel.wordWrap = true;
+
+            _headerLabel = _skin.GetStyle("GDTB_CodeTODOs_task");
         }
 
 
@@ -151,7 +164,7 @@ namespace com.immortalhydra.gdtb.codetodos
         public void SetMinSize()
         {
             var window = GetWindow(typeof(WindowWelcome)) as WindowWelcome;
-            window.minSize = new Vector2(450f, 380f);
+            window.minSize = new Vector2(450f, 350f);
         }
     }
 }
