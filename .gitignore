@@ -19,7 +19,7 @@
 .vscode
 
 # Unity3D generated meta files
-*.pidb.meta
+*.meta
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
@@ -27,14 +27,10 @@ sysinfo.txt
 # Manually added
 /.project
 /Assets/VSCode
-/Assets/VSCode.meta
 /Assets/Gamedev Toolbelt/Editor/EditorPrefs Editor
-/Assets/Gamedev Toolbelt/Editor/EditorPrefs Editor.meta
 /PSDs/
 /Assets/TestScript.cs
-/Assets/TestScript.cs.meta
 /Assets/Gamedev Toolbelt/Editor/CodeTODOs/bak.gdtb
-/Assets/Gamedev Toolbelt/Editor/CodeTODOs/bak.gdtb.meta
 /Assets/!MFCommon
 /Assets/Editor Default Resources
 /Assets/GameAssets
@@ -49,3 +45,11 @@ sysinfo.txt
 /Assets/Standard Assets
 /Assets/Standard Assets (Mobile)
 /Assets/Version Specific Assets
+/Assets/link.xml
+/Assets/gmcs.rsp
+/Assets/dbgSmoothTransformVelocity.prefab
+/Assets/Skyboxes/
+/Assets/Skyboxes/
+/Assets/Editor/
+/Assets/Gamedev Toolbelt/Editor/CodeTODOs/scripts.gdtb
+/Assets/New Cubemap.cubemap
