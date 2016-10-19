@@ -34,10 +34,10 @@ namespace com.immortalhydra.gdtb.codetodos
         [MenuItem("Window/Gamedev Toolbelt/CodeTODOs %q")]
         public static void Init()
         {
-            // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default.
-            if(!EditorPrefs.HasKey("GDTB_CodeTODOs_initialized") || EditorPrefs.GetBool("GDTB_CodeTODOs_initialized", false) == false)
+            // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default, and show the first start window.
+            if(!EditorPrefs.HasKey("GDTB_CodeTODOs_firsttime") || EditorPrefs.GetBool("GDTB_CodeTODOs_firsttime", false) == false)
             {
-                Preferences.InitPrefs();
+                Preferences.InitExtension();
             }
 
             // Get existing open window or if none, make a new one.
@@ -47,10 +47,18 @@ namespace com.immortalhydra.gdtb.codetodos
             window.LoadStyles();
             window.UpdateLayoutingSizes();
 
+            IO.LoadScripts();
+
             QQQs.Clear();
             QQQs.AddRange(IO.LoadStoredQQQs());
 
             window.Show();
+
+
+            if(Preferences.ShowWelcome == true)
+            {
+                WindowWelcome.Init();
+            }
         }
 
 
@@ -87,13 +95,6 @@ namespace com.immortalhydra.gdtb.codetodos
             UpdateLayoutingSizes();
             GUI.skin = _skin; // Without this, almost everything will work aside from the scrollbar.
 
-            // If the list is clean (for instance because we just recompiled) load QQQs based on preferences.
-            if (QQQs.Count == 0)
-            {
-                QQQs.Clear();
-                QQQs.AddRange(IO.LoadStoredQQQs());
-            }
-
             DrawWindowBackground();
 
             // If the list is still clean after the above, then we really have no QQQs.
@@ -118,7 +119,7 @@ namespace com.immortalhydra.gdtb.codetodos
         /// If there are no QQQs, tell the user.
         private void DrawNoQQQsMessage()
         {
-            var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken + " in it.\n\nIf you see this after the project recompiled,\ntry refreshing the window!\nYour tasks should come back just fine.";
+            var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken + " in it.\n\nIf it's the first time you open CodeTODOs,\npress the 'Process scripts' button.\n\nIf you want to refresh the list,\npress the 'Refresh tasks' button.";
             var labelContent = new GUIContent(label);
 
             Vector2 labelSize;
@@ -387,34 +388,43 @@ namespace com.immortalhydra.gdtb.codetodos
         #endregion
 
 
-        #region A-R-S buttons
-        /// Draw Add, Refresh and Settings based on preferences.
+        #region P-A-R-S buttons
+        /// Draw Process, Add, Refresh and Settings based on preferences.
         private void DrawBottomButtons()
         {
-            Rect addRect, refreshRect, settingsRect;
-            GUIContent addContent, refreshContent, settingsContent;
+            Rect processRect, addRect, refreshRect, settingsRect;
+            GUIContent processContent, addContent, refreshContent, settingsContent;
 
             switch (Preferences.ButtonsDisplay)
             {
                 case ButtonsDisplayFormat.REGULAR_BUTTONS:
+                    Button_Process_default(out processRect, out processContent);
                     Button_Add_default(out addRect, out addContent);
                     Button_Refresh_default(out refreshRect, out refreshContent);
                     Button_Settings_default(out settingsRect, out settingsContent);
                     break;
 				case ButtonsDisplayFormat.COOL_ICONS:
                 default:
+                    Button_Process_icon(out processRect, out processContent);
                     Button_Add_icon(out addRect, out addContent);
                     Button_Refresh_icon(out refreshRect, out refreshContent);
                     Button_Settings_icon(out settingsRect, out settingsContent);
                     break;
             }
 
-             // Add new QQQ.
+            // Process scripts.
+            if(Controls.Button(processRect, processContent))
+            {
+                QQQOps.FindAllScripts();
+                QQQOps.GetQQQsFromAllScripts();
+            }
+
+
+            // Add new QQQ.
             if (Controls.Button(addRect, addContent))
             {
                 WindowAdd.Init();
             }
-            //DrawingUtils.DrawButton(addRect, Preferences.ButtonsDisplay, DrawingUtils.Texture_Add, addContent.text, _style_buttonText);
 
 
             // Refresh list of QQQs.
@@ -438,36 +448,46 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
+        private void Button_Process_default(out Rect aRect, out GUIContent aContent)
+        {
+            aRect = new Rect((position.width / 2 - ButtonWidth * 2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aContent = new GUIContent("Process", "Process all scripts");
+        }
         private void Button_Add_default(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 - ButtonWidth - IconSize * 2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect((position.width / 2 - ButtonWidth), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Add", "Add a new QQQ");
         }
         private void Button_Refresh_default(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 - ButtonWidth/2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect((position.width / 2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Refresh", "Refresh list");
         }
         private void Button_Settings_default(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 + ButtonWidth / 2 + _offset), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect((position.width / 2 + ButtonWidth), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Settings", "Open Settings");
         }
 
 
+        private void Button_Process_icon(out Rect aRect, out GUIContent aContent)
+        {
+            aRect = new Rect((position.width / 2 - IconSize * 3.5f), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aContent = new GUIContent(DrawingUtils.Texture_Process, "Process all scripts");
+        }
         private void Button_Add_icon(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 - IconSize * 2), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aRect = new Rect((position.width / 2 - IconSize * 1.5f), position.height - (IconSize * 1.4f), IconSize, IconSize);
             aContent = new GUIContent(DrawingUtils.Texture_Add, "Add a new QQQ");
         }
         private void Button_Refresh_icon(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 - IconSize/2), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aRect = new Rect((position.width / 2 + IconSize * 0.5f), position.height - (IconSize * 1.4f), IconSize, IconSize);
             aContent = new GUIContent(DrawingUtils.Texture_Refresh, "Refresh list");
         }
         private void Button_Settings_icon(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 + IconSize), position.height - (IconSize * 1.4f), IconSize, IconSize);
+            aRect = new Rect((position.width / 2 + IconSize * 2.5f), position.height - (IconSize * 1.4f), IconSize, IconSize);
             aContent = new GUIContent(DrawingUtils.Texture_Settings, "Open Settings");
         }
         #endregion
@@ -583,6 +603,10 @@ namespace com.immortalhydra.gdtb.codetodos
             if (WindowEdit.IsOpen)
             {
                 EditorWindow.GetWindow(typeof(WindowEdit)).Close();
+            }
+            if (WindowWelcome.IsOpen)
+            {
+                EditorWindow.GetWindow(typeof(WindowWelcome)).Close();
             }
         }
 

@@ -28,7 +28,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private static string[] _buttonsFormatsString = { "Cool icons", "Regular buttons" };
 
 
-        // Confirmation dialogs
+        // Confirmation dialogs.
         private const string PREFS_CODETODOS_CONFIRMATION_DIALOGS = "GDTB_CodeTODOs_ConfirmationDialogs";
         private static bool _confirmationDialogs = true;
         private static bool _confirmationDialogs_default = true;
@@ -36,6 +36,17 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             get { return _confirmationDialogs; }
         }
+
+
+        // Welcome window.
+        private const string PREFS_CODETODOS_WELCOME = "GDTB_CodeTODOs_Welcome";
+        private static bool _showWelcome = true;
+        private static bool _showWelcome_default = true;
+        public static bool ShowWelcome
+        {
+            get { return _showWelcome; }
+        }
+
 
         #region Colors
         // Style of icons (light or dark).
@@ -95,7 +106,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
         // Color of URGENT tasks.
         private const string PREFS_CODETODOS_COLOR_PRI1 = "GDTB_CodeTODOs_Urgent";
-        private static Color _priColor1 = new Color(246, 71, 71, 1);  // Sunset orange http://www.flatuicolorpicker.com/pink
+        private static Color _priColor1 = new Color(246, 71, 71, 1);
         private static Color _priColor1_default = new Color(246, 71, 71, 1);
         private static Color _priColor1_dark = new Color(246, 71, 71, 1);
         private static Color _priColor1_light = new Color(197, 0, 0, 1);
@@ -106,7 +117,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
         // Color of NORMAL tasks
         private const string PREFS_CODETODOS_COLOR_PRI2 = "GDTB_CodeTODOs_Normal";
-        private static Color _priColor2 = new Color(244, 208, 63, 1); // Saffron http://www.flatuicolorpicker.com/yellow
+        private static Color _priColor2 = new Color(244, 208, 63, 1);
         private static Color _priColor2_default = new Color(244, 208, 63, 1);
         private static Color _priColor2_dark = new Color(244, 208, 63, 1);
         private static Color _priColor2_light = new Color(234, 188, 0, 1);
@@ -117,7 +128,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
         // Color of MINOR tasks
         private const string PREFS_CODETODOS_COLOR_PRI3 = "GDTB_CodeTODOs_Minor";
-        private static Color _priColor3 = new Color(46, 204, 113, 1); // Shamrock http://www.flatuicolorpicker.com/green
+        private static Color _priColor3 = new Color(46, 204, 113, 1);
         private static Color _priColor3_default = new Color(46, 204, 113, 1);
         private static Color _priColor3_dark = new Color(46, 204, 113, 1);
         private static Color _priColor3_light = new Color(0, 189, 80, 1);
@@ -154,6 +165,7 @@ namespace com.immortalhydra.gdtb.codetodos
             EditorGUILayout.LabelField("General Settings", EditorStyles.boldLabel);
             _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
             _confirmationDialogs = EditorGUILayout.Toggle("Show confirmation dialogs", _confirmationDialogs);
+            _showWelcome = EditorGUILayout.Toggle("Show Welcome window", _showWelcome);
             GUILayout.Space(20);
             EditorGUILayout.LabelField("UI", EditorStyles.boldLabel);
             _buttonsDisplay = (ButtonsDisplayFormat)EditorGUILayout.Popup("Button style", System.Convert.ToInt16(_buttonsDisplay), _buttonsFormatsString);
@@ -171,7 +183,8 @@ namespace com.immortalhydra.gdtb.codetodos
             GUILayout.Space(20);
             _newShortcut = DrawShortcutSelector();
             GUILayout.Space(20);
-            DrawResetButton();
+            DrawResetButtons();
+            GUILayout.Space(30);
             EditorGUILayout.EndScrollView();
 
             if (GUI.changed)
@@ -202,10 +215,11 @@ namespace com.immortalhydra.gdtb.codetodos
 
 
         /// If EditorPrefs have been lost or have never been initialized, we want to set them to their default values.
-        public static void InitPrefs()
+        public static void InitExtension()
         {
             ResetPrefsToDefault();
-            EditorPrefs.SetBool("GDTB_CodeTODOs_initialized", true);
+            QQQOps.FindAllScripts();
+            EditorPrefs.SetBool("GDTB_CodeTODOs_firsttime", true);
         }
 
 
@@ -215,11 +229,18 @@ namespace com.immortalhydra.gdtb.codetodos
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, _todoToken);
             EditorPrefs.SetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, System.Convert.ToInt16(_buttonsDisplay));
             EditorPrefs.SetBool(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs);
+            SetWelcome(_showWelcome);
             SetIconStyle();
             SetColorPrefs();
             SetShortcutPrefs();
         }
 
+
+        /// Set the value of ShowWelcome.
+        public static void SetWelcome(bool val)
+        {
+            EditorPrefs.SetBool(PREFS_CODETODOS_WELCOME, val);
+        }
 
         /// Set the value of IconStyle.
         private static void SetIconStyle()
@@ -353,6 +374,7 @@ namespace com.immortalhydra.gdtb.codetodos
             _oldDisplayFormat = _buttonsDisplay;
             GetIconStyle();
             _confirmationDialogs = GetPrefValue(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs_default);
+            _showWelcome = GetPrefValue(PREFS_CODETODOS_WELCOME, _showWelcome_default);
             GetColorPrefs();
             _shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut.
             ParseShortcutValues();
@@ -514,17 +536,36 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Draw reset button.
-        private static void DrawResetButton()
+        /// Draw buttons to rebuild the scripts list and reset preferences.
+        private static void DrawResetButtons()
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.Space();
+            DrawRebuildScriptListButton();
+            GUILayout.Space(10);
+            DrawResetButton();
+            EditorGUILayout.Space();
+            EditorGUILayout.EndHorizontal();
+        }
+
+
+        /// Draw button to rebuild the scripts list.
+        private static void DrawRebuildScriptListButton()
+        {
+            if (GUILayout.Button("Rebuild list of scripts", GUILayout.Width(140)))
+            {
+                QQQOps.FindAllScripts();
+            }
+        }
+
+
+        /// Draw reset button.
+        private static void DrawResetButton()
+        {
             if (GUILayout.Button("Reset preferences", GUILayout.Width(120)))
             {
                 ResetPrefsToDefault();
             }
-            EditorGUILayout.Space();
-            EditorGUILayout.EndHorizontal();
         }
 
 
@@ -535,6 +576,7 @@ namespace com.immortalhydra.gdtb.codetodos
             _buttonsDisplay = (ButtonsDisplayFormat)_buttonsDisplay_default;
             _iconStyle = (IconStyle)_iconStyle_default;
             _confirmationDialogs = _confirmationDialogs_default;
+            _showWelcome = _showWelcome_default;
             _primary = RGBA.GetNormalizedColor(_primary_default);
             _secondary = RGBA.GetNormalizedColor(_secondary_default);
             _tertiary = RGBA.GetNormalizedColor(_tertiary_default);

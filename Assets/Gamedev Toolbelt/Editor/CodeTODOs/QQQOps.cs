@@ -7,13 +7,15 @@ namespace com.immortalhydra.gdtb.codetodos
 {
     public static class QQQOps
     {
+        public static List<string> AllScripts = new List<string>();
+
         /// Find all files ending with .cs or .js (exclude those in exclude.txt).
-        public static List<string> FindAllScripts()
+        public static void FindAllScripts()
         {
             var assetsPaths = AssetDatabase.GetAllAssetPaths();
 
             var excludedScripts = IO.GetExcludedScripts();
-            var allScripts = new List<string>();
+            AllScripts = new List<string>();
             foreach (var path in assetsPaths)
             {
                 // There are some files we don't want to include.
@@ -35,22 +37,22 @@ namespace com.immortalhydra.gdtb.codetodos
 
                 if (shouldBeExcluded == false)
                 {
-                    allScripts.Add(path);
+                    AllScripts.Add(path);
                 }
             }
-            return allScripts;
+
+            IO.SaveScriptList();
         }
 
 
         /// Find all QQQs in all scripts.
         public static void GetQQQsFromAllScripts()
         {
-            var allScripts = FindAllScripts();
             var qqqs = new List<QQQ>();
-
-            for (int i = 0; i < allScripts.Count; i++)
+            
+            for (int i = 0; i < AllScripts.Count; i++)
             {
-                qqqs.AddRange(GetQQQsFromScript(allScripts[i]));
+                qqqs.AddRange(GetQQQsFromScript(AllScripts[i]));
             }
             WindowMain.QQQs = qqqs;
         }
@@ -134,12 +136,23 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Remove all references to the given script in CodeTODOs.QQQs.
         public static void RemoveScript(string aScript)
         {
+            // Remove from QQQs.
             for (int i = 0; i < WindowMain.QQQs.Count; i++)
             {
                 if (WindowMain.QQQs[i].Script == aScript)
                 {
                     WindowMain.QQQs.Remove(WindowMain.QQQs[i]);
                     i--;
+                }
+            }
+
+            // Remove from AllScripts
+            for (int i = 0; i < AllScripts.Count; i++)
+            {
+                if (AllScripts[i] == aScript)
+                {
+                    AllScripts.Remove(AllScripts[i]);
+                    break; // We have just one instance, we can exit the loop.
                 }
             }
         }
@@ -236,7 +249,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
 
         /// Remove all QQQs.
-        public static void RemoveAllQQQs() // Different from the method above because we don't want removing to be the same as completing (for future integrations in which the concepts are different).
+        public static void RemoveAllQQQs()
         {
             for (var i = 0; i < WindowMain.QQQs.Count; i++)
             {
