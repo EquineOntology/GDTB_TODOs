@@ -399,22 +399,28 @@ namespace com.immortalhydra.gdtb.codetodos
 
         private void SetupButton_Process(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 - ButtonWidth * 2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
-            aContent = new GUIContent("Process", "Process all scripts");
+            aRect = new Rect(position.width / 2 - ButtonWidth * 2 - _offset * 3, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aContent = new GUIContent("Process", "Process scripts");
         }
+
+
         private void SetupButton_Add(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 - ButtonWidth), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 - ButtonWidth - _offset, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Add", "Add a new QQQ");
         }
+
+
         private void SetupButton_Refresh(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 + _offset, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Refresh", "Refresh list");
         }
+
+
         private void SetupButton_Settings(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2 + ButtonWidth), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 + ButtonWidth + _offset * 3, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Settings", "Open Settings");
         }
 
@@ -486,6 +492,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
             scrollbar.Apply();
             _skin.verticalScrollbarThumb.normal.background = scrollbar;
+            _skin.verticalScrollbarThumb.active.background = scrollbar;
             _skin.verticalScrollbarThumb.fixedWidth = 6;
         }
 
@@ -494,7 +501,6 @@ namespace com.immortalhydra.gdtb.codetodos
         public void SetMinSize()
         {
             var window = GetWindow(typeof(WindowMain)) as WindowMain;
-
             window.minSize = new Vector2(322f, 150f);
         }
 
