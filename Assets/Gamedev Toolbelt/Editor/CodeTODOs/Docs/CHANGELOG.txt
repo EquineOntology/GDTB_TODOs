@@ -1,20 +1,20 @@
 ====== 2016.4 ======
 
-* Unified interface buttons to text style with border for visual clarity.
+ * Unified interface buttons to text style with border for visual clarity.
 
-====== 1.2 =====
+====== 2016.3 =====
 
  * Completely redesigned how scripts were collected/processed, as autoupdating was slowing Unity to a crawl on sizeable projects.
    Users can now process scripts and tasks on demand through buttons on the main interface (new workflow described in README).
  * Added a Welcome window to give users a few pointers on startup.
 
-====== 1.1 =====
+====== 2016.2 =====
 
  * FIX: EditorPrefs were not being initialized correctly on first start.
  * New icons and button style!
  * Buttons are now highlighted when hovered over.
  * FIX: Unity could freeze on very large projects due to auto-updating of the task list.
 
-====== 1.0 =====
+====== 2016.1 =====
 
 * Initial release

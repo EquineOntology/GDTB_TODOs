@@ -467,7 +467,7 @@ namespace com.immortalhydra.gdtb.codetodos
                 {
                     if(line.Contains("[MenuItem"))
                     {
-                        writer.WriteLine("        [MenuItem(" + '"' + "Window/Gamedev Toolbelt/CodeTODOs " + aShortcut + '"' + ")]");
+                        writer.WriteLine("        [MenuItem(" + '"' + "Window/Gamedev Toolbelt/CodeTODOs/Open CodeTODOs " + aShortcut + '"' + ")]");
                     }
                     else
                     {

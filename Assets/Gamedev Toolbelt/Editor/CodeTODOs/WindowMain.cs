@@ -31,7 +31,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
 
         // ====================================================================
-        [MenuItem("Window/Gamedev Toolbelt/CodeTODOs %q")]
+        [MenuItem("Window/Gamedev Toolbelt/CodeTODOs/Open CodeTODOs %q", false, 1)]
         public static void Init()
         {
             // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default, and show the first start window.
