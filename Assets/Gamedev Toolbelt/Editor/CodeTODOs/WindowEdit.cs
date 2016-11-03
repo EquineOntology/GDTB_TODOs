@@ -108,15 +108,7 @@ namespace com.immortalhydra.gdtb.codetodos
             Rect buttonRect;
             GUIContent buttonContent;
 
-            switch (Preferences.ButtonsDisplay)
-            {
-                case ButtonsDisplayFormat.REGULAR_BUTTONS:
-                    DrawEdit_Default(out buttonRect, out buttonContent);
-                    break;
-                default:
-                    DrawEdit_Icon(out buttonRect, out buttonContent);
-                    break;
-            }
+            SetupButton_Edit(out buttonRect, out buttonContent);
 
             if (Controls.Button(buttonRect, buttonContent))
             {
@@ -125,19 +117,11 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Draw default-style Edit.
-        private void DrawEdit_Default(out Rect aRect, out GUIContent aContent)
+        /// Setup the Edit button.
+        private void SetupButton_Edit(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2) - ButtonWidth/2, position.height - ButtonHeight * 1.5f, ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Save", "Save edits");
-        }
-
-
-        /// Draw icon Edit.
-        private void DrawEdit_Icon(out Rect aRect, out GUIContent aContent)
-        {
-            aRect = new Rect((position.width / 2) - IconSize/2, position.height - IconSize * 1.5f, IconSize, IconSize);
-            aContent = new GUIContent(DrawingUtils.Texture_Edit, "Save edits");
         }
 
 

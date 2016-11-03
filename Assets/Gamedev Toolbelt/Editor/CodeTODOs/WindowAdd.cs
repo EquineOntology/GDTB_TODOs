@@ -124,15 +124,7 @@ namespace com.immortalhydra.gdtb.codetodos
             Rect buttonRect;
             GUIContent buttonContent;
 
-            switch (Preferences.ButtonsDisplay)
-            {
-                case ButtonsDisplayFormat.REGULAR_BUTTONS:
-                    Button_Add_default(out buttonRect, out buttonContent);
-                    break;
-                default:
-                    Button_Add_icon(out buttonRect, out buttonContent);
-                    break;
-            }
+            SetupButton_Add(out buttonRect, out buttonContent);
 
             if (Controls.Button(buttonRect, buttonContent))
             {
@@ -141,18 +133,11 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Draw default-button Add.
-        private void Button_Add_default(out Rect aRect, out GUIContent aContent)
+        /// Setup the Add button.
+        private void SetupButton_Add(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect(position.width / 2 - ButtonWidth / 2, position.height - ButtonHeight * 1.5f, ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Add task", "Add task");
-        }
-
-        /// Draw icon Add.
-        private void Button_Add_icon(out Rect aRect, out GUIContent aContent)
-        {
-            aRect = new Rect((position.width / 2) - IconSize / 2, position.height - IconSize * 1.5f, IconSize, IconSize);
-            aContent = new GUIContent(DrawingUtils.Texture_Add, "Add task");
         }
 
 
@@ -193,6 +178,7 @@ namespace com.immortalhydra.gdtb.codetodos
                     }
                 }
         }
+
 
         /// Load CodeTODOs custom skin.
         public void LoadSkin()

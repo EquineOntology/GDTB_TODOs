@@ -167,11 +167,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 var height_qqqBackground = taskHeight + scriptHeight + _offset * 2;
                 height_qqqBackground = height_qqqBackground < IconSize * 2.7f ? IconSize * 2.7f : height_qqqBackground;
 
-                if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
-                {
-                    height_qqqBackground += 4;
-                }
-
                 _rect_qqq = new Rect(0, _height_totalQQQHeight, _width_qqq, height_qqqBackground);
                 _rect_editAndComplete = new Rect(_width_qqq + (_offset * 2), _rect_qqq.y, _width_buttons, height_qqqBackground);
 
@@ -285,39 +280,21 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        #region EditAndComplete
-        /// Select which format to use based on the user preference.
+        /// Draw Edit and Complete buttons.
         private void DrawEditAndComplete(Rect aRect, QQQ aQQQ)
         {
             Rect editRect, completeRect;
             GUIContent editContent, completeContent;
 
-            aRect.x = position.width - _offset * 2;
-            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.REGULAR_BUTTONS)
-            {
-                aRect.x = aRect.x - ButtonWidth - _offset * 0.5f;
-            }
-            else
-            {
-                aRect.x = aRect.x - IconSize - _offset * 0.5f;
-            }
+            aRect.x = position.width - ButtonWidth - _offset * 2.5f;
 
             if (_showingScrollbar == true)
             {
                 aRect.x -= _offset * 2.5f;
             }
 
-            switch (Preferences.ButtonsDisplay)
-            {
-                case ButtonsDisplayFormat.REGULAR_BUTTONS:
-                    Button_Edit_default(aRect, out editRect, out editContent);
-                    Button_Complete_default(aRect, out completeRect, out completeContent);
-                    break;
-                default:
-                    Button_Edit_icon(aRect, out editRect, out editContent);
-                    Button_Complete_icon(aRect, out completeRect, out completeContent);
-                    break;
-            }
+            SetupButton_Edit(aRect, out editRect, out editContent);
+            SetupButton_Complete(aRect, out completeRect, out completeContent);
 
             if (Controls.Button(editRect, editContent))
             {
@@ -349,7 +326,9 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
             }
         }
-        private void Button_Edit_default(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
+
+
+        private void SetupButton_Edit(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
         {
             anEditRect = aRect;
             anEditRect.y += _offset + 2;
@@ -358,7 +337,9 @@ namespace com.immortalhydra.gdtb.codetodos
 
             anEditContent = new GUIContent("Edit", "Edit this task");
         }
-        private void Button_Complete_default(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
+
+
+        private void SetupButton_Complete(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
         {
             aCompleteRect = aRect;
             aCompleteRect.y += ButtonHeight + _offset + 8;
@@ -368,49 +349,17 @@ namespace com.immortalhydra.gdtb.codetodos
             aCompleteContent = new GUIContent("Complete", "Complete this task");
         }
 
-        private void Button_Edit_icon(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
-        {
-            anEditRect = aRect;
-            anEditRect.y += _offset + 2;
-            anEditRect.width = IconSize;
-            anEditRect.height = IconSize;
-            anEditContent = new GUIContent(DrawingUtils.Texture_Edit, "Edit this EditorPref");
-        }
-        private void Button_Complete_icon(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
-        {
-            aCompleteRect = aRect;
-            aCompleteRect.y += IconSize + _offset + 8;
-            aCompleteRect.width = IconSize;
-            aCompleteRect.height = IconSize;
 
-            aCompleteContent = new GUIContent(DrawingUtils.Texture_Complete, "Complete this task");
-        }
-        #endregion
-
-
-        #region P-A-R-S buttons
-        /// Draw Process, Add, Refresh and Settings based on preferences.
+        /// Draw Process, Add, Refresh and Settings.
         private void DrawBottomButtons()
         {
             Rect processRect, addRect, refreshRect, settingsRect;
             GUIContent processContent, addContent, refreshContent, settingsContent;
 
-            switch (Preferences.ButtonsDisplay)
-            {
-                case ButtonsDisplayFormat.REGULAR_BUTTONS:
-                    Button_Process_default(out processRect, out processContent);
-                    Button_Add_default(out addRect, out addContent);
-                    Button_Refresh_default(out refreshRect, out refreshContent);
-                    Button_Settings_default(out settingsRect, out settingsContent);
-                    break;
-				case ButtonsDisplayFormat.COOL_ICONS:
-                default:
-                    Button_Process_icon(out processRect, out processContent);
-                    Button_Add_icon(out addRect, out addContent);
-                    Button_Refresh_icon(out refreshRect, out refreshContent);
-                    Button_Settings_icon(out settingsRect, out settingsContent);
-                    break;
-            }
+            SetupButton_Process(out processRect, out processContent);
+            SetupButton_Add(out addRect, out addContent);
+            SetupButton_Refresh(out refreshRect, out refreshContent);
+            SetupButton_Settings(out settingsRect, out settingsContent);
 
             // Process scripts.
             if(Controls.Button(processRect, processContent))
@@ -448,49 +397,27 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        private void Button_Process_default(out Rect aRect, out GUIContent aContent)
+        private void SetupButton_Process(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2 - ButtonWidth * 2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Process", "Process all scripts");
         }
-        private void Button_Add_default(out Rect aRect, out GUIContent aContent)
+        private void SetupButton_Add(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2 - ButtonWidth), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Add", "Add a new QQQ");
         }
-        private void Button_Refresh_default(out Rect aRect, out GUIContent aContent)
+        private void SetupButton_Refresh(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Refresh", "Refresh list");
         }
-        private void Button_Settings_default(out Rect aRect, out GUIContent aContent)
+        private void SetupButton_Settings(out Rect aRect, out GUIContent aContent)
         {
             aRect = new Rect((position.width / 2 + ButtonWidth), position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Settings", "Open Settings");
         }
 
-
-        private void Button_Process_icon(out Rect aRect, out GUIContent aContent)
-        {
-            aRect = new Rect((position.width / 2 - IconSize * 3.5f), position.height - (IconSize * 1.4f), IconSize, IconSize);
-            aContent = new GUIContent(DrawingUtils.Texture_Process, "Process all scripts");
-        }
-        private void Button_Add_icon(out Rect aRect, out GUIContent aContent)
-        {
-            aRect = new Rect((position.width / 2 - IconSize * 1.5f), position.height - (IconSize * 1.4f), IconSize, IconSize);
-            aContent = new GUIContent(DrawingUtils.Texture_Add, "Add a new QQQ");
-        }
-        private void Button_Refresh_icon(out Rect aRect, out GUIContent aContent)
-        {
-            aRect = new Rect((position.width / 2 + IconSize * 0.5f), position.height - (IconSize * 1.4f), IconSize, IconSize);
-            aContent = new GUIContent(DrawingUtils.Texture_Refresh, "Refresh list");
-        }
-        private void Button_Settings_icon(out Rect aRect, out GUIContent aContent)
-        {
-            aRect = new Rect((position.width / 2 + IconSize * 2.5f), position.height - (IconSize * 1.4f), IconSize, IconSize);
-            aContent = new GUIContent(DrawingUtils.Texture_Settings, "Open Settings");
-        }
-        #endregion
 
 
         /// Draw a line separating scrollview and lower buttons.
@@ -508,28 +435,13 @@ namespace com.immortalhydra.gdtb.codetodos
             _rect_scrollArea = new Rect(_offset, _offset, width - _offset * 2, position.height - IconSize - _offset * 4);
             _rect_scrollView = _rect_scrollArea;
 
-            // Buttons have different sizes based on preferences.
-            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
+            if (_showingScrollbar)
             {
-                if (_showingScrollbar)
-                {
-                    _width_buttons = IconSize + _offset * 3;
-                }
-                else
-                {
-                    _width_buttons = IconSize + _offset;
-                }
+                _width_buttons = ButtonWidth + _offset * 3;
             }
             else
             {
-                if (_showingScrollbar)
-                {
-                    _width_buttons = ButtonWidth + _offset * 3;
-                }
-                else
-                {
-                    _width_buttons = ButtonWidth + _offset * 1;
-                }
+                _width_buttons = ButtonWidth + _offset * 1;
             }
 
             _width_qqq = (int)width - _width_buttons - _offset * 3;
@@ -582,14 +494,8 @@ namespace com.immortalhydra.gdtb.codetodos
         public void SetMinSize()
         {
             var window = GetWindow(typeof(WindowMain)) as WindowMain;
-            if (Preferences.ButtonsDisplay == ButtonsDisplayFormat.COOL_ICONS)
-            {
-                window.minSize = new Vector2(222f, 150f);
-            }
-            else
-            {
-                window.minSize = new Vector2(322f, 150f);
-            }
+
+            window.minSize = new Vector2(322f, 150f);
         }
 
 

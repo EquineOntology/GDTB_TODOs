@@ -5,43 +5,8 @@ namespace com.immortalhydra.gdtb.codetodos
 {
     public static class DrawingUtils
     {
-        public static Texture2D Texture_Add = Resources.Load(Constants.TEX_ADD_DARK, typeof(Texture2D)) as Texture2D;
-        public static Texture2D Texture_Get = Resources.Load(Constants.TEX_GET_DARK, typeof(Texture2D)) as Texture2D;
-        public static Texture2D Texture_Refresh = Resources.Load(Constants.TEX_REFRESH_DARK, typeof(Texture2D)) as Texture2D;
-        public static Texture2D Texture_Settings = Resources.Load(Constants.TEX_SETTINGS_DARK, typeof(Texture2D)) as Texture2D;
-        public static Texture2D Texture_Edit = Resources.Load(Constants.TEX_EDIT_DARK, typeof(Texture2D)) as Texture2D;
-        public static Texture2D Texture_Complete = Resources.Load(Constants.TEX_COMPLETE_DARK, typeof(Texture2D)) as Texture2D;
-        public static Texture2D Texture_Process = Resources.Load(Constants.TEX_PROCESS_DARK, typeof(Texture2D)) as Texture2D;
-
-        public static IconStyle CurrentIconStyle = IconStyle.LIGHT;
-
-
         /// Draw the button, based on the type, not pressed.
-        public static void DrawButton(Rect aRect, ButtonsDisplayFormat aButtonType, Texture2D aTexture, string aText, GUIStyle aStyle)
-        {
-            if(aButtonType == ButtonsDisplayFormat.COOL_ICONS)
-            {
-                DrawIconButton(aRect, aTexture);
-            }
-            else
-            {
-                DrawTextButton(aRect, aText, aStyle);
-            }
-        }
-
-
-        /// Draw "fake" texture button.
-        public static void DrawIconButton(Rect aRect, Texture2D aTexture)
-        {
-            EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
-            var bgRect = new Rect(aRect.x + Constants.BUTTON_BORDER_THICKNESS, aRect.y + Constants.BUTTON_BORDER_THICKNESS, aRect.width - Constants.BUTTON_BORDER_THICKNESS * 2, aRect.height - Constants.BUTTON_BORDER_THICKNESS * 2);
-            EditorGUI.DrawRect(bgRect, Preferences.Color_Primary);
-            GUI.DrawTexture(new Rect(aRect.x + 2, aRect.y + 2, Constants.BUTTON_TEXTURE_SIZE, Constants.BUTTON_TEXTURE_SIZE), aTexture);
-        }
-
-
-        /// Draw "fake" text button based on preferences.
-        public static void DrawTextButton(Rect aRect, string aText, GUIStyle aStyle)
+        public static void DrawButton(Rect aRect, string aText, GUIStyle aStyle)
         {
             EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
             var bgRect = new Rect(aRect.x + Constants.BUTTON_BORDER_THICKNESS, aRect.y + Constants.BUTTON_BORDER_THICKNESS, aRect.width - Constants.BUTTON_BORDER_THICKNESS * 2, aRect.height - Constants.BUTTON_BORDER_THICKNESS * 2);
@@ -52,7 +17,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
 
         /// Draw "fake" text button in the pressed state.
-        public static void DrawPressedTextButton(Rect aRect, string aText, GUIStyle aStyle)
+        public static void DrawPressedButton(Rect aRect, string aText, GUIStyle aStyle)
         {
             EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
             aStyle.normal.textColor = Preferences.Color_Primary;
@@ -73,48 +38,12 @@ namespace com.immortalhydra.gdtb.codetodos
 
                 if (i != aSelectedIndex)
                 {
-                    DrawTextButton(gridRect, anElementArray[i], aNormalStyle);
+                    DrawButton(gridRect, anElementArray[i], aNormalStyle);
                 }
                 else
                 {
-                    DrawPressedTextButton(gridRect, anElementArray[i], aPressedStyle);
+                    DrawPressedButton(gridRect, anElementArray[i], aPressedStyle);
                 }
-            }
-        }
-
-
-        /// Change button textures when they're changed in preferences.
-        public static void LoadTextures(IconStyle aStyle)
-        {
-            Texture_Add = null;
-            Texture_Get = null;
-            Texture_Refresh = null;
-            Texture_Settings = null;
-            Texture_Edit = null;
-            Texture_Complete = null;
-            Texture_Process = null;
-
-            if (aStyle == IconStyle.DARK)
-            {
-                Texture_Add = Resources.Load(Constants.TEX_ADD_DARK, typeof(Texture2D)) as Texture2D;
-                Texture_Get = Resources.Load(Constants.TEX_GET_DARK, typeof(Texture2D)) as Texture2D;
-                Texture_Refresh = Resources.Load(Constants.TEX_REFRESH_DARK, typeof(Texture2D)) as Texture2D;
-                Texture_Settings = Resources.Load(Constants.TEX_SETTINGS_DARK, typeof(Texture2D)) as Texture2D;
-                Texture_Edit = Resources.Load(Constants.TEX_EDIT_DARK, typeof(Texture2D)) as Texture2D;
-                Texture_Complete = Resources.Load(Constants.TEX_COMPLETE_DARK, typeof(Texture2D)) as Texture2D;
-                Texture_Process = Resources.Load(Constants.TEX_PROCESS_DARK, typeof(Texture2D)) as Texture2D;
-                CurrentIconStyle = IconStyle.DARK;
-            }
-            else
-            {
-                Texture_Add = Resources.Load(Constants.TEX_ADD_LIGHT, typeof(Texture2D)) as Texture2D;
-                Texture_Get = Resources.Load(Constants.TEX_GET_LIGHT, typeof(Texture2D)) as Texture2D;
-                Texture_Refresh = Resources.Load(Constants.TEX_REFRESH_LIGHT, typeof(Texture2D)) as Texture2D;
-                Texture_Settings = Resources.Load(Constants.TEX_SETTINGS_LIGHT, typeof(Texture2D)) as Texture2D;
-                Texture_Edit = Resources.Load(Constants.TEX_EDIT_LIGHT, typeof(Texture2D)) as Texture2D;
-                Texture_Complete = Resources.Load(Constants.TEX_COMPLETE_LIGHT, typeof(Texture2D)) as Texture2D;
-                Texture_Process = Resources.Load(Constants.TEX_PROCESS_LIGHT, typeof(Texture2D)) as Texture2D;
-                CurrentIconStyle = IconStyle.LIGHT;
             }
         }
     }

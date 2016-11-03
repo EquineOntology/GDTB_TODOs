@@ -16,18 +16,6 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        // Buttons displayed as normal buttons or smaller icons.
-        private const string PREFS_CODETODOS_BUTTONS_DISPLAY = "GDTB_CodeTODOs_ButtonDisplay";
-        private static ButtonsDisplayFormat _buttonsDisplay = ButtonsDisplayFormat.COOL_ICONS;
-        private static int _buttonsDisplay_default = 1;
-        private static ButtonsDisplayFormat _oldDisplayFormat;
-        public static ButtonsDisplayFormat ButtonsDisplay
-        {
-            get { return _buttonsDisplay; }
-        }
-        private static string[] _buttonsFormatsString = { "Cool icons", "Regular buttons" };
-
-
         // Confirmation dialogs.
         private const string PREFS_CODETODOS_CONFIRMATION_DIALOGS = "GDTB_CodeTODOs_ConfirmationDialogs";
         private static bool _confirmationDialogs = true;
@@ -49,17 +37,6 @@ namespace com.immortalhydra.gdtb.codetodos
 
 
         #region Colors
-        // Style of icons (light or dark).
-        private const string PREFS_CODETODOS_ICON_STYLE = "GDTB_CodeTODOs_IconStyle";
-        private static IconStyle _iconStyle = IconStyle.LIGHT;
-        private static int _iconStyle_default = 1;
-        private static IconStyle _oldIconStyle;
-        public static IconStyle IconStyle
-        {
-            get { return _iconStyle; }
-        }
-        private static string[] arr_iconStyle = { "Dark", "Light" };
-
         // Primary color.
         private const string PREFS_CODETODOS_COLOR_PRIMARY = "GDTB_CodeTODOs_Primary";
         private static Color _primary = new Color(56, 56, 56, 1);
@@ -168,8 +145,6 @@ namespace com.immortalhydra.gdtb.codetodos
             _showWelcome = EditorGUILayout.Toggle("Show Welcome window", _showWelcome);
             GUILayout.Space(20);
             EditorGUILayout.LabelField("UI", EditorStyles.boldLabel);
-            _buttonsDisplay = (ButtonsDisplayFormat)EditorGUILayout.Popup("Button style", System.Convert.ToInt16(_buttonsDisplay), _buttonsFormatsString);
-            _iconStyle = (IconStyle)EditorGUILayout.Popup("Icon style", (int)_iconStyle, arr_iconStyle);
             _priColor1 = EditorGUILayout.ColorField("Urgent priority", _priColor1);
             _priColor2 = EditorGUILayout.ColorField("Normal priority", _priColor2);
             _priColor3 = EditorGUILayout.ColorField("Minor priority", _priColor3);
@@ -189,27 +164,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
             if (GUI.changed)
             {
-                // If buttons display changed we want to open and close the window, so that the new minsize is applied.
-                var shouldReopenWindowMain = false;
-                if (_buttonsDisplay != _oldDisplayFormat || _iconStyle != _oldIconStyle)
-                {
-                    _oldDisplayFormat = _buttonsDisplay;
-                    _oldIconStyle = _iconStyle;
-                    shouldReopenWindowMain = true;
-                }
-
                 SetPrefValues();
-
-                if (shouldReopenWindowMain)
-                {
-                    if (WindowMain.IsOpen)
-                    {
-                        EditorWindow.GetWindow(typeof(WindowMain)).Close();
-                        var window = EditorWindow.GetWindow(typeof(WindowMain)) as WindowMain;
-                        window.SetMinSize();
-                        window.Show();
-                    }
-                }
             }
         }
 
@@ -227,10 +182,8 @@ namespace com.immortalhydra.gdtb.codetodos
         private static void SetPrefValues()
         {
             EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, _todoToken);
-            EditorPrefs.SetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, System.Convert.ToInt16(_buttonsDisplay));
             EditorPrefs.SetBool(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs);
             SetWelcome(_showWelcome);
-            SetIconStyle();
             SetColorPrefs();
             SetShortcutPrefs();
         }
@@ -240,13 +193,6 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void SetWelcome(bool val)
         {
             EditorPrefs.SetBool(PREFS_CODETODOS_WELCOME, val);
-        }
-
-        /// Set the value of IconStyle.
-        private static void SetIconStyle()
-        {
-            EditorPrefs.SetInt(PREFS_CODETODOS_ICON_STYLE, (int)_iconStyle);
-            DrawingUtils.LoadTextures(_iconStyle);
         }
 
 
@@ -303,9 +249,6 @@ namespace com.immortalhydra.gdtb.codetodos
                     SetColorPrefs();
                     GetColorPrefs();
 
-                    _iconStyle = IconStyle.LIGHT;
-                    SetIconStyle();
-                    GetIconStyle();
                     ReloadSkins();
 
                     RepaintOpenWindows();
@@ -340,9 +283,6 @@ namespace com.immortalhydra.gdtb.codetodos
                     SetColorPrefs();
                     GetColorPrefs();
 
-                    _iconStyle = IconStyle.DARK;
-                    SetIconStyle();
-                    GetIconStyle();
                     ReloadSkins();
 
                     RepaintOpenWindows();
@@ -370,23 +310,11 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void GetAllPrefValues()
         {
             _todoToken = GetPrefValue(PREFS_CODETODOS_TOKEN, _todoToken_default); // TODO token.
-            _buttonsDisplay = (ButtonsDisplayFormat)EditorPrefs.GetInt(PREFS_CODETODOS_BUTTONS_DISPLAY, _buttonsDisplay_default); // Buttons display.
-            _oldDisplayFormat = _buttonsDisplay;
-            GetIconStyle();
             _confirmationDialogs = GetPrefValue(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs_default);
             _showWelcome = GetPrefValue(PREFS_CODETODOS_WELCOME, _showWelcome_default);
             GetColorPrefs();
             _shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut.
             ParseShortcutValues();
-        }
-
-
-        /// Get IconStyle.
-        private static void GetIconStyle()
-        {
-            _iconStyle = (IconStyle)EditorPrefs.GetInt(PREFS_CODETODOS_ICON_STYLE, _iconStyle_default); // Icon style.
-            _oldIconStyle = _iconStyle;
-            DrawingUtils.LoadTextures(_iconStyle);
         }
 
 
@@ -409,7 +337,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 _secondary = RGBA.GetNormalizedColor(_secondary_default);
                 _tertiary = RGBA.GetNormalizedColor(_tertiary_default);
                 _quaternary = RGBA.GetNormalizedColor(_quaternary_default);
-                _iconStyle = (IconStyle)_iconStyle_default;
             }
         }
 
@@ -573,8 +500,6 @@ namespace com.immortalhydra.gdtb.codetodos
         private static void ResetPrefsToDefault()
         {
             _todoToken = _todoToken_default;
-            _buttonsDisplay = (ButtonsDisplayFormat)_buttonsDisplay_default;
-            _iconStyle = (IconStyle)_iconStyle_default;
             _confirmationDialogs = _confirmationDialogs_default;
             _showWelcome = _showWelcome_default;
             _primary = RGBA.GetNormalizedColor(_primary_default);
@@ -609,6 +534,11 @@ namespace com.immortalhydra.gdtb.codetodos
                 var window = EditorWindow.GetWindow(typeof(WindowEdit)) as WindowMain;
                 window.LoadStyles();
             }
+            if (WindowWelcome.IsOpen)
+            {
+                var window = EditorWindow.GetWindow(typeof(WindowWelcome)) as WindowWelcome;
+                window.LoadStyle();
+            }
         }
 
 
@@ -627,20 +557,10 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 EditorWindow.GetWindow(typeof(WindowEdit)).Repaint();
             }
+            if (WindowWelcome.IsOpen)
+            {
+                EditorWindow.GetWindow(typeof(WindowWelcome)).Repaint();
+            }
         }
-    }
-
-
-    public enum ButtonsDisplayFormat
-    {
-        COOL_ICONS,
-        REGULAR_BUTTONS
-    }
-
-
-    public enum IconStyle
-    {
-        DARK,
-        LIGHT
     }
 }

@@ -54,25 +54,13 @@ namespace com.immortalhydra.gdtb.codetodos
 		{
 			var style = new GUIStyle();
 
-			// If text buttons:
-			if(Preferences.ButtonsDisplay == ButtonsDisplayFormat.REGULAR_BUTTONS)
-			{
-				// Text formatting.
-				style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Tertiary;
-				style.imagePosition = ImagePosition.TextOnly;
-				style.alignment = TextAnchor.MiddleCenter;
+			// Text formatting.
+			style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Tertiary;
+			style.imagePosition = ImagePosition.TextOnly;
+			style.alignment = TextAnchor.MiddleCenter;
 
-				// Label inside the button.
-				EditorGUI.LabelField(aRect, aContent.text, style);
-			}
-			// If image buttons:
-			else
-			{
-				style.imagePosition = ImagePosition.ImageOnly;
-
-				// Icon inside the button.
-				GUI.DrawTexture(aRect, aContent.image);
-			}
+			// Label inside the button.
+			EditorGUI.LabelField(aRect, aContent.text, style);
 		}
 
 
@@ -80,22 +68,13 @@ namespace com.immortalhydra.gdtb.codetodos
 		{
 			EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
 			var style = new GUIStyle();
-			// If text buttons:
-			if(Preferences.ButtonsDisplay == ButtonsDisplayFormat.REGULAR_BUTTONS)
-			{
-				// Text formatting.
-				style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Primary;
-				style.imagePosition = ImagePosition.TextOnly;
-				style.alignment = TextAnchor.MiddleCenter;
 
-				EditorGUI.LabelField(aRect, aContent.text, style);
-			}
-			// If image buttons:
-			else
-			{
-				style.imagePosition = ImagePosition.ImageOnly;
-				GUI.DrawTexture(aRect, aContent.image);
-			}
+			// Text formatting.
+			style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Primary;
+			style.imagePosition = ImagePosition.TextOnly;
+			style.alignment = TextAnchor.MiddleCenter;
+
+			EditorGUI.LabelField(aRect, aContent.text, style);
 		}
 	}
 }

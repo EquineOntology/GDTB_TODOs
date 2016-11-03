@@ -1,3 +1,7 @@
+====== 2016.4 ======
+
+* Unified interface buttons to text style with border for visual clarity.
+
 ====== 1.2 =====
 
  * Completely redesigned how scripts were collected/processed, as autoupdating was slowing Unity to a crawl on sizeable projects.

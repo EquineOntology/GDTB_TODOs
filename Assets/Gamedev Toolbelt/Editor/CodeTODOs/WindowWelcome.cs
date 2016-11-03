@@ -44,7 +44,12 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Called when the window is closed.
+        private void Update()
+        {
+            Repaint();
+        }
+
+
         private void OnDestroy()
         {
             Resources.UnloadUnusedAssets();
@@ -100,33 +105,20 @@ namespace com.immortalhydra.gdtb.codetodos
 
         private void DrawProcessButtons()
         {
-            // Text.
-            var rect_text = new Rect(60, 80, 100, 20);
-            var style = new GUIStyle();
-            style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Tertiary;
-			style.imagePosition = ImagePosition.TextOnly;
-			style.alignment = TextAnchor.MiddleCenter;
-			// Label inside the button.
-			EditorGUI.LabelField(rect_text, "Process", style);
+            var processRect = new Rect(60, 80, 80, 20);
+            var processContent = new GUIContent("Process", "Process all scripts");
 
-            // Icon
-            GUI.DrawTexture(new Rect(160, 84, Constants.BUTTON_TEXTURE_SIZE, Constants.BUTTON_TEXTURE_SIZE), DrawingUtils.Texture_Process);
+            Controls.Button(processRect, processContent);
         }
+
 
 
         private void DrawRefreshButtons()
         {
-            // Text.
-            var rect_text = new Rect(60, 160, 100, 20);
-            var style = new GUIStyle();
-            style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Tertiary;
-			style.imagePosition = ImagePosition.TextOnly;
-			style.alignment = TextAnchor.MiddleCenter;
-			// Label inside the button.
-			EditorGUI.LabelField(rect_text, "Refresh", style);
+            var refreshRect = new Rect(60, 160, 80, 20);
+            var refreshContent = new GUIContent("Refresh", "Refresh task list");
 
-            // Icon
-            GUI.DrawTexture(new Rect(160, 164, Constants.BUTTON_TEXTURE_SIZE, Constants.BUTTON_TEXTURE_SIZE), DrawingUtils.Texture_Refresh);
+            Controls.Button(refreshRect, refreshContent);
         }
 
 
