@@ -6,17 +6,14 @@ namespace com.immortalhydra.gdtb.codetodos
 {
     public class WindowMain : EditorWindow
     {
-        public static List<QQQ> QQQs = new List<QQQ>();
+#region FIELDS AND PROPERTIES
 
-        public static WindowMain Instance { get; private set; }
-        public static bool IsOpen {
-            get { return Instance != null; }
-        }
+        // Fields.
+        public static List<QQQ> QQQs = new List<QQQ>();
 
         private GUISkin _skin;
         private GUIStyle _style_task, _style_script, _style_buttonText;
 
-        // ========================= Editor layouting =========================
         private const int IconSize = Constants.ICON_SIZE;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
@@ -29,46 +26,24 @@ namespace com.immortalhydra.gdtb.codetodos
         private Rect _rect_scrollArea, _rect_scrollView, _rect_qqq, _rect_editAndComplete;
         private bool _showingScrollbar = false;
 
-
-        // ====================================================================
-        [MenuItem("Window/Gamedev Toolbelt/CodeTODOs/Open CodeTODOs %w", false, 1)]
-        public static void Init()
-        {
-            // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default, and show the first start window.
-            if(!EditorPrefs.HasKey("GDTB_CodeTODOs_firsttime") || EditorPrefs.GetBool("GDTB_CodeTODOs_firsttime", false) == false)
-            {
-                Preferences.InitExtension();
-            }
-
-            // Get existing open window or if none, make a new one.
-            var window = (WindowMain)EditorWindow.GetWindow(typeof(WindowMain));
-            window.SetMinSize();
-            window.LoadSkin();
-            window.LoadStyles();
-            window.UpdateLayoutingSizes();
-
-            IO.LoadScripts();
-
-            QQQs.Clear();
-            QQQs.AddRange(IO.LoadStoredQQQs());
-
-            window.Show();
-
-
-            if(Preferences.ShowWelcome == true)
-            {
-                WindowWelcome.Init();
-            }
+        // Properties.
+        public static WindowMain Instance { get; private set; }
+        public static bool IsOpen {
+            get { return Instance != null; }
         }
 
+#endregion
+
+
+#region MONOBEHAVIOUR METHODS
 
         public void OnEnable()
         {
-            #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
+        #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
                 titleContent = new GUIContent("CodeTODOs");
-            #else
+        #else
                 title = "CodeTODOs";
-            #endif
+        #endif
 
             Instance = this;
 
@@ -82,7 +57,6 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Called when the window is closed.
         private void OnDestroy()
         {
             IO.WriteQQQsToFile();
@@ -107,6 +81,101 @@ namespace com.immortalhydra.gdtb.codetodos
             DrawSeparator();
             DrawBottomButtons();
         }
+
+
+        private void Update()
+        {
+            // Unfortunately, IMGUI is not really responsive to events, e.g. changing the style of a button
+            // (like when you press it) shows some pretty abysmal delays in the GUI, the button will light up
+            // and down too late after the actual click. We force the UI to update more often instead.
+            Repaint();
+        }
+
+#endregion
+
+#region METHODS
+
+        [MenuItem("Window/Gamedev Toolbelt/CodeTODOs/Open CodeTODOs %w", false, 1)]
+        public static void Init()
+        {
+            // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default, and show the first start window.
+            if(!EditorPrefs.HasKey("GDTB_CodeTODOs_firsttime") || EditorPrefs.GetBool("GDTB_CodeTODOs_firsttime", false) == false)
+            {
+                Preferences.InitExtension();
+            }
+
+            // Get existing open window or if none, make a new one.
+            var window = (WindowMain)EditorWindow.GetWindow(typeof(WindowMain));
+            window.SetMinSize();
+            window.LoadSkin();
+            window.LoadStyles();
+            window.UpdateLayoutingSizes();
+
+            IO.LoadScripts();
+
+            QQQs.Clear();
+            QQQs.AddRange(IO.LoadStoredQQQs());
+
+            window.Show();
+
+            if(Preferences.ShowWelcome == true)
+            {
+                WindowWelcome.Init();
+            }
+        }
+
+
+        /// Load custom skin.
+        public void LoadSkin()
+        {
+            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+        }
+
+
+        /// Load custom styles and apply colors from preferences.
+        public void LoadStyles()
+        {
+            _style_script = _skin.GetStyle("GDTB_CodeTODOs_script");
+            _style_script.active.textColor = Preferences.Color_Tertiary;
+            _style_script.normal.textColor = Preferences.Color_Tertiary;
+            _style_task = _skin.GetStyle("GDTB_CodeTODOs_task");
+            _style_task.active.textColor = Preferences.Color_Secondary;
+            _style_task.normal.textColor = Preferences.Color_Secondary;
+            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
+            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
+            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
+
+            _skin.settings.selectionColor = Preferences.Color_Secondary;
+
+            // Change scrollbar color.
+            var scrollbar = Resources.Load(Constants.TEX_SCROLLBAR, typeof(Texture2D)) as Texture2D;
+        #if UNITY_5 || UNITY_5_3_OR_NEWER
+            scrollbar.SetPixel(0,0, Preferences.Color_Secondary);
+        #else
+			var pixels = scrollbar.GetPixels();
+			// We do it like this because minimum texture size in older versions of Unity is 2x2.
+			for(var i = 0; i < pixels.GetLength(0); i++)
+			{
+				scrollbar.SetPixel(i, 0, Preferences.Color_Secondary);
+				scrollbar.SetPixel(i, 1, Preferences.Color_Secondary);
+			}
+        #endif
+
+            scrollbar.Apply();
+            _skin.verticalScrollbarThumb.normal.background = scrollbar;
+            _skin.verticalScrollbarThumb.active.background = scrollbar;
+            _skin.verticalScrollbarThumb.fixedWidth = 6;
+        }
+
+
+        /// Set the minSize of the window based on preferences.
+        public void SetMinSize()
+        {
+            var window = GetWindow(typeof(WindowMain)) as WindowMain;
+            window.minSize = new Vector2(322f, 150f);
+        }
+
+
 
 
         /// Draw the background texture.
@@ -224,27 +293,6 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Get the correct color for a priority rectangle.
-        private Color GetQQQPriorityColor(int aPriority)
-        {
-            Color col;
-            switch (aPriority)
-            {
-                case 1:
-                    col = Preferences.PriColor1;
-                    break;
-                case 3:
-                    col = Preferences.PriColor3;
-                    break;
-                case 2:
-                default:
-                    col = Preferences.PriColor2;
-                    break;
-            }
-            return col;
-        }
-
-
         /// Draws the "Task" and "Script" texts for QQQs.
         private void DrawTaskAndScript(Rect aRect, QQQ aQQQ, float aTaskHeight, float aScriptHeight)
         {
@@ -270,13 +318,6 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 QQQOps.OpenScript(aQQQ);
             }
-        }
-
-
-        /// Create the text that indicates where the task is.
-        private string CreateScriptLabelText (QQQ aQQQ)
-        {
-            return "Line " + (aQQQ.LineNumber + 1) + " in \"" + aQQQ.Script + "\"";
         }
 
 
@@ -328,6 +369,58 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
+        /// Draw Process, Add, Refresh and Settings.
+        private void DrawBottomButtons()
+        {
+            Rect processRect, addRect, refreshRect, settingsRect;
+            GUIContent processContent, addContent, refreshContent, settingsContent;
+
+            SetupButton_Process(out processRect, out processContent);
+            SetupButton_Add(out addRect, out addContent);
+            SetupButton_Refresh(out refreshRect, out refreshContent);
+            SetupButton_Settings(out settingsRect, out settingsContent);
+
+            // Process scripts.
+            if(Controls.Button(processRect, processContent))
+            {
+                QQQOps.FindAllScripts();
+                QQQOps.GetQQQsFromAllScripts();
+            }
+
+            // Add new QQQ.
+            if (Controls.Button(addRect, addContent))
+            {
+                WindowAdd.Init();
+            }
+
+            // Refresh list of QQQs.
+            if (Controls.Button(refreshRect, refreshContent))
+            {
+                QQQOps.RefreshQQQs();
+            }
+
+            // Open settings.
+            if (Controls.Button(settingsRect, settingsContent))
+            {
+                CloseOtherWindows();
+
+                // Unfortunately EditorApplication.ExecuteMenuItem(...) doesn't work, so we have to rely on a bit of reflection.
+                var assembly = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
+                var type = assembly.GetType("UnityEditor.PreferencesWindow");
+                var method = type.GetMethod("ShowPreferencesWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                method.Invoke(null, null);
+            }
+        }
+
+
+        /// Draw a line separating scrollview and lower buttons.
+        private void DrawSeparator()
+        {
+            var separator = new Rect(0, position.height - (_offset * 7), position.width, 1);
+            EditorGUI.DrawRect(separator, Preferences.Color_Secondary);
+        }
+
+
         private void SetupButton_Edit(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
         {
             anEditRect = aRect;
@@ -347,53 +440,6 @@ namespace com.immortalhydra.gdtb.codetodos
             aCompleteRect.height = ButtonHeight;
 
             aCompleteContent = new GUIContent("Complete", "Complete this task");
-        }
-
-
-        /// Draw Process, Add, Refresh and Settings.
-        private void DrawBottomButtons()
-        {
-            Rect processRect, addRect, refreshRect, settingsRect;
-            GUIContent processContent, addContent, refreshContent, settingsContent;
-
-            SetupButton_Process(out processRect, out processContent);
-            SetupButton_Add(out addRect, out addContent);
-            SetupButton_Refresh(out refreshRect, out refreshContent);
-            SetupButton_Settings(out settingsRect, out settingsContent);
-
-            // Process scripts.
-            if(Controls.Button(processRect, processContent))
-            {
-                QQQOps.FindAllScripts();
-                QQQOps.GetQQQsFromAllScripts();
-            }
-
-
-            // Add new QQQ.
-            if (Controls.Button(addRect, addContent))
-            {
-                WindowAdd.Init();
-            }
-
-
-            // Refresh list of QQQs.
-            if (Controls.Button(refreshRect, refreshContent))
-            {
-                QQQOps.RefreshQQQs();
-            }
-
-
-            // Open settings.
-            if (Controls.Button(settingsRect, settingsContent))
-            {
-                CloseOtherWindows();
-
-                // Unfortunately EditorApplication.ExecuteMenuItem(...) doesn't work, so we have to rely on a bit of reflection.
-                var assembly = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
-                var type = assembly.GetType("UnityEditor.PreferencesWindow");
-                var method = type.GetMethod("ShowPreferencesWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-                method.Invoke(null, null);
-            }
         }
 
 
@@ -425,12 +471,31 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-
-        /// Draw a line separating scrollview and lower buttons.
-        private void DrawSeparator()
+        /// Create the text that indicates where the task is.
+        private string CreateScriptLabelText (QQQ aQQQ)
         {
-            var separator = new Rect(0, position.height - (_offset * 7), position.width, 1);
-            EditorGUI.DrawRect(separator, Preferences.Color_Secondary);
+            return "Line " + (aQQQ.LineNumber + 1) + " in \"" + aQQQ.Script + "\"";
+        }
+
+
+        /// Get the correct color for a priority rectangle.
+        private Color GetQQQPriorityColor(int aPriority)
+        {
+            Color col;
+            switch (aPriority)
+            {
+                case 1:
+                    col = Preferences.PriColor1;
+                    break;
+                case 3:
+                    col = Preferences.PriColor3;
+                    break;
+                case 2:
+                default:
+                    col = Preferences.PriColor2;
+                    break;
+            }
+            return col;
         }
 
 
@@ -454,57 +519,6 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Load CodeTODOs custom skin.
-        public void LoadSkin()
-        {
-            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
-        }
-
-
-        /// Load custom styles and apply colors from preferences.
-        public void LoadStyles()
-        {
-            _style_script = _skin.GetStyle("GDTB_CodeTODOs_script");
-            _style_script.active.textColor = Preferences.Color_Tertiary;
-            _style_script.normal.textColor = Preferences.Color_Tertiary;
-            _style_task = _skin.GetStyle("GDTB_CodeTODOs_task");
-            _style_task.active.textColor = Preferences.Color_Secondary;
-            _style_task.normal.textColor = Preferences.Color_Secondary;
-            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
-            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
-            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
-
-            _skin.settings.selectionColor = Preferences.Color_Secondary;
-
-            // Change scrollbar color.
-            var scrollbar = Resources.Load(Constants.TEX_SCROLLBAR, typeof(Texture2D)) as Texture2D;
-            #if UNITY_5 || UNITY_5_3_OR_NEWER
-                scrollbar.SetPixel(0,0, Preferences.Color_Secondary);
-            #else
-				var pixels = scrollbar.GetPixels();
-				// We do it like this because minimum texture size in older versions of Unity is 2x2.
-				for(var i = 0; i < pixels.GetLength(0); i++)
-				{
-					scrollbar.SetPixel(i, 0, Preferences.Color_Secondary);
-					scrollbar.SetPixel(i, 1, Preferences.Color_Secondary);
-				}
-            #endif
-
-            scrollbar.Apply();
-            _skin.verticalScrollbarThumb.normal.background = scrollbar;
-            _skin.verticalScrollbarThumb.active.background = scrollbar;
-            _skin.verticalScrollbarThumb.fixedWidth = 6;
-        }
-
-
-        /// Set the minSize of the window based on preferences.
-        public void SetMinSize()
-        {
-            var window = GetWindow(typeof(WindowMain)) as WindowMain;
-            window.minSize = new Vector2(322f, 150f);
-        }
-
-
         /// Close open sub-windows (add, edit) when opening prefs.
         private void CloseOtherWindows()
         {
@@ -522,13 +536,7 @@ namespace com.immortalhydra.gdtb.codetodos
             }
         }
 
+#endregion
 
-        private void Update()
-        {
-            // Unfortunately, IMGUI is not really responsive to events, e.g. changing the style of a button
-            // (like when you press it) shows some pretty abysmal delays in the GUI, the button will light up
-            // and down too late after the actual click. We force the UI to update more often instead.
-            Repaint();
-        }
     }
 }

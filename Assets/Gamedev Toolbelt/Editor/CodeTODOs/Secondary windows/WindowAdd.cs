@@ -6,35 +6,33 @@ namespace com.immortalhydra.gdtb.codetodos
 {
     public class WindowAdd : EditorWindow
     {
-        public static WindowAdd Instance { get; private set; }
-        public static bool IsOpen {
-            get { return Instance != null; }
-        }
 
-        private GUISkin _skin;
-        private GUIStyle _style_bold, _style_buttonText;
+#region FIELDS AND PROPERTIES
 
-        private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
-
-        private string _task;
-        private MonoScript _script;
-        private int _priority = 2;
-        private int _lineNumber = 0;
-
-
+        // Constants.
         private const int IconSize = Constants.ICON_SIZE;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
         private const int FieldsWidth = 120;
 
+        // Fields.
+        private GUISkin _skin;
+        private GUIStyle _style_bold, _style_buttonText;
+        private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
+        private string _task;
+        private MonoScript _script;
+        private int _priority = 2;
+        private int _lineNumber = 0;
 
-        public static void Init()
-        {
-            WindowAdd window = (WindowAdd)EditorWindow.GetWindow(typeof(WindowAdd));
-            window.minSize = new Vector2(208f, 230f);
-            window.ShowUtility();
+        // Properties.
+        public static WindowAdd Instance { get; private set; }
+        public static bool IsOpen {
+            get { return Instance != null; }
         }
 
+#endregion
+
+#region MONOBEHAVIOUR METHODS
 
         public void OnEnable()
         {
@@ -60,6 +58,47 @@ namespace com.immortalhydra.gdtb.codetodos
             DrawLineNumberField();
             DrawAdd();
         }
+
+
+        public void Update()
+        {
+            // We repaint every frame for the same reason we do so in WindowMain.
+            Repaint();
+        }
+
+#endregion
+
+#region METHODS
+
+        public static void Init()
+        {
+            WindowAdd window = (WindowAdd)EditorWindow.GetWindow(typeof(WindowAdd));
+            window.minSize = new Vector2(208f, 230f);
+            window.ShowUtility();
+        }
+
+
+        /// Load CodeTODOs custom skin.
+        public void LoadSkin()
+        {
+            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+        }
+
+
+        /// Load custom styles and apply colors from preferences.
+        public void LoadStyles()
+        {
+            _style_bold = _skin.GetStyle("GDTB_CodeTODOs_task");
+            _style_bold.active.textColor = Preferences.Color_Secondary;
+            _style_bold.normal.textColor = Preferences.Color_Secondary;
+            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
+            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
+            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
+
+            _skin.settings.selectionColor = Preferences.Color_Secondary;
+        }
+
+
 
 
         /// Draw the background texture.
@@ -145,66 +184,41 @@ namespace com.immortalhydra.gdtb.codetodos
         private void ButtonPressed()
         {
             if (_script.name == "")
+            {
+                EditorUtility.DisplayDialog("No script selected", "Please select a script.", "Ok");
+            }
+            else if (_task == "")
+            {
+                EditorUtility.DisplayDialog("No task to add", "Please create a task.", "Ok");
+            }
+            else
+            {
+                var execute = false;
+                // Get confirmation (through confirmation dialog or automatically if conf. is off).
+                if (Preferences.ShowConfirmationDialogs == true)
                 {
-                    EditorUtility.DisplayDialog("No script selected", "Please select a script.", "Ok");
-                }
-                else if (_task == "")
-                {
-                    EditorUtility.DisplayDialog("No task to add", "Please create a task.", "Ok");
-                }
-                else
-                {
-                    var execute = false;
-                    // Get confirmation (through confirmation dialog or automatically if conf. is off).
-                    if (Preferences.ShowConfirmationDialogs == true)
-                    {
-                        if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Cancel"))
-                        {
-                            execute = true;
-                        }
-                    }
-                    else
+                    if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Cancel"))
                     {
                         execute = true;
                     }
-
-                    // Do the thing.
-                    if (execute == true)
-                    {
-                        var path = AssetDatabase.GetAssetPath(_script);
-                        var newQQQ = new QQQ(_priority, _task, path, _lineNumber);
-                        QQQOps.AddQQQ(newQQQ);
-                        EditorWindow.GetWindow(typeof(WindowAdd)).Close();
-                    }
                 }
+                else
+                {
+                    execute = true;
+                }
+
+                // Do the thing.
+                if (execute == true)
+                {
+                    var path = AssetDatabase.GetAssetPath(_script);
+                    var newQQQ = new QQQ(_priority, _task, path, _lineNumber);
+                    QQQOps.AddQQQ(newQQQ);
+                    EditorWindow.GetWindow(typeof(WindowAdd)).Close();
+                }
+            }
         }
 
+#endregion
 
-        /// Load CodeTODOs custom skin.
-        public void LoadSkin()
-        {
-            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
-        }
-
-
-        /// Load custom styles and apply colors from preferences.
-        public void LoadStyles()
-        {
-            _style_bold = _skin.GetStyle("GDTB_CodeTODOs_task");
-            _style_bold.active.textColor = Preferences.Color_Secondary;
-            _style_bold.normal.textColor = Preferences.Color_Secondary;
-            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
-            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
-            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
-
-            _skin.settings.selectionColor = Preferences.Color_Secondary;
-        }
-
-
-        public void Update()
-        {
-            // We repaint every frame for the same reason we do so in WindowMain.
-            Repaint();
-        }
     }
 }

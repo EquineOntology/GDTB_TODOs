@@ -5,7 +5,7 @@ namespace com.immortalhydra.gdtb.codetodos
 {
     public class Preferences
     {
-        #region fields
+#region FIELDS AND PROPERTIES
         // TODO token (QQQ).
         private const string PREFS_CODETODOS_TOKEN = "GDTB_CodeTODOs_TODOToken";
         private static string _todoToken = "QQQ";
@@ -36,7 +36,7 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        #region Colors
+    #region Colors
         // Primary color.
         private const string PREFS_CODETODOS_COLOR_PRIMARY = "GDTB_CodeTODOs_Primary";
         private static Color _primary = new Color(56, 56, 56, 1);
@@ -113,8 +113,7 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             get { return _priColor3; }
         }
-
-        #endregion
+    #endregion
 
         // Custom shortcut
         private const string PREFS_CODETODOS_SHORTCUT = "GDTB_CodeTODOs_Shortcut";
@@ -129,10 +128,14 @@ namespace com.immortalhydra.gdtb.codetodos
         private static int _mainShortcutKeyIndex = 0;
         // Want absolute control over values.
         private static string[] _shortcutKeys = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "LEFT", "RIGHT", "UP", "DOWN", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "HOME", "END", "PGUP", "PGDN" };
-        #endregion fields
 
 
         private static Vector2 _scrollPosition = new Vector2(-1, 0);
+
+#endregion
+
+#region METHODS
+
         [PreferenceItem("Code TODOs")]
         public static void PreferencesGUI()
         {
@@ -178,6 +181,27 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
+        /// Set the value of ShowWelcome.
+        public static void SetWelcome(bool val)
+        {
+            EditorPrefs.SetBool(PREFS_CODETODOS_WELCOME, val);
+        }
+
+
+        /// If preferences have keys already saved in EditorPrefs, get them. Otherwise, set them.
+        public static void GetAllPrefValues()
+        {
+            _todoToken = GetPrefValue(PREFS_CODETODOS_TOKEN, _todoToken_default); // TODO token.
+            _confirmationDialogs = GetPrefValue(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs_default);
+            _showWelcome = GetPrefValue(PREFS_CODETODOS_WELCOME, _showWelcome_default);
+            GetColorPrefs();
+            _shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut.
+            ParseShortcutValues();
+        }
+
+
+
+
         /// Set the value of all preferences.
         private static void SetPrefValues()
         {
@@ -186,13 +210,6 @@ namespace com.immortalhydra.gdtb.codetodos
             SetWelcome(_showWelcome);
             SetColorPrefs();
             SetShortcutPrefs();
-        }
-
-
-        /// Set the value of ShowWelcome.
-        public static void SetWelcome(bool val)
-        {
-            EditorPrefs.SetBool(PREFS_CODETODOS_WELCOME, val);
         }
 
 
@@ -207,6 +224,62 @@ namespace com.immortalhydra.gdtb.codetodos
             EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI1, RGBA.ColorToString(_priColor1));
             EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI2, RGBA.ColorToString(_priColor2));
             EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI3, RGBA.ColorToString(_priColor3));
+        }
+
+
+        /// Set the value of the shortcut preference.
+        private static void SetShortcutPrefs()
+        {
+            if (_newShortcut != _shortcut && _newShortcut != null)
+            {
+                _shortcut = _newShortcut;
+                EditorPrefs.SetString(PREFS_CODETODOS_SHORTCUT, _shortcut);
+                var formattedShortcut = _shortcut.Replace("|", "");
+                IO.OverwriteShortcut(formattedShortcut);
+            }
+        }
+
+
+        /// Load color preferences.
+        private static void GetColorPrefs()
+        {
+            _primary = GetPrefValue(PREFS_CODETODOS_COLOR_PRIMARY, RGBA.GetNormalizedColor(_primary_default));
+            _secondary = GetPrefValue(PREFS_CODETODOS_COLOR_SECONDARY, RGBA.GetNormalizedColor(_secondary_default));
+            _tertiary = GetPrefValue(PREFS_CODETODOS_COLOR_TERTIARY, RGBA.GetNormalizedColor(_tertiary_default));
+            _quaternary = GetPrefValue(PREFS_CODETODOS_COLOR_QUATERNARY, RGBA.GetNormalizedColor(_quaternary_default));
+
+            _priColor1 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, RGBA.GetNormalizedColor(_priColor1_default));
+            _priColor2 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, RGBA.GetNormalizedColor(_priColor2_default));
+            _priColor3 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, RGBA.GetNormalizedColor(_priColor3_default));
+
+            // If all colors are the same, there's been some issue. Revert to initial dark scheme.
+            if(_primary == _secondary && _primary == _tertiary && _primary == _quaternary)
+            {
+                _primary = RGBA.GetNormalizedColor(_primary_default);
+                _secondary = RGBA.GetNormalizedColor(_secondary_default);
+                _tertiary = RGBA.GetNormalizedColor(_tertiary_default);
+                _quaternary = RGBA.GetNormalizedColor(_quaternary_default);
+            }
+        }
+
+
+        /// Reset all preferences to default.
+        private static void ResetPrefsToDefault()
+        {
+            _todoToken = _todoToken_default;
+            _confirmationDialogs = _confirmationDialogs_default;
+            _showWelcome = _showWelcome_default;
+            _primary = RGBA.GetNormalizedColor(_primary_default);
+            _secondary = RGBA.GetNormalizedColor(_secondary_default);
+            _tertiary = RGBA.GetNormalizedColor(_tertiary_default);
+            _quaternary = RGBA.GetNormalizedColor(_quaternary_default);
+            _priColor1 = RGBA.GetNormalizedColor(_priColor1_default);
+            _priColor2 = RGBA.GetNormalizedColor(_priColor2_default);
+            _priColor3 = RGBA.GetNormalizedColor(_priColor3_default);
+            _shortcut = _shortcut_default;
+
+            SetPrefValues();
+            GetAllPrefValues();
         }
 
 
@@ -293,50 +366,61 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Set the value of the shortcut preference.
-        private static void SetShortcutPrefs()
+        /// Draw the shortcut selector.
+        private static string DrawShortcutSelector()
         {
-            if (_newShortcut != _shortcut && _newShortcut != null)
-            {
-                _shortcut = _newShortcut;
-                EditorPrefs.SetString(PREFS_CODETODOS_SHORTCUT, _shortcut);
-                var formattedShortcut = _shortcut.Replace("|", "");
-                IO.OverwriteShortcut(formattedShortcut);
-            }
-        }
-
-
-        /// If preferences have keys already saved in EditorPrefs, get them. Otherwise, set them.
-        public static void GetAllPrefValues()
-        {
-            _todoToken = GetPrefValue(PREFS_CODETODOS_TOKEN, _todoToken_default); // TODO token.
-            _confirmationDialogs = GetPrefValue(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs_default);
-            _showWelcome = GetPrefValue(PREFS_CODETODOS_WELCOME, _showWelcome_default);
-            GetColorPrefs();
-            _shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut.
+            // Differentiate between Mac Editor (CMD) and Win editor (CTRL).
+            var platformKey = Application.platform == RuntimePlatform.OSXEditor ? "CMD" : "CTRL";
+            var shortcut = "";
             ParseShortcutValues();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Shortcut ");
+            GUILayout.Space(20);
+            _modifierKeys[0] = GUILayout.Toggle(_modifierKeys[0], platformKey, EditorStyles.miniButton, GUILayout.Width(50));
+            _modifierKeys[1] = GUILayout.Toggle(_modifierKeys[1], "ALT", EditorStyles.miniButton, GUILayout.Width(40));
+            _modifierKeys[2] = GUILayout.Toggle(_modifierKeys[2], "SHIFT", EditorStyles.miniButton, GUILayout.Width(60));
+            _mainShortcutKeyIndex = EditorGUILayout.Popup(_mainShortcutKeyIndex, _shortcutKeys, GUILayout.Width(60));
+            GUILayout.EndHorizontal();
+
+            // Generate shortcut string.
+            if (_modifierKeys[0] == true)
+            {
+                shortcut += "%|";
+            }
+            if (_modifierKeys[1] == true)
+            {
+                shortcut += "&|";
+            }
+            if (_modifierKeys[2] == true)
+            {
+                shortcut += "#|";
+            }
+            shortcut += _shortcutKeys[_mainShortcutKeyIndex];
+
+            return shortcut;
         }
 
 
-        /// Load color preferences.
-        private static void GetColorPrefs()
+        /// Draw buttons to rebuild the scripts list and reset preferences.
+        private static void DrawResetButtons()
         {
-            _primary = GetPrefValue(PREFS_CODETODOS_COLOR_PRIMARY, RGBA.GetNormalizedColor(_primary_default));
-            _secondary = GetPrefValue(PREFS_CODETODOS_COLOR_SECONDARY, RGBA.GetNormalizedColor(_secondary_default));
-            _tertiary = GetPrefValue(PREFS_CODETODOS_COLOR_TERTIARY, RGBA.GetNormalizedColor(_tertiary_default));
-            _quaternary = GetPrefValue(PREFS_CODETODOS_COLOR_QUATERNARY, RGBA.GetNormalizedColor(_quaternary_default));
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.Space();
+            DrawRebuildScriptListButton();
+            GUILayout.Space(10);
+            DrawResetButton();
+            EditorGUILayout.Space();
+            EditorGUILayout.EndHorizontal();
+        }
 
-            _priColor1 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, RGBA.GetNormalizedColor(_priColor1_default));
-            _priColor2 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, RGBA.GetNormalizedColor(_priColor2_default));
-            _priColor3 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, RGBA.GetNormalizedColor(_priColor3_default));
 
-            // If all colors are the same, there's been some issue. Revert to initial dark scheme.
-            if(_primary == _secondary && _primary == _tertiary && _primary == _quaternary)
+        /// Draw button to rebuild the scripts list.
+        private static void DrawRebuildScriptListButton()
+        {
+            if (GUILayout.Button("Rebuild list of scripts", GUILayout.Width(140)))
             {
-                _primary = RGBA.GetNormalizedColor(_primary_default);
-                _secondary = RGBA.GetNormalizedColor(_secondary_default);
-                _tertiary = RGBA.GetNormalizedColor(_tertiary_default);
-                _quaternary = RGBA.GetNormalizedColor(_quaternary_default);
+                QQQOps.FindAllScripts();
             }
         }
 
@@ -395,42 +479,6 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Draw the shortcut selector.
-        private static string DrawShortcutSelector()
-        {
-            // Differentiate between Mac Editor (CMD) and Win editor (CTRL).
-            var platformKey = Application.platform == RuntimePlatform.OSXEditor ? "CMD" : "CTRL";
-            var shortcut = "";
-            ParseShortcutValues();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Shortcut ");
-            GUILayout.Space(20);
-            _modifierKeys[0] = GUILayout.Toggle(_modifierKeys[0], platformKey, EditorStyles.miniButton, GUILayout.Width(50));
-            _modifierKeys[1] = GUILayout.Toggle(_modifierKeys[1], "ALT", EditorStyles.miniButton, GUILayout.Width(40));
-            _modifierKeys[2] = GUILayout.Toggle(_modifierKeys[2], "SHIFT", EditorStyles.miniButton, GUILayout.Width(60));
-            _mainShortcutKeyIndex = EditorGUILayout.Popup(_mainShortcutKeyIndex, _shortcutKeys, GUILayout.Width(60));
-            GUILayout.EndHorizontal();
-
-            // Generate shortcut string.
-            if (_modifierKeys[0] == true)
-            {
-                shortcut += "%|";
-            }
-            if (_modifierKeys[1] == true)
-            {
-                shortcut += "&|";
-            }
-            if (_modifierKeys[2] == true)
-            {
-                shortcut += "#|";
-            }
-            shortcut += _shortcutKeys[_mainShortcutKeyIndex];
-
-            return shortcut;
-        }
-
-
         /// Get usable values from the shortcut string pref.
         private static void ParseShortcutValues()
         {
@@ -463,29 +511,6 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Draw buttons to rebuild the scripts list and reset preferences.
-        private static void DrawResetButtons()
-        {
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.Space();
-            DrawRebuildScriptListButton();
-            GUILayout.Space(10);
-            DrawResetButton();
-            EditorGUILayout.Space();
-            EditorGUILayout.EndHorizontal();
-        }
-
-
-        /// Draw button to rebuild the scripts list.
-        private static void DrawRebuildScriptListButton()
-        {
-            if (GUILayout.Button("Rebuild list of scripts", GUILayout.Width(140)))
-            {
-                QQQOps.FindAllScripts();
-            }
-        }
-
-
         /// Draw reset button.
         private static void DrawResetButton()
         {
@@ -493,26 +518,6 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 ResetPrefsToDefault();
             }
-        }
-
-
-        /// Reset all preferences to default.
-        private static void ResetPrefsToDefault()
-        {
-            _todoToken = _todoToken_default;
-            _confirmationDialogs = _confirmationDialogs_default;
-            _showWelcome = _showWelcome_default;
-            _primary = RGBA.GetNormalizedColor(_primary_default);
-            _secondary = RGBA.GetNormalizedColor(_secondary_default);
-            _tertiary = RGBA.GetNormalizedColor(_tertiary_default);
-            _quaternary = RGBA.GetNormalizedColor(_quaternary_default);
-            _priColor1 = RGBA.GetNormalizedColor(_priColor1_default);
-            _priColor2 = RGBA.GetNormalizedColor(_priColor2_default);
-            _priColor3 = RGBA.GetNormalizedColor(_priColor3_default);
-            _shortcut = _shortcut_default;
-
-            SetPrefValues();
-            GetAllPrefValues();
         }
 
 
@@ -562,5 +567,8 @@ namespace com.immortalhydra.gdtb.codetodos
                 EditorWindow.GetWindow(typeof(WindowWelcome)).Repaint();
             }
         }
+
+#endregion
+
     }
 }

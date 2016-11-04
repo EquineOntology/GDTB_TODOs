@@ -5,6 +5,9 @@ namespace com.immortalhydra.gdtb.codetodos
 {
     public static class DrawingUtils
     {
+
+#region METHODS
+
         /// Draw the button, based on the type, not pressed.
         public static void DrawButton(Rect aRect, string aText, GUIStyle aStyle)
         {
@@ -46,5 +49,8 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
             }
         }
+
+#endregion
+
     }
 }

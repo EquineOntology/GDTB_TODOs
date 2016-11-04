@@ -6,70 +6,8 @@ namespace com.immortalhydra.gdtb.codetodos
 {
     public static class IO
     {
-        /// Return the first instance of the given folder.
-        /// This is a non-recursive, breadth-first search algorithm.
-        private static string GetFirstInstanceOfFolder(string aFolderName)
-        {
-            var projectDirectoryPath = Directory.GetCurrentDirectory();
-            var projectDirectoryInfo = new DirectoryInfo(projectDirectoryPath);
-            var listOfAssetsDirs = projectDirectoryInfo.GetDirectories("Assets");
-            var assetsDir = "";
-            foreach (var dir in listOfAssetsDirs)
-            {
-                if (dir.FullName.EndsWith("\\Assets"))
-                {
-                    assetsDir = dir.FullName;
-                }
-            }
-            var path = assetsDir;
 
-            var q = new Queue<string>();
-            q.Enqueue(path);
-            var absolutePath = "";
-            while (q.Count > 0)
-            {
-                path = q.Dequeue();
-                try
-                {
-                    foreach (string subDir in Directory.GetDirectories(path))
-                    {
-                        q.Enqueue(subDir);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    UnityEngine.Debug.Log(ex.Message);
-                    UnityEngine.Debug.Log(ex.Data);
-                    UnityEngine.Debug.Log(ex.StackTrace);
-                }
-
-                string[] folders = null;
-                try
-                {
-                    folders = Directory.GetDirectories(path);
-                }
-                catch (Exception ex)
-                {
-                    UnityEngine.Debug.Log(ex.Message);
-                    UnityEngine.Debug.Log(ex.Data);
-                    UnityEngine.Debug.Log(ex.StackTrace);
-                }
-
-                if (folders != null)
-                {
-                    for (int i = 0; i < folders.Length; i++)
-                    {
-                        if (folders[i].EndsWith(aFolderName))
-                        {
-                            absolutePath = folders[i];
-                        }
-                    }
-                }
-            }
-            var relativePath = absolutePath.Remove(0, projectDirectoryPath.Length + 1);
-            return relativePath;
-        }
-
+#region METHODS
 
         /// Remove a single line from a text file.
         public static void RemoveLineFromFile(string aFile, int aLineNumber)
@@ -115,32 +53,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 reader.Dispose();
                 writer.Dispose();
             }
-        }
-
-
-        /// Check for character before the QQQ to see if they are spaces or backslashes. If they are, remove them.
-        /// This is to remove the whole QQQ without removing anything else of importance (including stuff in a comment BEFORE a QQQ).
-        private static string GetLineWithoutQQQ(string aLine)
-        {
-            var qqqIndex = aLine.IndexOf(Preferences.TODOToken);
-            qqqIndex = qqqIndex < 1 ? 1 : qqqIndex;
-
-            int j = qqqIndex - 1;
-            while (j >= 0 && (aLine[j] == ' ' || aLine[j] == '/'))
-            {
-                if (j > 0)
-                {
-                    j--;
-                    qqqIndex--;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            var lineWithoutQQQ = aLine.Substring(0, aLine.Length - (aLine.Length - qqqIndex));
-
-            return lineWithoutQQQ;
         }
 
 
@@ -296,23 +208,6 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Get the path of a file based on the ending provided.
-        private static string GetFilePath(string aPathEnd)
-        {
-            var assetsPaths = UnityEditor.AssetDatabase.GetAllAssetPaths();
-            var filePath = "";
-            foreach (var path in assetsPaths)
-            {
-                if (path.EndsWith(aPathEnd))
-                {
-                    filePath = path;
-                    break;
-                }
-            }
-            return filePath;
-        }
-
-
         /// Load scripts stored in the "script db".
         public static void LoadScripts()
         {
@@ -386,33 +281,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
             }
             return backedQQQs;
-        }
-
-
-        /// Parse a line in the backup file.
-        private static QQQ ParseQQQ(string aString)
-        {
-            var parts = aString.Split('|');
-
-            // Make sure that priority is assigned.
-            int priority;
-            if (Int32.TryParse(parts[0], out priority) == false)
-            {
-                priority = 2;
-            }
-
-            // Restore any pipe sign in the task.
-            var task = parts[1].Replace("(U+007C)", "|");
-
-            // Make sure that line number is assigned.
-            int lineNumber;
-            if (Int32.TryParse(parts[3], out lineNumber) == false)
-            {
-                lineNumber = 0;
-            }
-
-            var qqq = new QQQ(priority, task, parts[2], lineNumber);
-            return qqq;
         }
 
 
@@ -535,5 +403,145 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             return GetFirstInstanceOfFolder("CodeTODOs") + "/" + aName;
         }
+
+
+
+
+        /// Return the first instance of the given folder.
+        /// This is a non-recursive, breadth-first search algorithm.
+        private static string GetFirstInstanceOfFolder(string aFolderName)
+        {
+            var projectDirectoryPath = Directory.GetCurrentDirectory();
+            var projectDirectoryInfo = new DirectoryInfo(projectDirectoryPath);
+            var listOfAssetsDirs = projectDirectoryInfo.GetDirectories("Assets");
+            var assetsDir = "";
+            foreach (var dir in listOfAssetsDirs)
+            {
+                if (dir.FullName.EndsWith("\\Assets"))
+                {
+                    assetsDir = dir.FullName;
+                }
+            }
+            var path = assetsDir;
+
+            var q = new Queue<string>();
+            q.Enqueue(path);
+            var absolutePath = "";
+            while (q.Count > 0)
+            {
+                path = q.Dequeue();
+                try
+                {
+                    foreach (string subDir in Directory.GetDirectories(path))
+                    {
+                        q.Enqueue(subDir);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    UnityEngine.Debug.Log(ex.Message);
+                    UnityEngine.Debug.Log(ex.Data);
+                    UnityEngine.Debug.Log(ex.StackTrace);
+                }
+
+                string[] folders = null;
+                try
+                {
+                    folders = Directory.GetDirectories(path);
+                }
+                catch (Exception ex)
+                {
+                    UnityEngine.Debug.Log(ex.Message);
+                    UnityEngine.Debug.Log(ex.Data);
+                    UnityEngine.Debug.Log(ex.StackTrace);
+                }
+
+                if (folders != null)
+                {
+                    for (int i = 0; i < folders.Length; i++)
+                    {
+                        if (folders[i].EndsWith(aFolderName))
+                        {
+                            absolutePath = folders[i];
+                        }
+                    }
+                }
+            }
+            var relativePath = absolutePath.Remove(0, projectDirectoryPath.Length + 1);
+            return relativePath;
+        }
+
+
+        /// Check for character before the QQQ to see if they are spaces or backslashes. If they are, remove them.
+        /// This is to remove the whole QQQ without removing anything else of importance (including stuff in a comment BEFORE a QQQ).
+        private static string GetLineWithoutQQQ(string aLine)
+        {
+            var qqqIndex = aLine.IndexOf(Preferences.TODOToken);
+            qqqIndex = qqqIndex < 1 ? 1 : qqqIndex;
+
+            int j = qqqIndex - 1;
+            while (j >= 0 && (aLine[j] == ' ' || aLine[j] == '/'))
+            {
+                if (j > 0)
+                {
+                    j--;
+                    qqqIndex--;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            var lineWithoutQQQ = aLine.Substring(0, aLine.Length - (aLine.Length - qqqIndex));
+
+            return lineWithoutQQQ;
+        }
+
+
+        /// Get the path of a file based on the ending provided.
+        private static string GetFilePath(string aPathEnd)
+        {
+            var assetsPaths = UnityEditor.AssetDatabase.GetAllAssetPaths();
+            var filePath = "";
+            foreach (var path in assetsPaths)
+            {
+                if (path.EndsWith(aPathEnd))
+                {
+                    filePath = path;
+                    break;
+                }
+            }
+            return filePath;
+        }
+
+
+        /// Parse a line in the backup file.
+        private static QQQ ParseQQQ(string aString)
+        {
+            var parts = aString.Split('|');
+
+            // Make sure that priority is assigned.
+            int priority;
+            if (Int32.TryParse(parts[0], out priority) == false)
+            {
+                priority = 2;
+            }
+
+            // Restore any pipe sign in the task.
+            var task = parts[1].Replace("(U+007C)", "|");
+
+            // Make sure that line number is assigned.
+            int lineNumber;
+            if (Int32.TryParse(parts[3], out lineNumber) == false)
+            {
+                lineNumber = 0;
+            }
+
+            var qqq = new QQQ(priority, task, parts[2], lineNumber);
+            return qqq;
+        }
+
+#endregion
+
     }
 }

@@ -3,11 +3,17 @@
     [System.Serializable]
     public class QQQ: System.Object
     {
+
+#region FIELDS AND PROPERTIES
+
         public QQQPriority Priority;
         public string Task;
         public string Script;
         public int LineNumber;
 
+#endregion
+
+#region CONSTRUCTORS
 
         public QQQ(int aPriority, string aTask, string aScript, int aLineNumber)
         {
@@ -57,5 +63,8 @@
             this.Script = "";
             this.LineNumber = 0;
         }
+
+#endregion
+
     }
 }

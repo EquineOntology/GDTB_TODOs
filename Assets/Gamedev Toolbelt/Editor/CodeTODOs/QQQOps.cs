@@ -7,8 +7,15 @@ namespace com.immortalhydra.gdtb.codetodos
 {
     public static class QQQOps
     {
+
+#region FIELDS AND PROPERTIES
+
         public static List<string> AllScripts = new List<string>();
 
+#endregion
+
+
+#region METHODS
         /// Find all files ending with .cs or .js (exclude those in exclude.txt).
         public static void FindAllScripts()
         {
@@ -49,7 +56,7 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void GetQQQsFromAllScripts()
         {
             var qqqs = new List<QQQ>();
-            
+
             for (int i = 0; i < AllScripts.Count; i++)
             {
                 qqqs.AddRange(GetQQQsFromScript(AllScripts[i]));
@@ -220,18 +227,6 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// If the script path is wider than its rect, cut it and insert "..."
-        private static string ReduceScriptPath(QQQ aQQQ, float aWidth, GUIStyle aStyle)
-        {
-            var stringWidth = aStyle.CalcSize(new GUIContent(aQQQ.Script)).x;
-            var surplusWidth = stringWidth - aWidth;
-            var surplusCharacters = (int)Mathf.Ceil(surplusWidth / 7); // 7 being the character width with a normal style.
-
-            int cutoffIndex = Mathf.Clamp(surplusCharacters + 4, 0, aQQQ.Script.Length - 1); // +4 because of the "..." we'll be adding.
-            return "..." + aQQQ.Script.Substring(cutoffIndex);
-        }
-
-
         /// Remove a QQQ (both from the list and from the file in which it was written).
         public static void CompleteQQQ(QQQ aQQQ)
         {
@@ -339,5 +334,22 @@ namespace com.immortalhydra.gdtb.codetodos
                     return QQQPriority.NORMAL;
             }
         }
+
+
+
+
+        /// If the script path is wider than its rect, cut it and insert "..."
+        private static string ReduceScriptPath(QQQ aQQQ, float aWidth, GUIStyle aStyle)
+        {
+            var stringWidth = aStyle.CalcSize(new GUIContent(aQQQ.Script)).x;
+            var surplusWidth = stringWidth - aWidth;
+            var surplusCharacters = (int)Mathf.Ceil(surplusWidth / 7); // 7 being the character width with a normal style.
+
+            int cutoffIndex = Mathf.Clamp(surplusCharacters + 4, 0, aQQQ.Script.Length - 1); // +4 because of the "..." we'll be adding.
+            return "..." + aQQQ.Script.Substring(cutoffIndex);
+        }
+
+#endregion
+
     }
 }

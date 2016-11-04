@@ -5,18 +5,15 @@ namespace com.immortalhydra.gdtb.codetodos
 {
     public class WindowEdit : EditorWindow
     {
-        public static WindowEdit Instance { get; private set; }
-        public static bool IsOpen {
-            get { return Instance != null; }
 
-        }
+#region FIELDS AND PROPERTIES
 
+        // Fields.
         private static QQQ _oldQQQ;
         private static QQQ _newQQQ;
 
         private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
         private bool _prioritySetOnce = false;
-
 
         private GUISkin _skin;
         private GUIStyle _style_bold, _style_buttonText;
@@ -25,16 +22,15 @@ namespace com.immortalhydra.gdtb.codetodos
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
 
-        public static void Init(QQQ aQQQ)
-        {
-            // Get existing open window or if none, make a new one.
-            WindowEdit window = (WindowEdit)EditorWindow.GetWindow(typeof(WindowEdit));
-            window.minSize = new Vector2(208f, 140f);
-            _oldQQQ = aQQQ;
-            _newQQQ = new QQQ((int)aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);
-            window.Show();
+        // Properties.
+        public static WindowEdit Instance { get; private set; }
+        public static bool IsOpen {
+            get { return Instance != null; }
         }
 
+#endregion
+
+#region MONOBEHAVIOUR METHODS
 
         public void OnEnable()
         {
@@ -49,6 +45,15 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
+        public void Update()
+        {
+            // We repaint every frame for the same reason we do so in WindowMain.
+            Repaint();
+        }
+
+
+
+
         private void OnGUI()
         {
             GUI.skin = _skin;
@@ -57,6 +62,43 @@ namespace com.immortalhydra.gdtb.codetodos
             DrawTask();
             DrawEdit();
         }
+
+#endregion
+
+
+#region METHODS
+        public static void Init(QQQ aQQQ)
+        {
+            // Get existing open window or if none, make a new one.
+            WindowEdit window = (WindowEdit)EditorWindow.GetWindow(typeof(WindowEdit));
+            window.minSize = new Vector2(208f, 140f);
+            _oldQQQ = aQQQ;
+            _newQQQ = new QQQ((int)aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);
+            window.Show();
+        }
+
+
+        /// Load CodeTODOs custom skin.
+        public void LoadSkin()
+        {
+            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
+        }
+
+
+        /// Load custom styles and apply colors from preferences.
+        public void LoadStyles()
+        {
+            _style_bold = _skin.GetStyle("GDTB_CodeTODOs_task");
+            _style_bold.active.textColor = Preferences.Color_Secondary;
+            _style_bold.normal.textColor = Preferences.Color_Secondary;
+            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
+            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
+            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
+
+            _skin.settings.selectionColor = Preferences.Color_Secondary;
+        }
+
+
 
 
         /// Draw the background texture.
@@ -155,32 +197,7 @@ namespace com.immortalhydra.gdtb.codetodos
             }
         }
 
+#endregion
 
-        /// Load CodeTODOs custom skin.
-        public void LoadSkin()
-        {
-            _skin = Resources.Load(Constants.FILE_GUISKIN, typeof(GUISkin)) as GUISkin;
-        }
-
-
-        /// Load custom styles and apply colors from preferences.
-        public void LoadStyles()
-        {
-            _style_bold = _skin.GetStyle("GDTB_CodeTODOs_task");
-            _style_bold.active.textColor = Preferences.Color_Secondary;
-            _style_bold.normal.textColor = Preferences.Color_Secondary;
-            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
-            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
-            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
-
-            _skin.settings.selectionColor = Preferences.Color_Secondary;
-        }
-
-
-        public void Update()
-        {
-            // We repaint every frame for the same reason we do so in WindowMain.
-            Repaint();
-        }
     }
 }

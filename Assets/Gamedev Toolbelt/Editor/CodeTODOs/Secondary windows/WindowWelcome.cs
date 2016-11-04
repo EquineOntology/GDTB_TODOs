@@ -6,26 +6,26 @@ namespace com.immortalhydra.gdtb.codetodos
 {
     public class WindowWelcome : EditorWindow
     {
-        public static WindowWelcome Instance { get; private set; }
-        public static bool IsOpen {
-            get { return Instance != null; }
-        }
+
+#region FIELDS AND PROPERTIES
+
+        // Fields.
         private GUISkin _skin;
         private GUIStyle _wordWrappedColoredLabel, _headerLabel;
         private int _offset = 5;
         private bool _welcomeValue;
         private float _usableWidth = 0;
 
-
-        public static void Init()
-        {
-            // Get existing open window or if none, make a new one.
-            var window = (WindowWelcome)EditorWindow.GetWindow(typeof(WindowWelcome));
-            window.SetMinSize();
-            window.LoadSkin();
-            window.Show();
+        // Properties.
+        public static WindowWelcome Instance { get; private set; }
+        public static bool IsOpen {
+            get { return Instance != null; }
         }
 
+#endregion
+
+
+#region MONOBEHAVIOUT METHODS
 
         public void OnEnable()
         {
@@ -95,41 +95,16 @@ namespace com.immortalhydra.gdtb.codetodos
             DrawToggle();
         }
 
+#endregion
 
-        /// Draw the background texture.
-        private void DrawWindowBackground()
+#region METHODS
+        public static void Init()
         {
-            EditorGUI.DrawRect(new Rect(0, 0, position.width, position.height), Preferences.Color_Primary);
-        }
-
-
-        private void DrawProcessButtons()
-        {
-            var processRect = new Rect(60, 80, 80, 20);
-            var processContent = new GUIContent("Process", "Process all scripts");
-
-            Controls.Button(processRect, processContent);
-        }
-
-
-
-        private void DrawRefreshButtons()
-        {
-            var refreshRect = new Rect(60, 160, 80, 20);
-            var refreshContent = new GUIContent("Refresh", "Refresh task list");
-
-            Controls.Button(refreshRect, refreshContent);
-        }
-
-
-        private void DrawToggle()
-        {
-            var rect = new Rect(_offset * 2, position.height - 20 - _offset, position.width, 20);
-            _welcomeValue = EditorGUI.ToggleLeft(rect, " Show this window every time CodeTODOs is opened", _welcomeValue, _wordWrappedColoredLabel);
-            if (_welcomeValue != Preferences.ShowWelcome)
-            {
-                Preferences.SetWelcome(_welcomeValue);
-            }
+            // Get existing open window or if none, make a new one.
+            var window = (WindowWelcome)EditorWindow.GetWindow(typeof(WindowWelcome));
+            window.SetMinSize();
+            window.LoadSkin();
+            window.Show();
         }
 
 
@@ -152,11 +127,51 @@ namespace com.immortalhydra.gdtb.codetodos
         }
 
 
-        /// Set the minSize of the window based on preferences.
-        public void SetMinSize()
+
+
+        /// Draw the background texture.
+        private void DrawWindowBackground()
+        {
+            EditorGUI.DrawRect(new Rect(0, 0, position.width, position.height), Preferences.Color_Primary);
+        }
+
+
+        private void DrawProcessButtons()
+        {
+            var processRect = new Rect(60, 80, 80, 20);
+            var processContent = new GUIContent("Process", "Process all scripts");
+
+            Controls.Button(processRect, processContent);
+        }
+
+
+        private void DrawRefreshButtons()
+        {
+            var refreshRect = new Rect(60, 160, 80, 20);
+            var refreshContent = new GUIContent("Refresh", "Refresh task list");
+
+            Controls.Button(refreshRect, refreshContent);
+        }
+
+
+        private void DrawToggle()
+        {
+            var rect = new Rect(_offset * 2, position.height - 20 - _offset, position.width, 20);
+            _welcomeValue = EditorGUI.ToggleLeft(rect, " Show this window every time CodeTODOs is opened", _welcomeValue, _wordWrappedColoredLabel);
+            if (_welcomeValue != Preferences.ShowWelcome)
+            {
+                Preferences.SetWelcome(_welcomeValue);
+            }
+        }
+
+
+        private void SetMinSize()
         {
             var window = GetWindow(typeof(WindowWelcome)) as WindowWelcome;
             window.minSize = new Vector2(450f, 350f);
         }
+
+#endregion
+
     }
 }

@@ -8,6 +8,9 @@ namespace com.immortalhydra.gdtb.codetodos
     // for text files only, so I need to actually check if each file is a script to update the QQQ/Scripts db.
     public class ScriptsPostProcessor : AssetPostprocessor
     {
+
+#region METHODS
+
         private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
             // Remove QQQs from deleted files.
@@ -19,7 +22,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
             }
 
-
             // Change the script reference for QQQs when a script is moved.
             for (int i = 0; i < movedAssets.Length; i++)
             {
@@ -28,7 +30,6 @@ namespace com.immortalhydra.gdtb.codetodos
                     QQQOps.ChangeScriptOfQQQ(movedFromAssetPaths[i], movedAssets[i]);
                 }
             }
-
 
             var excludedScripts = IO.GetExcludedScripts();
             var importedAssetsCopy = new List<string>();
@@ -62,8 +63,10 @@ namespace com.immortalhydra.gdtb.codetodos
                     }
                 }
             }
-
             IO.SaveScriptList();
         }
+
+#endregion
+
     }
 }
