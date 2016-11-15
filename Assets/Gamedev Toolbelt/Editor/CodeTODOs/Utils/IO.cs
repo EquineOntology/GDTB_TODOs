@@ -417,10 +417,19 @@ namespace com.immortalhydra.gdtb.codetodos
             var assetsDir = "";
             foreach (var dir in listOfAssetsDirs)
             {
+
+            #if UNITY_EDITOR_WIN
                 if (dir.FullName.EndsWith("\\Assets"))
                 {
                     assetsDir = dir.FullName;
                 }
+            #elif UNITY_EDITOR_OSX
+                if (dir.FullName.EndsWith("/Assets"))
+                {
+                    assetsDir = dir.FullName;
+                }
+            #endif
+
             }
             var path = assetsDir;
 
