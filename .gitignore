@@ -25,6 +25,7 @@
 sysinfo.txt
 
 # Manually added
+.idea
 /.project
 /Assets/VSCode
 /Assets/Gamedev Toolbelt/Editor/EditorPrefs Editor
