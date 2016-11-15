@@ -1,5 +1,6 @@
 ====== 2016.4 ======
 
+ * MacOS support!
  * Unified interface buttons to text style with border for visual clarity.
  * Added help window to Gamedev Toolbelt/CodeTODOs menu, plus links to other assets and to leave a review.
  * Refactor and partition code for clarity.
