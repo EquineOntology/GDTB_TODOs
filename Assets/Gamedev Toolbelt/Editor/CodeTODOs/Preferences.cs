@@ -9,130 +9,146 @@ namespace com.immortalhydra.gdtb.codetodos
         // TODO token (QQQ).
         private const string PREFS_CODETODOS_TOKEN = "GDTB_CodeTODOs_TODOToken";
         private static string _todoToken = "QQQ";
-        private static string _todoToken_default = "QQQ";
+        private const string TODOTokenDefault = "QQQ";
         public static string TODOToken
         {
             get { return _todoToken; }
+            set { _todoToken = value; }
         }
 
 
         // Confirmation dialogs.
         private const string PREFS_CODETODOS_CONFIRMATION_DIALOGS = "GDTB_CodeTODOs_ConfirmationDialogs";
         private static bool _confirmationDialogs = true;
-        private static bool _confirmationDialogs_default = true;
+        private const bool ConfirmationDialogsDefault = true;
         public static bool ShowConfirmationDialogs
         {
             get { return _confirmationDialogs; }
+            set { _confirmationDialogs = value; }
+
         }
 
 
         // Welcome window.
         private const string PREFS_CODETODOS_WELCOME = "GDTB_CodeTODOs_Welcome";
         private static bool _showWelcome = true;
-        private static bool _showWelcome_default = true;
+        private const bool ShowWelcomeDefault = true;
         public static bool ShowWelcome
         {
             get { return _showWelcome; }
+            set { _showWelcome = value; }
         }
 
-
-    #region Colors
+        #region Colors
         // Primary color.
         private const string PREFS_CODETODOS_COLOR_PRIMARY = "GDTB_CodeTODOs_Primary";
-        private static Color _primary = new Color(56, 56, 56, 1);
-        private static Color _primary_dark = new Color(56, 56, 56, 1);
-        private static Color _primary_light = new Color(255, 255, 255, 1);
-        private static Color _primary_default = new Color(56, 56, 56, 1);
-        public static Color Color_Primary
+        private static Color _primary = new Color(56,56,56,1);
+        private static Color _primaryDark = new Color(56, 56, 56, 1);
+        private static Color _primaryLight = new Color(255, 255, 255, 1);
+        private static readonly Color PrimaryDefault = new Color(56, 56, 56, 1);
+
+        public static Color Primary
         {
             get { return _primary; }
+            set { _primary = value; }
         }
 
         // Secondary color.
         private const string PREFS_CODETODOS_COLOR_SECONDARY = "GDTB_CodeTODOs_Secondary";
         private static Color _secondary = new Color(255, 90, 90, 1);
-        private static Color _secondary_dark = new Color(255, 90, 90, 1);
-        private static Color _secondary_light = new Color(165, 0, 0, 1);
-        private static Color _secondary_default = new Color(255, 90, 90, 1);
-        public static Color Color_Secondary
+        private static Color _secondaryDark = new Color(255, 90, 90, 1);
+        private static Color _secondaryLight = new Color(165, 0, 0, 1);
+        private static readonly Color SecondaryDefault = new Color(255, 90, 90, 1);
+
+        public static Color Secondary
         {
             get { return _secondary; }
+            set { _secondary = value; }
         }
 
         // Tertiary color.
         private const string PREFS_CODETODOS_COLOR_TERTIARY = "GDTB_CodeTODOs_Tertiary";
         private static Color _tertiary = new Color(255, 248, 248, 1);
-        private static Color _tertiary_dark = new Color(255, 248, 248, 1);
-        private static Color _tertiary_light = new Color(56, 56, 56, 1);
-        private static Color _tertiary_default = new Color(255, 248, 248, 1);
-        public static Color Color_Tertiary
+        private static Color _tertiaryDark = new Color(255, 248, 248, 1);
+        private static Color _tertiaryLight = new Color(56, 56, 56, 1);
+        private static readonly Color TertiaryDefault = new Color(255, 248, 248, 1);
+
+        public static Color Tertiary
         {
             get { return _tertiary; }
+            set { _tertiary = value; }
         }
 
-        // Quaretnary color.
+        // Quaternary color.
         private const string PREFS_CODETODOS_COLOR_QUATERNARY = "GDTB_CodeTODOs_Quaternary";
         private static Color _quaternary = new Color(70, 70, 70, 1);
-        private static Color _quaternary_dark = new Color(70, 70, 70, 1);
-        private static Color _quaternary_light = new Color(242, 242, 242, 1);
-        private static Color _quaternary_default = new Color(70, 70, 70, 1);
-        public static Color Color_Quaternary
+        private static Color _quaternaryDark = new Color(70, 70, 70, 1);
+        private static Color _quaternaryLight = new Color(242, 242, 242, 1);
+        private static readonly Color QuaternaryDefault = new Color(70, 70, 70, 1);
+        public static Color Quaternary
         {
             get { return _quaternary; }
+            set { _quaternary = value; }
         }
 
         // Color of URGENT tasks.
         private const string PREFS_CODETODOS_COLOR_PRI1 = "GDTB_CodeTODOs_Urgent";
-        private static Color _priColor1 = new Color(246, 71, 71, 1);
-        private static Color _priColor1_default = new Color(246, 71, 71, 1);
-        private static Color _priColor1_dark = new Color(246, 71, 71, 1);
-        private static Color _priColor1_light = new Color(197, 0, 0, 1);
-        public static Color PriColor1
+        private static Color _priorityUrgent = new Color(246, 71, 71, 1);
+        private static readonly Color PriorityUrgentDefault = new Color(246, 71, 71, 1);
+        private static Color _priorityUrgentDark = new Color(246, 71, 71, 1);
+        private static Color _priorityUrgentLight = new Color(197, 0, 0, 1);
+        public static Color PriorityUrgent
         {
-            get { return _priColor1; }
+            get { return _priorityUrgent; }
+            set { _priorityUrgent = value; }
         }
 
         // Color of NORMAL tasks
         private const string PREFS_CODETODOS_COLOR_PRI2 = "GDTB_CodeTODOs_Normal";
-        private static Color _priColor2 = new Color(244, 208, 63, 1);
-        private static Color _priColor2_default = new Color(244, 208, 63, 1);
-        private static Color _priColor2_dark = new Color(244, 208, 63, 1);
-        private static Color _priColor2_light = new Color(234, 188, 0, 1);
-        public static Color PriColor2
+        private static Color _priorityNormal = new Color(244, 208, 63, 1);
+        private static readonly Color PriorityNormalDefault = new Color(244, 208, 63, 1);
+        private static Color _priorityNormalDark = new Color(244, 208, 63, 1);
+        private static Color _priorityNormalLight = new Color(234, 188, 0, 1);
+        public static Color PriorityNormal
         {
-            get { return _priColor2; }
+            get { return _priorityNormal; }
+            set { _priorityNormal = value; }
         }
 
         // Color of MINOR tasks
         private const string PREFS_CODETODOS_COLOR_PRI3 = "GDTB_CodeTODOs_Minor";
-        private static Color _priColor3 = new Color(46, 204, 113, 1);
-        private static Color _priColor3_default = new Color(46, 204, 113, 1);
-        private static Color _priColor3_dark = new Color(46, 204, 113, 1);
-        private static Color _priColor3_light = new Color(0, 189, 80, 1);
-        public static Color PriColor3
+        private static Color _priorityMinor = new Color(46, 204, 113, 1);
+        private static readonly Color PriorityMinorDefault = new Color(46, 204, 113, 1);
+        private static Color _priorityMinorDark = new Color(46, 204, 113, 1);
+        private static Color _priorityMinorLight = new Color(0, 189, 80, 1);
+        public static Color PriorityMinor
         {
-            get { return _priColor3; }
+            get { return _priorityMinor; }
+            set { _priorityMinor = value; }
         }
-    #endregion
+
+        #endregion
 
         // Custom shortcut
         private const string PREFS_CODETODOS_SHORTCUT = "GDTB_CodeTODOs_Shortcut";
         private static string _shortcut = "%|q";
         private static string _newShortcut;
-        private static string _shortcut_default = "%|q";
+        private const string ShortcutDefault = "%|q";
         public static string Shortcut
         {
             get { return _shortcut; }
+            set { _shortcut = value; }
         }
-        private static bool[] _modifierKeys = new bool[] { false, false, false }; // Ctrl/Cmd, Alt, Shift.
-        private static int _mainShortcutKeyIndex = 0;
+
+        private static readonly bool[] ModifierKeys = { false, false, false }; // Ctrl/Cmd, Alt, Shift.
+        private static int _mainShortcutKeyIndex;
         // Want absolute control over values.
-        private static string[] _shortcutKeys = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "LEFT", "RIGHT", "UP", "DOWN", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "HOME", "END", "PGUP", "PGDN" };
+        private static readonly string[] ShortcutKeys = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "LEFT", "RIGHT", "UP", "DOWN", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "HOME", "END", "PGUP", "PGDN" };
 
 
         private static Vector2 _scrollPosition = new Vector2(-1, 0);
 
-#endregion
+        #endregion
 
 #region METHODS
 
@@ -143,19 +159,19 @@ namespace com.immortalhydra.gdtb.codetodos
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, false, false);
             EditorGUILayout.LabelField("General Settings", EditorStyles.boldLabel);
-            _todoToken = EditorGUILayout.TextField("TODO token", _todoToken);
-            _confirmationDialogs = EditorGUILayout.Toggle("Show confirmation dialogs", _confirmationDialogs);
-            _showWelcome = EditorGUILayout.Toggle("Show Welcome window", _showWelcome);
+            TODOToken = EditorGUILayout.TextField("TODO token", TODOToken);
+            ShowConfirmationDialogs = EditorGUILayout.Toggle("Show confirmation dialogs", ShowConfirmationDialogs);
+            ShowWelcome = EditorGUILayout.Toggle("Show Welcome window", ShowWelcome);
             GUILayout.Space(20);
             EditorGUILayout.LabelField("UI", EditorStyles.boldLabel);
-            _priColor1 = EditorGUILayout.ColorField("Urgent priority", _priColor1);
-            _priColor2 = EditorGUILayout.ColorField("Normal priority", _priColor2);
-            _priColor3 = EditorGUILayout.ColorField("Minor priority", _priColor3);
+            PriorityUrgent = EditorGUILayout.ColorField("Urgent priority", PriorityUrgent);
+            PriorityNormal = EditorGUILayout.ColorField("Normal priority", PriorityNormal);
+            PriorityMinor = EditorGUILayout.ColorField("Minor priority", PriorityMinor);
             EditorGUILayout.Separator();
-            _primary = EditorGUILayout.ColorField("Background and button color", _primary);
-            _secondary = EditorGUILayout.ColorField("Accent color", _secondary);
-            _tertiary = EditorGUILayout.ColorField("Text color", _tertiary);
-            _quaternary = EditorGUILayout.ColorField("Element background color", _quaternary);
+            Primary = EditorGUILayout.ColorField("Background and button color", Primary);
+            Secondary = EditorGUILayout.ColorField("Accent color", Secondary);
+            Tertiary = EditorGUILayout.ColorField("Text color", Tertiary);
+            Quaternary = EditorGUILayout.ColorField("Element background color", Quaternary);
             EditorGUILayout.Separator();
             DrawThemeButtons();
             GUILayout.Space(20);
@@ -191,11 +207,11 @@ namespace com.immortalhydra.gdtb.codetodos
         /// If preferences have keys already saved in EditorPrefs, get them. Otherwise, set them.
         public static void GetAllPrefValues()
         {
-            _todoToken = GetPrefValue(PREFS_CODETODOS_TOKEN, _todoToken_default); // TODO token.
-            _confirmationDialogs = GetPrefValue(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs_default);
-            _showWelcome = GetPrefValue(PREFS_CODETODOS_WELCOME, _showWelcome_default);
+            TODOToken = GetPrefValue(PREFS_CODETODOS_TOKEN, TODOTokenDefault); // TODO token.
+            ShowConfirmationDialogs = GetPrefValue(PREFS_CODETODOS_CONFIRMATION_DIALOGS, ConfirmationDialogsDefault);
+            ShowWelcome = GetPrefValue(PREFS_CODETODOS_WELCOME, ShowWelcomeDefault);
             GetColorPrefs();
-            _shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, _shortcut_default); // Shortcut.
+            Shortcut = GetPrefValue(PREFS_CODETODOS_SHORTCUT, ShortcutDefault); // Shortcut.
             ParseShortcutValues();
         }
 
@@ -205,9 +221,9 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Set the value of all preferences.
         private static void SetPrefValues()
         {
-            EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, _todoToken);
-            EditorPrefs.SetBool(PREFS_CODETODOS_CONFIRMATION_DIALOGS, _confirmationDialogs);
-            SetWelcome(_showWelcome);
+            EditorPrefs.SetString(PREFS_CODETODOS_TOKEN, TODOToken);
+            EditorPrefs.SetBool(PREFS_CODETODOS_CONFIRMATION_DIALOGS, ShowConfirmationDialogs);
+            SetWelcome(ShowWelcome);
             SetColorPrefs();
             SetShortcutPrefs();
         }
@@ -216,25 +232,25 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Set the value of a Color preference.
         private static void SetColorPrefs()
         {
-            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRIMARY, RGBA.ColorToString(_primary));
-            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_SECONDARY, RGBA.ColorToString(_secondary));
-            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_TERTIARY, RGBA.ColorToString(_tertiary));
-            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_QUATERNARY, RGBA.ColorToString(_quaternary));
+            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRIMARY, RGBA.ColorToString(Primary));
+            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_SECONDARY, RGBA.ColorToString(Secondary));
+            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_TERTIARY, RGBA.ColorToString(Tertiary));
+            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_QUATERNARY, RGBA.ColorToString(Quaternary));
 
-            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI1, RGBA.ColorToString(_priColor1));
-            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI2, RGBA.ColorToString(_priColor2));
-            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI3, RGBA.ColorToString(_priColor3));
+            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI1, RGBA.ColorToString(PriorityUrgent));
+            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI2, RGBA.ColorToString(PriorityNormal));
+            EditorPrefs.SetString(PREFS_CODETODOS_COLOR_PRI3, RGBA.ColorToString(PriorityMinor));
         }
 
 
         /// Set the value of the shortcut preference.
         private static void SetShortcutPrefs()
         {
-            if (_newShortcut != _shortcut && _newShortcut != null)
+            if (_newShortcut != Shortcut && _newShortcut != null)
             {
-                _shortcut = _newShortcut;
-                EditorPrefs.SetString(PREFS_CODETODOS_SHORTCUT, _shortcut);
-                var formattedShortcut = _shortcut.Replace("|", "");
+                Shortcut = _newShortcut;
+                EditorPrefs.SetString(PREFS_CODETODOS_SHORTCUT, Shortcut);
+                var formattedShortcut = Shortcut.Replace("|", "");
                 IO.OverwriteShortcut(formattedShortcut);
             }
         }
@@ -243,22 +259,22 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Load color preferences.
         private static void GetColorPrefs()
         {
-            _primary = GetPrefValue(PREFS_CODETODOS_COLOR_PRIMARY, RGBA.GetNormalizedColor(_primary_default));
-            _secondary = GetPrefValue(PREFS_CODETODOS_COLOR_SECONDARY, RGBA.GetNormalizedColor(_secondary_default));
-            _tertiary = GetPrefValue(PREFS_CODETODOS_COLOR_TERTIARY, RGBA.GetNormalizedColor(_tertiary_default));
-            _quaternary = GetPrefValue(PREFS_CODETODOS_COLOR_QUATERNARY, RGBA.GetNormalizedColor(_quaternary_default));
+            Primary = GetPrefValue(PREFS_CODETODOS_COLOR_PRIMARY, RGBA.GetNormalizedColor(PrimaryDefault));
+            Secondary = GetPrefValue(PREFS_CODETODOS_COLOR_SECONDARY, RGBA.GetNormalizedColor(SecondaryDefault));
+            Tertiary = GetPrefValue(PREFS_CODETODOS_COLOR_TERTIARY, RGBA.GetNormalizedColor(TertiaryDefault));
+            Quaternary = GetPrefValue(PREFS_CODETODOS_COLOR_QUATERNARY, RGBA.GetNormalizedColor(QuaternaryDefault));
 
-            _priColor1 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, RGBA.GetNormalizedColor(_priColor1_default));
-            _priColor2 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, RGBA.GetNormalizedColor(_priColor2_default));
-            _priColor3 = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, RGBA.GetNormalizedColor(_priColor3_default));
+            PriorityUrgent = GetPrefValue(PREFS_CODETODOS_COLOR_PRI1, RGBA.GetNormalizedColor(PriorityUrgentDefault));
+            PriorityNormal = GetPrefValue(PREFS_CODETODOS_COLOR_PRI2, RGBA.GetNormalizedColor(PriorityNormalDefault));
+            PriorityMinor = GetPrefValue(PREFS_CODETODOS_COLOR_PRI3, RGBA.GetNormalizedColor(PriorityMinorDefault));
 
             // If all colors are the same, there's been some issue. Revert to initial dark scheme.
-            if(_primary == _secondary && _primary == _tertiary && _primary == _quaternary)
+            if(Primary == Secondary && Primary == Tertiary && Primary == Quaternary)
             {
-                _primary = RGBA.GetNormalizedColor(_primary_default);
-                _secondary = RGBA.GetNormalizedColor(_secondary_default);
-                _tertiary = RGBA.GetNormalizedColor(_tertiary_default);
-                _quaternary = RGBA.GetNormalizedColor(_quaternary_default);
+                Primary = RGBA.GetNormalizedColor(PrimaryDefault);
+                Secondary = RGBA.GetNormalizedColor(SecondaryDefault);
+                Tertiary = RGBA.GetNormalizedColor(TertiaryDefault);
+                Quaternary = RGBA.GetNormalizedColor(QuaternaryDefault);
             }
         }
 
@@ -266,17 +282,17 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Reset all preferences to default.
         private static void ResetPrefsToDefault()
         {
-            _todoToken = _todoToken_default;
-            _confirmationDialogs = _confirmationDialogs_default;
-            _showWelcome = _showWelcome_default;
-            _primary = RGBA.GetNormalizedColor(_primary_default);
-            _secondary = RGBA.GetNormalizedColor(_secondary_default);
-            _tertiary = RGBA.GetNormalizedColor(_tertiary_default);
-            _quaternary = RGBA.GetNormalizedColor(_quaternary_default);
-            _priColor1 = RGBA.GetNormalizedColor(_priColor1_default);
-            _priColor2 = RGBA.GetNormalizedColor(_priColor2_default);
-            _priColor3 = RGBA.GetNormalizedColor(_priColor3_default);
-            _shortcut = _shortcut_default;
+            TODOToken = TODOTokenDefault;
+            ShowConfirmationDialogs = ConfirmationDialogsDefault;
+            ShowWelcome = ShowWelcomeDefault;
+            Primary = RGBA.GetNormalizedColor(PrimaryDefault);
+            Secondary = RGBA.GetNormalizedColor(SecondaryDefault);
+            Tertiary = RGBA.GetNormalizedColor(TertiaryDefault);
+            Quaternary = RGBA.GetNormalizedColor(QuaternaryDefault);
+            PriorityUrgent = RGBA.GetNormalizedColor(PriorityUrgentDefault);
+            PriorityNormal = RGBA.GetNormalizedColor(PriorityNormalDefault);
+            PriorityMinor = RGBA.GetNormalizedColor(PriorityMinorDefault);
+            Shortcut = ShortcutDefault;
 
             SetPrefValues();
             GetAllPrefValues();
@@ -297,7 +313,7 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 // Get confirmation through dialog (or not if the user doesn't want to).
                 var canExecute = false;
-                if (ShowConfirmationDialogs == true)
+                if (ShowConfirmationDialogs)
                 {
                     if (EditorUtility.DisplayDialog("Change to dark theme?", "Are you sure you want to change the color scheme to the dark (default) theme?", "Change color scheme", "Cancel"))
                     {
@@ -310,15 +326,15 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
 
                 // Do it if we have permission.
-                if (canExecute == true)
+                if (canExecute)
                 {
-                    _primary = new Color(_primary_dark.r / 255.0f, _primary_dark.g / 255.0f, _primary_dark.b / 255.0f, 1.0f);
-                    _secondary = new Color(_secondary_dark.r / 255.0f, _secondary_dark.g / 255.0f, _secondary_dark.b / 255.0f, 1.0f);
-                    _tertiary = new Color(_tertiary_dark.r / 255.0f, _tertiary_dark.g / 255.0f, _tertiary_dark.b / 255.0f, 1.0f);
-                    _quaternary = new Color(_quaternary_dark.r / 255.0f, _quaternary_dark.g / 255.0f, _quaternary_dark.b / 255.0f, 1.0f);
-                    _priColor1 = new Color(_priColor1_dark.r / 255.0f, _priColor1_dark.g / 255.0f, _priColor1_dark.b / 255.0f, 1.0f);
-                    _priColor2 = new Color(_priColor2_dark.r / 255.0f, _priColor2_dark.g / 255.0f, _priColor2_dark.b / 255.0f, 1.0f);
-                    _priColor3 = new Color(_priColor3_dark.r / 255.0f, _priColor3_dark.g / 255.0f, _priColor3_dark.b / 255.0f, 1.0f);
+                    Primary = new Color(_primaryDark.r / 255.0f, _primaryDark.g / 255.0f, _primaryDark.b / 255.0f, 1.0f);
+                    Secondary = new Color(_secondaryDark.r / 255.0f, _secondaryDark.g / 255.0f, _secondaryDark.b / 255.0f, 1.0f);
+                    Tertiary = new Color(_tertiaryDark.r / 255.0f, _tertiaryDark.g / 255.0f, _tertiaryDark.b / 255.0f, 1.0f);
+                    Quaternary = new Color(_quaternaryDark.r / 255.0f, _quaternaryDark.g / 255.0f, _quaternaryDark.b / 255.0f, 1.0f);
+                    PriorityUrgent = new Color(_priorityUrgentDark.r / 255.0f, _priorityUrgentDark.g / 255.0f, _priorityUrgentDark.b / 255.0f, 1.0f);
+                    PriorityNormal = new Color(_priorityNormalDark.r / 255.0f, _priorityNormalDark.g / 255.0f, _priorityNormalDark.b / 255.0f, 1.0f);
+                    PriorityMinor = new Color(_priorityMinorDark.r / 255.0f, _priorityMinorDark.g / 255.0f, _priorityMinorDark.b / 255.0f, 1.0f);
                     SetColorPrefs();
                     GetColorPrefs();
 
@@ -331,7 +347,7 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 // Get confirmation through dialog (or not if the user doesn't want to).
                 var canExecute = false;
-                if (ShowConfirmationDialogs == true)
+                if (ShowConfirmationDialogs)
                 {
                     if (EditorUtility.DisplayDialog("Change to light theme?", "Are you sure you want to change the color scheme to the light theme?", "Change color scheme", "Cancel"))
                     {
@@ -344,15 +360,15 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
 
                 // Actually do the thing.
-                if (canExecute == true)
+                if (canExecute)
                 {
-                    _primary = new Color(_primary_light.r / 255.0f, _primary_light.g / 255.0f, _primary_light.b / 255.0f, 1.0f);
-                    _secondary = new Color(_secondary_light.r / 255.0f, _secondary_light.g / 255.0f, _secondary_light.b / 255.0f, 1.0f);
-                    _tertiary = new Color(_tertiary_light.r / 255.0f, _tertiary_light.g / 255.0f, _tertiary_light.b / 255.0f, 1.0f);
-                    _quaternary = new Color(_quaternary_light.r / 255.0f, _quaternary_light.g / 255.0f, _quaternary_light.b / 255.0f, 1.0f);
-                    _priColor1 = new Color(_priColor1_light.r / 255.0f, _priColor1_light.g / 255.0f, _priColor1_light.b / 255.0f, 1.0f);
-                    _priColor2 = new Color(_priColor2_light.r / 255.0f, _priColor2_light.g / 255.0f, _priColor2_light.b / 255.0f, 1.0f);
-                    _priColor3 = new Color(_priColor3_light.r / 255.0f, _priColor3_light.g / 255.0f, _priColor3_light.b / 255.0f, 1.0f);
+                    Primary = new Color(_primaryLight.r / 255.0f, _primaryLight.g / 255.0f, _primaryLight.b / 255.0f, 1.0f);
+                    Secondary = new Color(_secondaryLight.r / 255.0f, _secondaryLight.g / 255.0f, _secondaryLight.b / 255.0f, 1.0f);
+                    Tertiary = new Color(_tertiaryLight.r / 255.0f, _tertiaryLight.g / 255.0f, _tertiaryLight.b / 255.0f, 1.0f);
+                    Quaternary = new Color(_quaternaryLight.r / 255.0f, _quaternaryLight.g / 255.0f, _quaternaryLight.b / 255.0f, 1.0f);
+                    PriorityUrgent = new Color(_priorityUrgentLight.r / 255.0f, _priorityUrgentLight.g / 255.0f, _priorityUrgentLight.b / 255.0f, 1.0f);
+                    PriorityNormal = new Color(_priorityNormalLight.r / 255.0f, _priorityNormalLight.g / 255.0f, _priorityNormalLight.b / 255.0f, 1.0f);
+                    PriorityMinor = new Color(_priorityMinorLight.r / 255.0f, _priorityMinorLight.g / 255.0f, _priorityMinorLight.b / 255.0f, 1.0f);
                     SetColorPrefs();
                     GetColorPrefs();
 
@@ -377,26 +393,26 @@ namespace com.immortalhydra.gdtb.codetodos
             GUILayout.BeginHorizontal();
             GUILayout.Label("Shortcut ");
             GUILayout.Space(20);
-            _modifierKeys[0] = GUILayout.Toggle(_modifierKeys[0], platformKey, EditorStyles.miniButton, GUILayout.Width(50));
-            _modifierKeys[1] = GUILayout.Toggle(_modifierKeys[1], "ALT", EditorStyles.miniButton, GUILayout.Width(40));
-            _modifierKeys[2] = GUILayout.Toggle(_modifierKeys[2], "SHIFT", EditorStyles.miniButton, GUILayout.Width(60));
-            _mainShortcutKeyIndex = EditorGUILayout.Popup(_mainShortcutKeyIndex, _shortcutKeys, GUILayout.Width(60));
+            ModifierKeys[0] = GUILayout.Toggle(ModifierKeys[0], platformKey, EditorStyles.miniButton, GUILayout.Width(50));
+            ModifierKeys[1] = GUILayout.Toggle(ModifierKeys[1], "ALT", EditorStyles.miniButton, GUILayout.Width(40));
+            ModifierKeys[2] = GUILayout.Toggle(ModifierKeys[2], "SHIFT", EditorStyles.miniButton, GUILayout.Width(60));
+            _mainShortcutKeyIndex = EditorGUILayout.Popup(_mainShortcutKeyIndex, ShortcutKeys, GUILayout.Width(60));
             GUILayout.EndHorizontal();
 
             // Generate shortcut string.
-            if (_modifierKeys[0] == true)
+            if (ModifierKeys[0])
             {
                 shortcut += "%|";
             }
-            if (_modifierKeys[1] == true)
+            if (ModifierKeys[1])
             {
                 shortcut += "&|";
             }
-            if (_modifierKeys[2] == true)
+            if (ModifierKeys[2])
             {
                 shortcut += "#|";
             }
-            shortcut += _shortcutKeys[_mainShortcutKeyIndex];
+            shortcut += ShortcutKeys[_mainShortcutKeyIndex];
 
             return shortcut;
         }
@@ -486,10 +502,10 @@ namespace com.immortalhydra.gdtb.codetodos
             var foundAlt = false;
             var foundShift = false;
 
-            var keys = _shortcut.Split('|');
-            for (var i = 0; i < keys.Length; i++)
+            var keys = Shortcut.Split('|');
+            foreach (var key in keys)
             {
-                switch (keys[i])
+                switch (key)
                 {
                     case "%":
                         foundCmd = true;
@@ -501,13 +517,13 @@ namespace com.immortalhydra.gdtb.codetodos
                         foundShift = true;
                         break;
                     default:
-                        _mainShortcutKeyIndex = System.Array.IndexOf(_shortcutKeys, keys[i]);
+                        _mainShortcutKeyIndex = System.Array.IndexOf(ShortcutKeys, key);
                         break;
                 }
             }
-            _modifierKeys[0] = foundCmd; // Ctrl/Cmd.
-            _modifierKeys[1] = foundAlt; // Alt.
-            _modifierKeys[2] = foundShift; // Shift.
+            ModifierKeys[0] = foundCmd; // Ctrl/Cmd.
+            ModifierKeys[1] = foundAlt; // Alt.
+            ModifierKeys[2] = foundShift; // Shift.
         }
 
 

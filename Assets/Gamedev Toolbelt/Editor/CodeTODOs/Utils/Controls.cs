@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 
 namespace com.immortalhydra.gdtb.codetodos
 {
@@ -58,14 +57,14 @@ namespace com.immortalhydra.gdtb.codetodos
 			var style = new GUIStyle();
 
 			// Draw "border".
-			EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
+			EditorGUI.DrawRect(aRect, Preferences.Secondary);
 
 			// Draw the darker internal rect.
 			var internalRect = new Rect(aRect.x + 1, aRect.y + 1, aRect.width - 2, aRect.height - 2);
-			EditorGUI.DrawRect(internalRect, Preferences.Color_Primary);
+			EditorGUI.DrawRect(internalRect, Preferences.Primary);
 
 			// Text formatting.
-			style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Tertiary;
+			style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Tertiary;
 			style.imagePosition = ImagePosition.TextOnly;
 			style.alignment = TextAnchor.MiddleCenter;
 
@@ -82,10 +81,10 @@ namespace com.immortalhydra.gdtb.codetodos
 		{
 			var style = new GUIStyle();
 
-			EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
+			EditorGUI.DrawRect(aRect, Preferences.Secondary);
 
 			// Text formatting.
-			style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Color_Primary;
+			style.active.textColor = style.onActive.textColor = style.normal.textColor = style.onNormal.textColor = Preferences.Primary;
 			style.imagePosition = ImagePosition.TextOnly;
 			style.alignment = TextAnchor.MiddleCenter;
 

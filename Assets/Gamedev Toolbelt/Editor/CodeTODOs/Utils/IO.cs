@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System;
+using UnityEngine;
 
 namespace com.immortalhydra.gdtb.codetodos
 {
@@ -13,7 +14,6 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void RemoveLineFromFile(string aFile, int aLineNumber)
         {
             var tempFile = Path.GetTempFileName();
-            var line = "";
             var currentLineNumber = 0;
 
             var reader = new StreamReader(aFile);
@@ -21,6 +21,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
             try
             {
+                string line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     // If the line is not the one we want to remove, write it to the temp file.
@@ -47,9 +48,9 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.Log(ex.Message);
-                UnityEngine.Debug.Log(ex.Data);
-                UnityEngine.Debug.Log(ex.StackTrace);
+                Debug.Log(ex.Message);
+                Debug.Log(ex.Data);
+                Debug.Log(ex.StackTrace);
                 reader.Dispose();
                 writer.Dispose();
             }
@@ -60,13 +61,13 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void ChangeQQQ(QQQ anOldQQQ, QQQ aNewQQQ)
         {
             var tempFile = Path.GetTempFileName();
-            var line = "";
             var currentLineNumber = 0;
 
             var reader = new StreamReader(anOldQQQ.Script);
             var writer = new StreamWriter(tempFile);
             try
             {
+                string line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     // If the line is not the one we want to remove, write it to the temp file.
@@ -79,8 +80,7 @@ namespace com.immortalhydra.gdtb.codetodos
                         // Remove the old QQQ and add the new one, then write the line to file.
                         var lineWithoutQQQ = GetLineWithoutQQQ(line);
 
-                        var slashes = "";
-                        slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //"; // If the line isn't empty we want a space before the comment.
+                        var slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //";
 
                         var newLine = lineWithoutQQQ + slashes + Preferences.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
                         writer.WriteLine(newLine);
@@ -96,9 +96,9 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.Log(ex.Message);
-                UnityEngine.Debug.Log(ex.Data);
-                UnityEngine.Debug.Log(ex.StackTrace);
+                Debug.Log(ex.Message);
+                Debug.Log(ex.Data);
+                Debug.Log(ex.StackTrace);
                 reader.Dispose();
                 writer.Dispose();
             }
@@ -165,9 +165,9 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.Log(ex.Message);
-                UnityEngine.Debug.Log(ex.Data);
-                UnityEngine.Debug.Log(ex.StackTrace);
+                Debug.Log(ex.Message);
+                Debug.Log(ex.Data);
+                Debug.Log(ex.StackTrace);
                 writer.Dispose();
             }
         }
@@ -180,16 +180,14 @@ namespace com.immortalhydra.gdtb.codetodos
 
             // Parse the document for exclusions.
             var excludedScripts = new List<string>();
-            string line;
             var reader = new StreamReader(excludeDoc);
             try
             {
+                string line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (line.StartsWith("#") || String.IsNullOrEmpty(line) || line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
-                    {
-                        continue;
-                    }
+                    { }
                     else
                     {
                         excludedScripts.Add(line);
@@ -199,9 +197,9 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.Log(ex.Message);
-                UnityEngine.Debug.Log(ex.Data);
-                UnityEngine.Debug.Log(ex.StackTrace);
+                Debug.Log(ex.Message);
+                Debug.Log(ex.Data);
+                Debug.Log(ex.StackTrace);
                 reader.Dispose();
             }
             return excludedScripts;
@@ -225,10 +223,10 @@ namespace com.immortalhydra.gdtb.codetodos
             if (File.Exists(scriptsFile))
             {
                 // Parse the document for exclusions.
-                string line;
                 var reader = new StreamReader(scriptsFile);
                 try
                 {
+                    string line;
                     while ((line = reader.ReadLine()) != null)
                     {
                         QQQOps.AllScripts.Add(line);
@@ -237,9 +235,9 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
                 catch (Exception ex)
                 {
-                    UnityEngine.Debug.Log(ex.Message);
-                    UnityEngine.Debug.Log(ex.Data);
-                    UnityEngine.Debug.Log(ex.StackTrace);
+                    Debug.Log(ex.Message);
+                    Debug.Log(ex.Data);
+                    Debug.Log(ex.StackTrace);
                     reader.Dispose();
                 }
             }
@@ -255,16 +253,14 @@ namespace com.immortalhydra.gdtb.codetodos
             if (File.Exists(bakFile))
             {
                 // Parse the document for exclusions.
-                string line;
                 var reader = new StreamReader(bakFile);
                 try
                 {
+                    string line;
                     while ((line = reader.ReadLine()) != null)
                     {
                         if (line.StartsWith("#") || String.IsNullOrEmpty(line) || line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
-                        {
-                            continue;
-                        }
+                        { }
                         else
                         {
                             backedQQQs.Add(ParseQQQ(line));
@@ -274,9 +270,9 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
                 catch (Exception ex)
                 {
-                    UnityEngine.Debug.Log(ex.Message);
-                    UnityEngine.Debug.Log(ex.Data);
-                    UnityEngine.Debug.Log(ex.StackTrace);
+                    Debug.Log(ex.Message);
+                    Debug.Log(ex.Data);
+                    Debug.Log(ex.StackTrace);
                     reader.Dispose();
                 }
             }
@@ -311,9 +307,9 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.Log(ex.Message);
-                UnityEngine.Debug.Log(ex.Data);
-                UnityEngine.Debug.Log(ex.StackTrace);
+                Debug.Log(ex.Message);
+                Debug.Log(ex.Data);
+                Debug.Log(ex.StackTrace);
                 writer.Dispose();
             }
         }
@@ -328,9 +324,9 @@ namespace com.immortalhydra.gdtb.codetodos
             var writer = new StreamWriter(tempFile, false);
             var reader = new StreamReader(file);
 
-            var line = "";
             try
             {
+                string line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     if(line.Contains("[MenuItem"))
@@ -352,9 +348,9 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.Log(ex.Message);
-                UnityEngine.Debug.Log(ex.Data);
-                UnityEngine.Debug.Log(ex.StackTrace);
+                Debug.Log(ex.Message);
+                Debug.Log(ex.Data);
+                Debug.Log(ex.StackTrace);
                 reader.Dispose();
                 writer.Dispose();
             }
@@ -390,9 +386,9 @@ namespace com.immortalhydra.gdtb.codetodos
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.Log(ex.Message);
-                UnityEngine.Debug.Log(ex.Data);
-                UnityEngine.Debug.Log(ex.StackTrace);
+                Debug.Log(ex.Message);
+                Debug.Log(ex.Data);
+                Debug.Log(ex.StackTrace);
                 writer.Dispose();
             }
         }
@@ -448,9 +444,9 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
                 catch (Exception ex)
                 {
-                    UnityEngine.Debug.Log(ex.Message);
-                    UnityEngine.Debug.Log(ex.Data);
-                    UnityEngine.Debug.Log(ex.StackTrace);
+                    Debug.Log(ex.Message);
+                    Debug.Log(ex.Data);
+                    Debug.Log(ex.StackTrace);
                 }
 
                 string[] folders = null;
@@ -460,18 +456,18 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
                 catch (Exception ex)
                 {
-                    UnityEngine.Debug.Log(ex.Message);
-                    UnityEngine.Debug.Log(ex.Data);
-                    UnityEngine.Debug.Log(ex.StackTrace);
+                    Debug.Log(ex.Message);
+                    Debug.Log(ex.Data);
+                    Debug.Log(ex.StackTrace);
                 }
 
                 if (folders != null)
                 {
-                    for (int i = 0; i < folders.Length; i++)
+                    foreach (var folder in folders)
                     {
-                        if (folders[i].EndsWith(aFolderName))
+                        if (folder.EndsWith(aFolderName))
                         {
-                            absolutePath = folders[i];
+                            absolutePath = folder;
                         }
                     }
                 }
@@ -485,10 +481,10 @@ namespace com.immortalhydra.gdtb.codetodos
         /// This is to remove the whole QQQ without removing anything else of importance (including stuff in a comment BEFORE a QQQ).
         private static string GetLineWithoutQQQ(string aLine)
         {
-            var qqqIndex = aLine.IndexOf(Preferences.TODOToken);
+            var qqqIndex = aLine.IndexOf(Preferences.TODOToken, StringComparison.Ordinal);
             qqqIndex = qqqIndex < 1 ? 1 : qqqIndex;
 
-            int j = qqqIndex - 1;
+            var j = qqqIndex - 1;
             while (j >= 0 && (aLine[j] == ' ' || aLine[j] == '/'))
             {
                 if (j > 0)

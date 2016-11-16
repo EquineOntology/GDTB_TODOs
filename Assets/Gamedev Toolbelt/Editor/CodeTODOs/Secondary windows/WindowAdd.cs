@@ -10,37 +10,37 @@ namespace com.immortalhydra.gdtb.codetodos
 #region FIELDS AND PROPERTIES
 
         // Constants.
-        private const int IconSize = Constants.ICON_SIZE;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
         private const int FieldsWidth = 120;
 
         // Fields.
         private GUISkin _skin;
-        private GUIStyle _style_bold, _style_buttonText;
-        private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
+        private GUIStyle _boldStyle, _buttonTextStyle;
+        private readonly string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
         private string _task;
         private MonoScript _script;
         private int _priority = 2;
-        private int _lineNumber = 0;
+        private int _lineNumber;
 
         // Properties.
         public static WindowAdd Instance { get; private set; }
-        public static bool IsOpen {
+        public static bool IsOpen
+        {
             get { return Instance != null; }
         }
 
-#endregion
+        #endregion
 
 #region MONOBEHAVIOUR METHODS
 
         public void OnEnable()
         {
-            #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
-                titleContent = new GUIContent("Add task");
-            #else
-                title = "Add task";
-            #endif
+        #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
+            titleContent = new GUIContent("Add task");
+        #else
+            title = "Add task";
+        #endif
 
             Instance = this;
             LoadSkin();
@@ -72,7 +72,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
         public static void Init()
         {
-            WindowAdd window = (WindowAdd)EditorWindow.GetWindow(typeof(WindowAdd));
+            var window = (WindowAdd)GetWindow(typeof(WindowAdd));
             window.minSize = new Vector2(208f, 230f);
             window.ShowUtility();
         }
@@ -88,14 +88,14 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Load custom styles and apply colors from preferences.
         public void LoadStyles()
         {
-            _style_bold = _skin.GetStyle("GDTB_CodeTODOs_task");
-            _style_bold.active.textColor = Preferences.Color_Secondary;
-            _style_bold.normal.textColor = Preferences.Color_Secondary;
-            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
-            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
-            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
+            _boldStyle = _skin.GetStyle("GDTB_CodeTODOs_task");
+            _boldStyle.active.textColor = Preferences.Secondary;
+            _boldStyle.normal.textColor = Preferences.Secondary;
+            _buttonTextStyle = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
+            _buttonTextStyle.active.textColor = Preferences.Tertiary;
+            _buttonTextStyle.normal.textColor = Preferences.Tertiary;
 
-            _skin.settings.selectionColor = Preferences.Color_Secondary;
+            _skin.settings.selectionColor = Preferences.Secondary;
         }
 
 
@@ -104,7 +104,7 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Draw the background texture.
         private void DrawWindowBackground()
         {
-            EditorGUI.DrawRect(new Rect(0, 0, position.width, position.height), Preferences.Color_Primary);
+            EditorGUI.DrawRect(new Rect(0, 0, position.width, position.height), Preferences.Primary);
         }
 
 
@@ -112,7 +112,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawScriptPicker()
         {
             var labelRect = new Rect(10, 10, position.width - 20, 16);
-            EditorGUI.LabelField(labelRect, "Pick a script:",  _style_bold);
+            EditorGUI.LabelField(labelRect, "Pick a script:",  _boldStyle);
 
             var pickerRect = new Rect(10, 28, position.width - 20, 16);
             _script = (MonoScript)EditorGUI.ObjectField(pickerRect, _script, typeof(MonoScript), false);
@@ -123,7 +123,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawTaskField()
         {
             var labelRect = new Rect(10, 53, position.width - 20, 16);
-            EditorGUI.LabelField(labelRect, "Write a task:", _style_bold);
+            EditorGUI.LabelField(labelRect, "Write a task:", _boldStyle);
 
             var taskRect = new Rect(10, 71, position.width - 20, 32);
             _task = EditorGUI.TextField(taskRect, _task);
@@ -134,7 +134,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawPriorityPopup()
         {
             var labelRect = new Rect(10, 112, position.width - 20, 16);
-            EditorGUI.LabelField(labelRect, "Choose a priority:", _style_bold);
+            EditorGUI.LabelField(labelRect, "Choose a priority:", _boldStyle);
 
             var priorityRect = new Rect(10, 130, FieldsWidth, 16);
             _priority = EditorGUI.Popup(priorityRect, _priority - 1, _qqqPriorities) + 1;
@@ -145,7 +145,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawLineNumberField()
         {
             var labelRect = new Rect(10, 155, position.width - 20, 32);
-            EditorGUI.LabelField(labelRect, "Choose the line number:", _style_bold);
+            EditorGUI.LabelField(labelRect, "Choose the line number:", _boldStyle);
 
             var lineRect = new Rect(10, 176, FieldsWidth, 16);
             _lineNumber = EditorGUI.IntField(lineRect, _lineNumber);
@@ -195,7 +195,7 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 var execute = false;
                 // Get confirmation (through confirmation dialog or automatically if conf. is off).
-                if (Preferences.ShowConfirmationDialogs == true)
+                if (Preferences.ShowConfirmationDialogs)
                 {
                     if (EditorUtility.DisplayDialog("Add task?", "Are you sure you want to add this task to the specified script?", "Add task", "Cancel"))
                     {
@@ -208,12 +208,12 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
 
                 // Do the thing.
-                if (execute == true)
+                if (execute)
                 {
                     var path = AssetDatabase.GetAssetPath(_script);
                     var newQQQ = new QQQ(_priority, _task, path, _lineNumber);
                     QQQOps.AddQQQ(newQQQ);
-                    EditorWindow.GetWindow(typeof(WindowAdd)).Close();
+                    GetWindow(typeof(WindowAdd)).Close();
                 }
             }
         }

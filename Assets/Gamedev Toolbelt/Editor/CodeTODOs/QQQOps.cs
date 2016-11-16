@@ -57,9 +57,9 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             var qqqs = new List<QQQ>();
 
-            for (int i = 0; i < AllScripts.Count; i++)
+            foreach (var script in AllScripts)
             {
-                qqqs.AddRange(GetQQQsFromScript(AllScripts[i]));
+                qqqs.AddRange(GetQQQsFromScript(script));
             }
             WindowMain.QQQs = qqqs;
         }
@@ -72,7 +72,7 @@ namespace com.immortalhydra.gdtb.codetodos
             var lines = File.ReadAllLines(aPath);
 
             QQQ newQQQ;
-            for (int i = 0; i < lines.Length; i++)
+            for (var i = 0; i < lines.Length; i++)
             {
                 newQQQ = new QQQ();
                 if (lines[i].Contains(Preferences.TODOToken))
@@ -103,7 +103,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
                     // After the priority we get the task.
                     // If the QQQ has an explicit priority, we add 1 to the index so that the number doesn't appear in the task.
-                    if (hasExplicitPriority == true)
+                    if (hasExplicitPriority)
                     {
                         index += 1;
                     }
@@ -128,13 +128,13 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Add the QQQs in a script to the list in CodeTODOs.
         public static void AddQQQs(string aScript)
         {
-            var qqqs = QQQOps.GetQQQsFromScript(aScript);
+            var qqqs = GetQQQsFromScript(aScript);
 
-            for (int i = 0; i < qqqs.Count; i++)
+            foreach (var qqq in qqqs)
             {
-                if (!WindowMain.QQQs.Contains(qqqs[i]))
+                if (!WindowMain.QQQs.Contains(qqq))
                 {
-                    WindowMain.QQQs.Add(qqqs[i]);
+                    WindowMain.QQQs.Add(qqq);
                 }
             }
         }
@@ -144,7 +144,7 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void RemoveScript(string aScript)
         {
             // Remove from QQQs.
-            for (int i = 0; i < WindowMain.QQQs.Count; i++)
+            for (var i = 0; i < WindowMain.QQQs.Count; i++)
             {
                 if (WindowMain.QQQs[i].Script == aScript)
                 {
@@ -154,7 +154,7 @@ namespace com.immortalhydra.gdtb.codetodos
             }
 
             // Remove from AllScripts
-            for (int i = 0; i < AllScripts.Count; i++)
+            for (var i = 0; i < AllScripts.Count; i++)
             {
                 if (AllScripts[i] == aScript)
                 {
@@ -168,11 +168,11 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Change all references to a script in CodeTODOs.QQQs to another script (for when a script is moved).
         public static void ChangeScriptOfQQQ(string aPathTo, string aPathFrom)
         {
-            for (int i = 0; i < WindowMain.QQQs.Count; i++)
+            foreach (var qqq in WindowMain.QQQs)
             {
-                if (WindowMain.QQQs[i].Script == aPathTo)
+                if (qqq.Script == aPathTo)
                 {
-                    WindowMain.QQQs[i].Script = aPathFrom;
+                    qqq.Script = aPathFrom;
                 }
             }
         }
@@ -197,29 +197,29 @@ namespace com.immortalhydra.gdtb.codetodos
             var orderedQQQs = new List<QQQ>();
 
             // First add urgent tasks.
-            for (int i = 0; i < originalQQQs.Count; i++)
+            foreach (var originalQQQ in originalQQQs)
             {
-                if (originalQQQs[i].Priority == QQQPriority.URGENT)
+                if (originalQQQ.Priority == QQQPriority.URGENT)
                 {
-                    orderedQQQs.Add(originalQQQs[i]);
+                    orderedQQQs.Add(originalQQQ);
                 }
             }
 
             // Then normal ones.
-            for (int i = 0; i < originalQQQs.Count; i++)
+            foreach (var originalQQQ in originalQQQs)
             {
-                if (originalQQQs[i].Priority == QQQPriority.NORMAL)
+                if (originalQQQ.Priority == QQQPriority.NORMAL)
                 {
-                    orderedQQQs.Add(originalQQQs[i]);
+                    orderedQQQs.Add(originalQQQ);
                 }
             }
 
             // Then minor ones.
-            for (int i = 0; i < originalQQQs.Count; i++)
+            foreach (var originalQQQ in originalQQQs)
             {
-                if (originalQQQs[i].Priority == QQQPriority.MINOR)
+                if (originalQQQ.Priority == QQQPriority.MINOR)
                 {
-                    orderedQQQs.Add(originalQQQs[i]);
+                    orderedQQQs.Add(originalQQQ);
                 }
             }
 
@@ -246,9 +246,9 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Remove all QQQs.
         public static void RemoveAllQQQs()
         {
-            for (var i = 0; i < WindowMain.QQQs.Count; i++)
+            foreach (var qqq in WindowMain.QQQs)
             {
-                RemoveQQQ(WindowMain.QQQs[i]);
+                RemoveQQQ(qqq);
             }
             RefreshQQQs();
         }
@@ -257,19 +257,19 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Open the script associated with the qqq in question.
         public static void OpenScript(QQQ aQQQ)
         {
-            #if UNITY_5_3_OR_NEWER
-            var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script) as UnityEngine.TextAsset;
-            AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
+        #if UNITY_5_3_OR_NEWER
+            var script = AssetDatabase.LoadAssetAtPath<TextAsset>(aQQQ.Script);
+            AssetDatabase.OpenAsset(script.GetInstanceID(), aQQQ.LineNumber + 1);
 
-            #elif UNITY_5
+        #elif UNITY_5
             var script = AssetDatabase.LoadAssetAtPath(aQQQ.Script, typeof(UnityEngine.TextAsset)) as UnityEngine.TextAsset;
             AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
 
-            #elif UNITY_4
+        #elif UNITY_4
             var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script, typeof(UnityEngine.TextAsset)) as UnityEngine.TextAsset;
             AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
 
-            #endif
+        #endif
         }
 
 
@@ -292,8 +292,8 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void RefreshQQQs()
         {
             WindowMain.QQQs.Clear();
-            QQQOps.GetQQQsFromAllScripts();
-            QQQOps.ReorderQQQs();
+            GetQQQsFromAllScripts();
+            ReorderQQQs();
         }
 
 
@@ -333,20 +333,6 @@ namespace com.immortalhydra.gdtb.codetodos
                 default:
                     return QQQPriority.NORMAL;
             }
-        }
-
-
-
-
-        /// If the script path is wider than its rect, cut it and insert "..."
-        private static string ReduceScriptPath(QQQ aQQQ, float aWidth, GUIStyle aStyle)
-        {
-            var stringWidth = aStyle.CalcSize(new GUIContent(aQQQ.Script)).x;
-            var surplusWidth = stringWidth - aWidth;
-            var surplusCharacters = (int)Mathf.Ceil(surplusWidth / 7); // 7 being the character width with a normal style.
-
-            int cutoffIndex = Mathf.Clamp(surplusCharacters + 4, 0, aQQQ.Script.Length - 1); // +4 because of the "..." we'll be adding.
-            return "..." + aQQQ.Script.Substring(cutoffIndex);
         }
 
 #endregion

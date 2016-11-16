@@ -11,19 +11,19 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Draw the button, based on the type, not pressed.
         public static void DrawButton(Rect aRect, string aText, GUIStyle aStyle)
         {
-            EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
+            EditorGUI.DrawRect(aRect, Preferences.Secondary);
             var bgRect = new Rect(aRect.x + Constants.BUTTON_BORDER_THICKNESS, aRect.y + Constants.BUTTON_BORDER_THICKNESS, aRect.width - Constants.BUTTON_BORDER_THICKNESS * 2, aRect.height - Constants.BUTTON_BORDER_THICKNESS * 2);
-            EditorGUI.DrawRect(bgRect, Preferences.Color_Primary);
+            EditorGUI.DrawRect(bgRect, Preferences.Primary);
             GUI.Label(new Rect(bgRect.x, bgRect.y - 1, bgRect.width, bgRect.height), aText, aStyle);
-            aStyle.normal.textColor = Preferences.Color_Tertiary;
+            aStyle.normal.textColor = Preferences.Tertiary;
         }
 
 
         /// Draw "fake" text button in the pressed state.
         public static void DrawPressedButton(Rect aRect, string aText, GUIStyle aStyle)
         {
-            EditorGUI.DrawRect(aRect, Preferences.Color_Secondary);
-            aStyle.normal.textColor = Preferences.Color_Primary;
+            EditorGUI.DrawRect(aRect, Preferences.Secondary);
+            aStyle.normal.textColor = Preferences.Primary;
             GUI.Label(new Rect(aRect.x, aRect.y - 1, aRect.width, aRect.height), aText, aStyle);
         }
 

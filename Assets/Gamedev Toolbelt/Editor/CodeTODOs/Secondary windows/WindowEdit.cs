@@ -13,32 +13,32 @@ namespace com.immortalhydra.gdtb.codetodos
         private static QQQ _newQQQ;
 
         private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
-        private bool _prioritySetOnce = false;
+        private bool _prioritySetOnce;
 
         private GUISkin _skin;
-        private GUIStyle _style_bold, _style_buttonText;
+        private GUIStyle _boldStyle, _buttonTextStyle;
 
-        private const int IconSize = Constants.ICON_SIZE;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
 
         // Properties.
         public static WindowEdit Instance { get; private set; }
-        public static bool IsOpen {
+        public static bool IsOpen
+        {
             get { return Instance != null; }
         }
 
-#endregion
+        #endregion
 
 #region MONOBEHAVIOUR METHODS
 
         public void OnEnable()
         {
-            #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
-                titleContent = new GUIContent("Edit task");
-            #else
-                title = "Edit task";
-            #endif
+        #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
+            titleContent = new GUIContent("Edit task");
+        #else
+            title = "Edit task";
+        #endif
             Instance = this;
             LoadSkin();
             LoadStyles();
@@ -70,7 +70,7 @@ namespace com.immortalhydra.gdtb.codetodos
         public static void Init(QQQ aQQQ)
         {
             // Get existing open window or if none, make a new one.
-            WindowEdit window = (WindowEdit)EditorWindow.GetWindow(typeof(WindowEdit));
+            var window = (WindowEdit) GetWindow(typeof(WindowEdit));
             window.minSize = new Vector2(208f, 140f);
             _oldQQQ = aQQQ;
             _newQQQ = new QQQ((int)aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);
@@ -88,14 +88,14 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Load custom styles and apply colors from preferences.
         public void LoadStyles()
         {
-            _style_bold = _skin.GetStyle("GDTB_CodeTODOs_task");
-            _style_bold.active.textColor = Preferences.Color_Secondary;
-            _style_bold.normal.textColor = Preferences.Color_Secondary;
-            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
-            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
-            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
+            _boldStyle = _skin.GetStyle("GDTB_CodeTODOs_task");
+            _boldStyle.active.textColor = Preferences.Secondary;
+            _boldStyle.normal.textColor = Preferences.Secondary;
+            _buttonTextStyle = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
+            _buttonTextStyle.active.textColor = Preferences.Tertiary;
+            _buttonTextStyle.normal.textColor = Preferences.Tertiary;
 
-            _skin.settings.selectionColor = Preferences.Color_Secondary;
+            _skin.settings.selectionColor = Preferences.Secondary;
         }
 
 
@@ -104,7 +104,7 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Draw the background texture.
         private void DrawWindowBackground()
         {
-            EditorGUI.DrawRect(new Rect(0, 0, position.width, position.height), Preferences.Color_Primary);
+            EditorGUI.DrawRect(new Rect(0, 0, position.width, position.height), Preferences.Primary);
         }
 
 
@@ -112,7 +112,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void DrawPriority()
         {
             var labelRect = new Rect(10, 10, position.width, 16);
-            EditorGUI.LabelField(labelRect, "Choose a priority:", _style_bold);
+            EditorGUI.LabelField(labelRect, "Choose a priority:", _boldStyle);
 
             int priorityIndex;
             if (!_prioritySetOnce)
@@ -136,7 +136,7 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             // Label.
             var labelRect = new Rect(10, 53, position.width, 16);
-            EditorGUI.LabelField(labelRect, "Task:", _style_bold);
+            EditorGUI.LabelField(labelRect, "Task:", _boldStyle);
 
             // The task itself.
             var fieldRect = new Rect(10, 71, position.width - 20, 32);
@@ -173,7 +173,7 @@ namespace com.immortalhydra.gdtb.codetodos
             // Get confirmation (through confirmation dialog or automatically if conf. is off).
             var execute = false;
 
-            if (Preferences.ShowConfirmationDialogs == true)
+            if (Preferences.ShowConfirmationDialogs)
             {
                 if (EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
                 {
@@ -186,14 +186,14 @@ namespace com.immortalhydra.gdtb.codetodos
             }
 
             // Do the thing.
-            if (execute == true)
+            if (execute)
             {
                 QQQOps.UpdateTask(_oldQQQ, _newQQQ);
                 if (WindowMain.IsOpen)
                 {
-                    EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
+                    GetWindow(typeof(WindowMain)).Repaint();
                 }
-                EditorWindow.GetWindow(typeof(WindowEdit)).Close();
+                GetWindow(typeof(WindowEdit)).Close();
             }
         }
 

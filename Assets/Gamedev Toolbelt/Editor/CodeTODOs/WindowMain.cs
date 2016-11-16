@@ -8,31 +8,33 @@ namespace com.immortalhydra.gdtb.codetodos
     {
 #region FIELDS AND PROPERTIES
 
+        // Constants.
+        private const int IconSize = Constants.ICON_SIZE;
+        private const int Offset = Constants.OFFSET;
+        private const int ButtonWidth = 70;
+        private const int ButtonHeight = 18;
+
         // Fields.
         public static List<QQQ> QQQs = new List<QQQ>();
 
         private GUISkin _skin;
-        private GUIStyle _style_task, _style_script, _style_buttonText;
+        private GUIStyle _taskStyle, _scriptStyle, _buttonTextStyle;
 
-        private const int IconSize = Constants.ICON_SIZE;
-        private const int ButtonWidth = 70;
-        private const int ButtonHeight = 18;
-
-        private int _width_qqq, _width_buttons;
-        private float _height_totalQQQHeight = 0;
-        private int _offset = 5;
+        private int _qqqWidth, _buttonsWidth;
+        private float _totalQQQHeight;
 
         private Vector2 _scrollPosition = new Vector2(0.0f, 0.0f);
-        private Rect _rect_scrollArea, _rect_scrollView, _rect_qqq, _rect_editAndComplete;
-        private bool _showingScrollbar = false;
+        private Rect _scrollAreaRect, _scrollViewRect, _qqqRect, _editAndCompleteRect;
+        private bool _showingScrollbar;
 
         // Properties.
         public static WindowMain Instance { get; private set; }
-        public static bool IsOpen {
+        public static bool IsOpen
+        {
             get { return Instance != null; }
         }
 
-#endregion
+        #endregion
 
 
 #region MONOBEHAVIOUR METHODS
@@ -40,9 +42,9 @@ namespace com.immortalhydra.gdtb.codetodos
         public void OnEnable()
         {
         #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
-                titleContent = new GUIContent("CodeTODOs");
+            titleContent = new GUIContent("CodeTODOs");
         #else
-                title = "CodeTODOs";
+            title = "CodeTODOs";
         #endif
 
             Instance = this;
@@ -95,7 +97,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
 #region METHODS
 
-        [MenuItem("Window/Gamedev Toolbelt/CodeTODOs/Open CodeTODOs %w", false, 1)]
+        [MenuItem("Window/Gamedev Toolbelt/CodeTODOs/Open CodeTODOs %&w", false, 1)]
         public static void Init()
         {
             // If CodeTODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default, and show the first start window.
@@ -105,7 +107,7 @@ namespace com.immortalhydra.gdtb.codetodos
             }
 
             // Get existing open window or if none, make a new one.
-            var window = (WindowMain)EditorWindow.GetWindow(typeof(WindowMain));
+            var window = (WindowMain) GetWindow(typeof(WindowMain));
             window.SetMinSize();
             window.LoadSkin();
             window.LoadStyles();
@@ -118,7 +120,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
             window.Show();
 
-            if(Preferences.ShowWelcome == true)
+            if(Preferences.ShowWelcome)
             {
                 WindowWelcome.Init();
             }
@@ -135,22 +137,22 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Load custom styles and apply colors from preferences.
         public void LoadStyles()
         {
-            _style_script = _skin.GetStyle("GDTB_CodeTODOs_script");
-            _style_script.active.textColor = Preferences.Color_Tertiary;
-            _style_script.normal.textColor = Preferences.Color_Tertiary;
-            _style_task = _skin.GetStyle("GDTB_CodeTODOs_task");
-            _style_task.active.textColor = Preferences.Color_Secondary;
-            _style_task.normal.textColor = Preferences.Color_Secondary;
-            _style_buttonText = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
-            _style_buttonText.active.textColor = Preferences.Color_Tertiary;
-            _style_buttonText.normal.textColor = Preferences.Color_Tertiary;
+            _scriptStyle = _skin.GetStyle("GDTB_CodeTODOs_script");
+            _scriptStyle.active.textColor = Preferences.Tertiary;
+            _scriptStyle.normal.textColor = Preferences.Tertiary;
+            _taskStyle = _skin.GetStyle("GDTB_CodeTODOs_task");
+            _taskStyle.active.textColor = Preferences.Secondary;
+            _taskStyle.normal.textColor = Preferences.Secondary;
+            _buttonTextStyle = _skin.GetStyle("GDTB_CodeTODOs_buttonText");
+            _buttonTextStyle.active.textColor = Preferences.Tertiary;
+            _buttonTextStyle.normal.textColor = Preferences.Tertiary;
 
-            _skin.settings.selectionColor = Preferences.Color_Secondary;
+            _skin.settings.selectionColor = Preferences.Secondary;
 
             // Change scrollbar color.
             var scrollbar = Resources.Load(Constants.TEX_SCROLLBAR, typeof(Texture2D)) as Texture2D;
         #if UNITY_5 || UNITY_5_3_OR_NEWER
-            scrollbar.SetPixel(0,0, Preferences.Color_Secondary);
+            scrollbar.SetPixel(0,0, Preferences.Secondary);
         #else
 			var pixels = scrollbar.GetPixels();
 			// We do it like this because minimum texture size in older versions of Unity is 2x2.
@@ -181,7 +183,7 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Draw the background texture.
         private void DrawWindowBackground()
         {
-            EditorGUI.DrawRect(new Rect(0, 0, position.width, position.height), Preferences.Color_Primary);
+            EditorGUI.DrawRect(new Rect(0, 0, position.width, position.height), Preferences.Primary);
         }
 
 
@@ -198,7 +200,7 @@ namespace com.immortalhydra.gdtb.codetodos
                 labelSize = EditorStyles.wordWrappedMiniLabel.CalcSize(labelContent);
             #endif
 
-            var labelRect = new Rect(position.width / 2 - labelSize.x / 2, position.height / 2 - labelSize.y / 2 - _offset * 2.5f, labelSize.x, labelSize.y);
+            var labelRect = new Rect(position.width / 2 - labelSize.x / 2, position.height / 2 - labelSize.y / 2 - Offset * 2.5f, labelSize.x, labelSize.y);
             #if UNITY_5_3_OR_NEWER
                 EditorGUI.LabelField(labelRect, labelContent, EditorStyles.centeredGreyMiniLabel);
             #else
@@ -210,71 +212,64 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Draw the list of QQQs.
         private void DrawQQQs()
         {
-            _rect_scrollView.height = _height_totalQQQHeight - _offset;
+            _scrollViewRect.height = _totalQQQHeight - Offset;
 
             // Diminish the width of scrollview and scroll area so that the scollbar is offset from the right edge of the window.
-            _rect_scrollArea.width += IconSize - _offset;
-            _rect_scrollView.width -= _offset;
+            _scrollAreaRect.width += IconSize - Offset;
+            _scrollViewRect.width -= Offset;
 
             // Change size of the scroll area so that it fills the window when there's no scrollbar.
             if (_showingScrollbar == false)
             {
-                _rect_scrollView.width += IconSize;
+                _scrollViewRect.width += IconSize;
             }
 
-            _scrollPosition = GUI.BeginScrollView(_rect_scrollArea, _scrollPosition, _rect_scrollView);
+            _scrollPosition = GUI.BeginScrollView(_scrollAreaRect, _scrollPosition, _scrollViewRect);
 
-            _height_totalQQQHeight = _offset; // This includes all prefs, not just a single one.
+            _totalQQQHeight = Offset; // This includes all prefs, not just a single one.
 
-            for (var i = 0; i < QQQs.Count; i++)
+            foreach (var qqq in QQQs)
             {
-                var taskContent = new GUIContent(QQQs[i].Task);
-                var scriptContent = new GUIContent(CreateScriptLabelText(QQQs[i]));
-                var taskHeight = _style_task.CalcHeight(taskContent, _width_qqq);
-                var scriptHeight = _style_script.CalcHeight(scriptContent, _width_qqq);
+                var taskContent = new GUIContent(qqq.Task);
+                var scriptContent = new GUIContent(CreateScriptLabelText(qqq));
+                var taskHeight = _taskStyle.CalcHeight(taskContent, _qqqWidth);
+                var scriptHeight = _scriptStyle.CalcHeight(scriptContent, _qqqWidth);
 
-                var height_qqqBackground = taskHeight + scriptHeight + _offset * 2;
-                height_qqqBackground = height_qqqBackground < IconSize * 2.7f ? IconSize * 2.7f : height_qqqBackground;
+                var qqqBackgroundHeight = taskHeight + scriptHeight + Offset * 2;
+                qqqBackgroundHeight = qqqBackgroundHeight < IconSize * 2.7f ? IconSize * 2.7f : qqqBackgroundHeight;
 
-                _rect_qqq = new Rect(0, _height_totalQQQHeight, _width_qqq, height_qqqBackground);
-                _rect_editAndComplete = new Rect(_width_qqq + (_offset * 2), _rect_qqq.y, _width_buttons, height_qqqBackground);
+                _qqqRect = new Rect(0, _totalQQQHeight, _qqqWidth, qqqBackgroundHeight);
+                _editAndCompleteRect = new Rect(_qqqWidth + (Offset * 2), _qqqRect.y, _buttonsWidth, qqqBackgroundHeight);
 
-                var rect_qqqBackground = _rect_qqq;
-                rect_qqqBackground.height = height_qqqBackground + _offset / 2;
+                var qqqBackgroundRect = _qqqRect;
+                qqqBackgroundRect.height = qqqBackgroundHeight + Offset / 2;
 
-                if (_showingScrollbar == true) // If we're not showing the scrollbar, QQQs need to be larger too.
+                if (_showingScrollbar) // If we're not showing the scrollbar, QQQs need to be larger too.
                 {
-                    rect_qqqBackground.width = position.width - _offset - IconSize;
+                    qqqBackgroundRect.width = position.width - Offset - IconSize;
                 }
                 else
                 {
-                    rect_qqqBackground.width = position.width - _offset * 2.5f;
+                    qqqBackgroundRect.width = position.width - Offset * 2.5f;
                 }
 
-                rect_qqqBackground.x += _offset;
+                qqqBackgroundRect.x += Offset;
 
-                _height_totalQQQHeight += rect_qqqBackground.height + _offset;
+                _totalQQQHeight += qqqBackgroundRect.height + Offset;
 
                 // If the user removes a QQQ from the list in the middle of a draw call, the index in the for loop stays the same but QQQs.Count diminishes.
                 // I couldn't find a way around it, so what we do is swallow the exception and wait for the next draw call.
                 try
                 {
-                    DrawQQQBackground(rect_qqqBackground,  GetQQQPriorityColor((int)QQQs[i].Priority));
-                    DrawTaskAndScript(_rect_qqq, QQQs[i], taskHeight, scriptHeight);
-                    DrawEditAndComplete(_rect_editAndComplete, QQQs[i]);
+                    DrawQQQBackground(qqqBackgroundRect,  GetQQQPriorityColor((int)qqq.Priority));
+                    DrawTaskAndScript(_qqqRect, qqq, taskHeight, scriptHeight);
+                    DrawEditAndComplete(_editAndCompleteRect, qqq);
                 }
                 catch (System.Exception) { }
             }
 
             // Are we showing the scrollbar?
-            if (_rect_scrollArea.height < _rect_scrollView.height)
-            {
-                _showingScrollbar = true;
-            }
-            else
-            {
-                _showingScrollbar = false;
-            }
+            _showingScrollbar = _scrollAreaRect.height < _scrollViewRect.height;
 
             GUI.EndScrollView();
         }
@@ -289,7 +284,7 @@ namespace com.immortalhydra.gdtb.codetodos
                     aRect.y + Constants.BUTTON_BORDER_THICKNESS,
                     aRect.width - Constants.BUTTON_BORDER_THICKNESS * 2,
                     aRect.height - Constants.BUTTON_BORDER_THICKNESS * 2),
-                Preferences.Color_Quaternary);
+                Preferences.Quaternary);
         }
 
 
@@ -298,19 +293,19 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             // Task.
             var taskRect = aRect;
-            taskRect.x = _offset * 2;
-            taskRect.y += _offset;
+            taskRect.x = Offset * 2;
+            taskRect.y += Offset;
             taskRect.height = aTaskHeight;
-            EditorGUI.LabelField(taskRect, aQQQ.Task, _style_task);
+            EditorGUI.LabelField(taskRect, aQQQ.Task, _taskStyle);
 
             // Script.
             var scriptRect = aRect;
-            scriptRect.x = _offset * 2;
+            scriptRect.x = Offset * 2;
             scriptRect.y += (taskRect.height + 8);
             scriptRect.height = aScriptHeight;
             var scriptLabel = CreateScriptLabelText(aQQQ);
 
-            EditorGUI.LabelField(scriptRect, scriptLabel, _style_script);
+            EditorGUI.LabelField(scriptRect, scriptLabel, _scriptStyle);
 
             // Open editor on click.
             EditorGUIUtility.AddCursorRect(scriptRect, MouseCursor.Link);
@@ -327,11 +322,11 @@ namespace com.immortalhydra.gdtb.codetodos
             Rect editRect, completeRect;
             GUIContent editContent, completeContent;
 
-            aRect.x = position.width - ButtonWidth - _offset * 2.5f;
+            aRect.x = position.width - ButtonWidth - Offset * 2.5f;
 
-            if (_showingScrollbar == true)
+            if (_showingScrollbar)
             {
-                aRect.x -= _offset * 2.5f;
+                aRect.x -= Offset * 2.5f;
             }
 
             SetupButton_Edit(aRect, out editRect, out editContent);
@@ -347,7 +342,7 @@ namespace com.immortalhydra.gdtb.codetodos
             {
                 // Get confirmation through dialog (or not if the user doesn't want to).
                 var canExecute = false;
-                if (Preferences.ShowConfirmationDialogs == true)
+                if (Preferences.ShowConfirmationDialogs)
                 {
                     var token = Preferences.TODOToken;
                     if (EditorUtility.DisplayDialog("Complete " + token, "Are you sure you're done with this " + token + "?\nIt will be removed from the code too.", "Complete " + token, "Cancel"))
@@ -361,7 +356,7 @@ namespace com.immortalhydra.gdtb.codetodos
                 }
 
                 // Actually do the thing.
-                if (canExecute == true)
+                if (canExecute)
                 {
                     QQQOps.CompleteQQQ(aQQQ);
                 }
@@ -416,15 +411,15 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Draw a line separating scrollview and lower buttons.
         private void DrawSeparator()
         {
-            var separator = new Rect(0, position.height - (_offset * 7), position.width, 1);
-            EditorGUI.DrawRect(separator, Preferences.Color_Secondary);
+            var separator = new Rect(0, position.height - (Offset * 7), position.width, 1);
+            EditorGUI.DrawRect(separator, Preferences.Secondary);
         }
 
 
         private void SetupButton_Edit(Rect aRect, out Rect anEditRect, out GUIContent anEditContent)
         {
             anEditRect = aRect;
-            anEditRect.y += _offset + 2;
+            anEditRect.y += Offset + 2;
             anEditRect.width = ButtonWidth;
             anEditRect.height = ButtonHeight;
 
@@ -435,7 +430,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private void SetupButton_Complete(Rect aRect, out Rect aCompleteRect, out GUIContent aCompleteContent)
         {
             aCompleteRect = aRect;
-            aCompleteRect.y += ButtonHeight + _offset + 8;
+            aCompleteRect.y += ButtonHeight + Offset + 8;
             aCompleteRect.width = ButtonWidth;
             aCompleteRect.height = ButtonHeight;
 
@@ -445,28 +440,28 @@ namespace com.immortalhydra.gdtb.codetodos
 
         private void SetupButton_Process(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect(position.width / 2 - ButtonWidth * 2 - _offset * 3, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 - ButtonWidth * 2 - Offset * 3, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Process", "Process scripts");
         }
 
 
         private void SetupButton_Add(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect(position.width / 2 - ButtonWidth - _offset, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 - ButtonWidth - Offset, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Add", "Add a new QQQ");
         }
 
 
         private void SetupButton_Refresh(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect(position.width / 2 + _offset, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 + Offset, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Refresh", "Refresh list");
         }
 
 
         private void SetupButton_Settings(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect(position.width / 2 + ButtonWidth + _offset * 3, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 + ButtonWidth + Offset * 3, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Settings", "Open Settings");
         }
 
@@ -485,14 +480,13 @@ namespace com.immortalhydra.gdtb.codetodos
             switch (aPriority)
             {
                 case 1:
-                    col = Preferences.PriColor1;
+                    col = Preferences.PriorityUrgent;
                     break;
                 case 3:
-                    col = Preferences.PriColor3;
+                    col = Preferences.PriorityMinor;
                     break;
-                case 2:
                 default:
-                    col = Preferences.PriColor2;
+                    col = Preferences.PriorityNormal;
                     break;
             }
             return col;
@@ -502,20 +496,20 @@ namespace com.immortalhydra.gdtb.codetodos
         /// Update sizes used in layouting based on the window size.
         private void UpdateLayoutingSizes()
         {
-            var width = position.width - _offset * 2;
-            _rect_scrollArea = new Rect(_offset, _offset, width - _offset * 2, position.height - IconSize - _offset * 4);
-            _rect_scrollView = _rect_scrollArea;
+            var width = position.width - Offset * 2;
+            _scrollAreaRect = new Rect(Offset, Offset, width - Offset * 2, position.height - IconSize - Offset * 4);
+            _scrollViewRect = _scrollAreaRect;
 
             if (_showingScrollbar)
             {
-                _width_buttons = ButtonWidth + _offset * 3;
+                _buttonsWidth = ButtonWidth + Offset * 3;
             }
             else
             {
-                _width_buttons = ButtonWidth + _offset * 1;
+                _buttonsWidth = ButtonWidth + Offset * 1;
             }
 
-            _width_qqq = (int)width - _width_buttons - _offset * 3;
+            _qqqWidth = (int)width - _buttonsWidth - Offset * 3;
         }
 
 
@@ -524,15 +518,15 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             if (WindowAdd.IsOpen)
             {
-                EditorWindow.GetWindow(typeof(WindowAdd)).Close();
+                GetWindow(typeof(WindowAdd)).Close();
             }
             if (WindowEdit.IsOpen)
             {
-                EditorWindow.GetWindow(typeof(WindowEdit)).Close();
+                GetWindow(typeof(WindowEdit)).Close();
             }
             if (WindowWelcome.IsOpen)
             {
-                EditorWindow.GetWindow(typeof(WindowWelcome)).Close();
+                GetWindow(typeof(WindowWelcome)).Close();
             }
         }
 

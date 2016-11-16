@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 
 namespace com.immortalhydra.gdtb.codetodos
 {
@@ -10,8 +9,7 @@ namespace com.immortalhydra.gdtb.codetodos
 
         public static string ColorToString(Color aColor)
         {
-            string colorString = "";
-            colorString = aColor.r.ToString() + '/' + aColor.g.ToString() + '/' + aColor.b.ToString() + '/' + aColor.a.ToString();
+            var colorString = aColor.r.ToString() + '/' + aColor.g.ToString() + '/' + aColor.b.ToString() + '/' + aColor.a.ToString();
             return colorString;
         }
 
@@ -20,10 +18,10 @@ namespace com.immortalhydra.gdtb.codetodos
         {
             var color = new Color();
             var values = anRGBAString.Split('/');
-            color.r = Single.Parse(values[0]);
-            color.g = Single.Parse(values[1]);
-            color.b = Single.Parse(values[2]);
-            color.a = Single.Parse(values[3]);
+            color.r = float.Parse(values[0]);
+            color.g = float.Parse(values[1]);
+            color.b = float.Parse(values[2]);
+            color.a = float.Parse(values[3]);
 
             return color;
         }
