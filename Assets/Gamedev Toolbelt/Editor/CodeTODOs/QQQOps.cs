@@ -71,10 +71,9 @@ namespace com.immortalhydra.gdtb.codetodos
             var currentQQQs = new List<QQQ>();
             var lines = File.ReadAllLines(aPath);
 
-            QQQ newQQQ;
             for (var i = 0; i < lines.Length; i++)
             {
-                newQQQ = new QQQ();
+                var newQQQ = new QQQ();
                 if (lines[i].Contains(Preferences.TODOToken))
                 {
                     var index = lines[i].IndexOf(Preferences.TODOToken);

@@ -17,6 +17,8 @@ namespace com.immortalhydra.gdtb.codetodos
         // Fields.
         public static List<QQQ> QQQs = new List<QQQ>();
 
+        public static bool WasHiddenByReimport = false;
+
         private GUISkin _skin;
         private GUIStyle _taskStyle, _scriptStyle, _buttonTextStyle;
 
@@ -26,6 +28,7 @@ namespace com.immortalhydra.gdtb.codetodos
         private Vector2 _scrollPosition = new Vector2(0.0f, 0.0f);
         private Rect _scrollAreaRect, _scrollViewRect, _qqqRect, _editAndCompleteRect;
         private bool _showingScrollbar;
+
 
         // Properties.
         public static WindowMain Instance { get; private set; }
@@ -62,7 +65,6 @@ namespace com.immortalhydra.gdtb.codetodos
         private void OnDestroy()
         {
             IO.WriteQQQsToFile();
-            Resources.UnloadUnusedAssets();
         }
 
 
@@ -77,6 +79,14 @@ namespace com.immortalhydra.gdtb.codetodos
             if (QQQs.Count == 0)
             {
                 DrawNoQQQsMessage();
+            }
+
+            if (WasHiddenByReimport)
+            {
+                QQQs.Clear();
+                QQQs.AddRange(IO.LoadStoredQQQs());
+                GetWindow(typeof(WindowMain)).Show();
+                WasHiddenByReimport = false;
             }
 
             DrawQQQs();
@@ -190,7 +200,7 @@ namespace com.immortalhydra.gdtb.codetodos
         /// If there are no QQQs, tell the user.
         private void DrawNoQQQsMessage()
         {
-            var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken + " in it.\n\nIf it's the first time you open CodeTODOs,\npress the 'Process scripts' button.\n\nIf you want to refresh the list,\npress the 'Refresh tasks' button.";
+            var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken + " in it.\n\nIf it's the first time you open CodeTODOs,\npress the 'Process scripts' button.\n\nIf you just reimported some files,\npress the 'Refresh tasks' button.";
             var labelContent = new GUIContent(label);
 
             Vector2 labelSize;
