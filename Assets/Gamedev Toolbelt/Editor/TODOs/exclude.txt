@@ -1,0 +1,12 @@
+# Paths included in this file will not be searched when looking for tasks.
+# This is accomplished by checking the path of each file against each line written here, so in some cases it pays to be more precise.
+# As an example, if you write "/Gamedev Toolbelt/" below every path will be tested for containing "/Gamedev Toolbelt/".
+# If you create another folder called "Gamedev Toolbelt" somewhere else in the project (aside frome the one created by this extension), that too will be ignored.
+# You can prevent this by including a bigger part of the path, for instance "/Gamedev Toolbelt/TODOs/"
+#
+# You can include both folders and files.
+
+/Gamedev Toolbelt/Editor/TODOs/
+/Gamedev Toolbelt/Editor/EditorPrefs Editor/
+/Gamedev Toolbelt/Editor/AnimationTester/
+/Plugins/FrameworkExtensionSomething/
