@@ -2,6 +2,7 @@
 
 * Let user change the border thickness in Settings.
 * Change default shortcut to CTRL/CMD + T (Q was quitting Unity on MacOS).
+* QQQs can now be pinned - a pinned QQQ will jump to the top of the list.
 
 ====== 2017.1 ======
 
