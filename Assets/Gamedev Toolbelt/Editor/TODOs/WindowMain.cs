@@ -26,7 +26,7 @@ namespace com.immortalhydra.gdtb.todos
         private float _totalQQQHeight;
 
         private Vector2 _scrollPosition = new Vector2(0.0f, 0.0f);
-        private Rect _scrollAreaRect, _scrollViewRect, _qqqRect, _editAndCompleteRect;
+        private Rect _scrollAreaRect, _scrollViewRect, _qqqRect, _editAndCompleteRect, _pinRect;
         private bool _showingScrollbar;
 
 
@@ -89,6 +89,7 @@ namespace com.immortalhydra.gdtb.todos
                 WasHiddenByReimport = false;
             }
 
+            QQQOps.ReorderQQQs();
             DrawQQQs();
             DrawSeparator();
             DrawBottomButtons();
@@ -244,11 +245,13 @@ namespace com.immortalhydra.gdtb.todos
                 var scriptContent = new GUIContent(CreateScriptLabelText(qqq));
                 var taskHeight = _taskStyle.CalcHeight(taskContent, _qqqWidth);
                 var scriptHeight = _scriptStyle.CalcHeight(scriptContent, _qqqWidth);
+                var pinHeight = Constants.LINE_HEIGHT;
 
-                var qqqBackgroundHeight = taskHeight + scriptHeight + Offset * 2;
+                var qqqBackgroundHeight = taskHeight + scriptHeight + pinHeight + Offset * 2;
                 qqqBackgroundHeight = qqqBackgroundHeight < IconSize * 2.7f ? IconSize * 2.7f : qqqBackgroundHeight;
 
                 _qqqRect = new Rect(0, _totalQQQHeight, _qqqWidth, qqqBackgroundHeight);
+                _pinRect = new Rect(Offset * 2, _totalQQQHeight + taskHeight + scriptHeight + Offset * 2, 70, Constants.LINE_HEIGHT);
                 _editAndCompleteRect = new Rect(_qqqWidth + (Offset * 2), _qqqRect.y, _buttonsWidth, qqqBackgroundHeight);
 
                 var qqqBackgroundRect = _qqqRect;
@@ -273,6 +276,7 @@ namespace com.immortalhydra.gdtb.todos
                 {
                     DrawQQQBackground(qqqBackgroundRect,  GetQQQPriorityColor((int)qqq.Priority));
                     DrawTaskAndScript(_qqqRect, qqq, taskHeight, scriptHeight);
+                    DrawPin(_pinRect, qqq);
                     DrawEditAndComplete(_editAndCompleteRect, qqq);
                 }
                 catch (System.Exception) { }
@@ -324,6 +328,13 @@ namespace com.immortalhydra.gdtb.todos
             {
                 QQQOps.OpenScript(aQQQ);
             }
+        }
+
+
+        /// Draws the "Pin to top" checkbox.
+        private void DrawPin(Rect aRect, QQQ qqq)
+        {
+            qqq.IsPinned = EditorGUI.ToggleLeft(aRect, "Pin to top", qqq.IsPinned, _scriptStyle);
         }
 
 

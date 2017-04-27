@@ -10,6 +10,7 @@
         public string Task;
         public string Script;
         public int LineNumber;
+        public bool IsPinned;
 
 #endregion
 
@@ -35,6 +36,31 @@
             Task = aTask;
             Script = aScript;
             LineNumber = aLineNumber;
+            IsPinned = false;
+        }
+
+
+        public QQQ(int aPriority, string aTask, string aScript, int aLineNumber, bool isPinned)
+        {
+            switch(aPriority)
+            {
+                case 1:
+                    Priority = QQQPriority.URGENT;
+                    break;
+                case 2:
+                    Priority = QQQPriority.NORMAL;
+                    break;
+                case 3:
+                    Priority = QQQPriority.MINOR;
+                    break;
+                default:
+                    Priority = QQQPriority.NORMAL;
+                    break;
+            }
+            Task = aTask;
+            Script = aScript;
+            LineNumber = aLineNumber;
+            IsPinned = isPinned;
         }
 
 
@@ -44,6 +70,7 @@
             Task = aTask;
             Script = aScript;
             LineNumber = aLineNumber;
+            IsPinned = false;
         }
 
 
@@ -53,6 +80,7 @@
             Task = aTask;
             Script = aScript;
             LineNumber = 0;
+            IsPinned = false;
         }
 
 
@@ -62,6 +90,7 @@
             Task = "";
             Script = "";
             LineNumber = 0;
+            IsPinned = false;
         }
 
 #endregion

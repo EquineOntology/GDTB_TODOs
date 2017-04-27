@@ -195,32 +195,38 @@ namespace com.immortalhydra.gdtb.todos
             var originalQQQs = WindowMain.QQQs;
             var orderedQQQs = new List<QQQ>();
 
-            // First add urgent tasks.
-            foreach (var originalQQQ in originalQQQs)
-            {
-                if (originalQQQ.Priority == QQQPriority.URGENT)
-                {
-                    orderedQQQs.Add(originalQQQ);
-                }
-            }
 
-            // Then normal ones.
-            foreach (var originalQQQ in originalQQQs)
+            // First are pinned tasks, then urgent, then normal, then minor ones.
+            var pinnedQQQs = new List<QQQ>();
+            var urgentQQQs = new List<QQQ>();
+            var normalQQQs = new List<QQQ>();
+            var minorQQQs = new List<QQQ>();
+            foreach (var qqq in originalQQQs)
             {
-                if (originalQQQ.Priority == QQQPriority.NORMAL)
+                if (qqq.IsPinned)
                 {
-                    orderedQQQs.Add(originalQQQ);
+                    pinnedQQQs.Add(qqq);
+                }
+                else
+                {
+                    switch (qqq.Priority)
+                    {
+                        case QQQPriority.URGENT:
+                            urgentQQQs.Add(qqq);
+                            break;
+                        case QQQPriority.NORMAL:
+                            normalQQQs.Add(qqq);
+                            break;
+                        default:
+                            minorQQQs.Add(qqq);
+                            break;
+                    }
                 }
             }
-
-            // Then minor ones.
-            foreach (var originalQQQ in originalQQQs)
-            {
-                if (originalQQQ.Priority == QQQPriority.MINOR)
-                {
-                    orderedQQQs.Add(originalQQQ);
-                }
-            }
+            orderedQQQs.AddRange(pinnedQQQs);
+            orderedQQQs.AddRange(urgentQQQs);
+            orderedQQQs.AddRange(normalQQQs);
+            orderedQQQs.AddRange(minorQQQs);
 
             WindowMain.QQQs = orderedQQQs;
         }

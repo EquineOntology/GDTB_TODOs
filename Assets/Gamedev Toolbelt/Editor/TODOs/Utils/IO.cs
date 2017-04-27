@@ -293,7 +293,7 @@ namespace com.immortalhydra.gdtb.todos
                 {
                     var priority = QQQOps.PriorityToInt(qqq.Priority);
                     var task = qqq.Task.Replace("|", "(U+007C)"); // Replace pipes so that the parser doesn't get confused on reimport.
-                    var line = priority + "|" + task + "|" + qqq.Script + "|" + qqq.LineNumber;
+                    var line = priority + "|" + task + "|" + qqq.Script + "|" + qqq.LineNumber + "|" + qqq.IsPinned;
                     writer.WriteLine(line);
                 }
                 writer.Close();
@@ -542,7 +542,14 @@ namespace com.immortalhydra.gdtb.todos
                 lineNumber = 0;
             }
 
-            var qqq = new QQQ(priority, task, parts[2], lineNumber);
+            // Check whether the QQQ is pinned or not.
+            bool isPinned;
+            if (Boolean.TryParse(parts[4], out isPinned) == false)
+            {
+                isPinned = false;
+            }
+
+            var qqq = new QQQ(priority, task, parts[2], lineNumber, isPinned);
             return qqq;
         }
 
