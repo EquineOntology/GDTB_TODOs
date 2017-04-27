@@ -1,6 +1,7 @@
 ====== 2017.2 ======
 
 * Let user change the border thickness in Settings.
+* Change default shortcut to CTRL/CMD + T (Q was quitting Unity on MacOS).
 
 ====== 2017.1 ======
 
