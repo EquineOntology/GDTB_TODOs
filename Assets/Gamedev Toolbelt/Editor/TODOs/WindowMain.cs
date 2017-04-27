@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace com.immortalhydra.gdtb.todos
 {
@@ -18,6 +20,8 @@ namespace com.immortalhydra.gdtb.todos
         public static List<QQQ> QQQs = new List<QQQ>();
 
         public static bool WasHiddenByReimport = false;
+        public static bool QQQsChanged = false;
+
 
         private GUISkin _skin;
         private GUIStyle _taskStyle, _scriptStyle, _buttonTextStyle;
@@ -85,11 +89,18 @@ namespace com.immortalhydra.gdtb.todos
             {
                 QQQs.Clear();
                 QQQs.AddRange(IO.LoadStoredQQQs());
+                QQQOps.ReorderQQQs();
                 GetWindow(typeof(WindowMain)).Show();
                 WasHiddenByReimport = false;
             }
 
-            QQQOps.ReorderQQQs();
+            // If the list has changed in some way, we reorder it.
+            if (QQQsChanged)
+            {
+                QQQOps.ReorderQQQs();
+                QQQsChanged = false;
+            }
+
             DrawQQQs();
             DrawSeparator();
             DrawBottomButtons();
@@ -334,7 +345,13 @@ namespace com.immortalhydra.gdtb.todos
         /// Draws the "Pin to top" checkbox.
         private void DrawPin(Rect aRect, QQQ qqq)
         {
+            var _wasPinned = qqq.IsPinned;
             qqq.IsPinned = EditorGUI.ToggleLeft(aRect, "Pin to top", qqq.IsPinned, _scriptStyle);
+
+            if (qqq.IsPinned != _wasPinned)
+            {
+                WindowMain.QQQsChanged = true;
+            }
         }
 
 

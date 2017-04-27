@@ -195,9 +195,10 @@ namespace com.immortalhydra.gdtb.todos
             var originalQQQs = WindowMain.QQQs;
             var orderedQQQs = new List<QQQ>();
 
-
-            // First are pinned tasks, then urgent, then normal, then minor ones.
-            var pinnedQQQs = new List<QQQ>();
+            // First are pinned tasks (ordered urgent-normal-minor), then urgent, then normal, then minor ones.
+            var pinnedQQQsUrgent = new List<QQQ>();
+            var pinnedQQQsNormal = new List<QQQ>();
+            var pinnedQQQsMinor = new List<QQQ>();
             var urgentQQQs = new List<QQQ>();
             var normalQQQs = new List<QQQ>();
             var minorQQQs = new List<QQQ>();
@@ -205,7 +206,18 @@ namespace com.immortalhydra.gdtb.todos
             {
                 if (qqq.IsPinned)
                 {
-                    pinnedQQQs.Add(qqq);
+                    switch (qqq.Priority)
+                    {
+                        case QQQPriority.URGENT:
+                            pinnedQQQsUrgent.Add(qqq);
+                            break;
+                        case QQQPriority.NORMAL:
+                            pinnedQQQsNormal.Add(qqq);
+                            break;
+                        default:
+                            pinnedQQQsMinor.Add(qqq);
+                            break;
+                    }
                 }
                 else
                 {
@@ -223,7 +235,9 @@ namespace com.immortalhydra.gdtb.todos
                     }
                 }
             }
-            orderedQQQs.AddRange(pinnedQQQs);
+            orderedQQQs.AddRange(pinnedQQQsUrgent);
+            orderedQQQs.AddRange(pinnedQQQsNormal);
+            orderedQQQs.AddRange(pinnedQQQsMinor);
             orderedQQQs.AddRange(urgentQQQs);
             orderedQQQs.AddRange(normalQQQs);
             orderedQQQs.AddRange(minorQQQs);
