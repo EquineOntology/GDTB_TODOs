@@ -136,7 +136,7 @@ namespace com.immortalhydra.gdtb.todos
         private const string ShortcutDefault = "%|t";
         public static string Shortcut
         {
-            get { return _shortcut; }2
+            get { return _shortcut; }
             set { _shortcut = value; }
         }
 
