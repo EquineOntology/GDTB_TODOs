@@ -30,7 +30,7 @@ sysinfo.txt
 /Assets/Gamedev Toolbelt/Editor/EditorPrefs Editor
 /PSDs/
 /Assets/TestScript.cs
-/Assets/Gamedev Toolbelt/Editor/CodeTODOs/bak.gdtb
+/Assets/Gamedev Toolbelt/Editor/TODOs/bak.gdtb
 /Assets/!MFCommon
 /Assets/Editor Default Resources
 /Assets/GameAssets
@@ -51,5 +51,7 @@ sysinfo.txt
 /Assets/Skyboxes/
 /Assets/Skyboxes/
 /Assets/Editor/
-/Assets/Gamedev Toolbelt/Editor/CodeTODOs/scripts.gdtb
+/Assets/Gamedev Toolbelt/Editor/TODOs/scripts.gdtb
 /Assets/New Cubemap.cubemap
+/Assets/Gamedev Toolbelt/Editor/CodeTODOs/
+/Assets/BigAwesomeProject/

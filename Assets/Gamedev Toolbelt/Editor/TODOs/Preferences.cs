@@ -131,12 +131,12 @@ namespace com.immortalhydra.gdtb.todos
 
         // Custom shortcut
         private const string PREFS_TODOS_SHORTCUT = "GDTB_TODOs_Shortcut";
-        private static string _shortcut = "%|q";
+        private static string _shortcut = "%|t";
         private static string _newShortcut;
-        private const string ShortcutDefault = "%|q";
+        private const string ShortcutDefault = "%|t";
         public static string Shortcut
         {
-            get { return _shortcut; }
+            get { return _shortcut; }2
             set { _shortcut = value; }
         }
 
