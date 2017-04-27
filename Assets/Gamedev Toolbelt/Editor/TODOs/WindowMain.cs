@@ -19,9 +19,10 @@ namespace com.immortalhydra.gdtb.todos
         // Fields.
         public static List<QQQ> QQQs = new List<QQQ>();
 
-        public static bool WasHiddenByReimport = false;
-        public static bool QQQsChanged = false;
+        public static bool WasHiddenByReimport;
+        public static bool QQQsChanged;
 
+        private static List<QQQ> _currentQQQs = new List<QQQ>();
 
         private GUISkin _skin;
         private GUIStyle _taskStyle, _scriptStyle, _buttonTextStyle;
@@ -101,6 +102,8 @@ namespace com.immortalhydra.gdtb.todos
                 QQQsChanged = false;
             }
 
+            _currentQQQs = QQQs;
+
             DrawQQQs();
             DrawSeparator();
             DrawBottomButtons();
@@ -139,6 +142,8 @@ namespace com.immortalhydra.gdtb.todos
 
             QQQs.Clear();
             QQQs.AddRange(IO.LoadStoredQQQs());
+
+            _currentQQQs = QQQs;
 
             window.Show();
 
@@ -250,10 +255,10 @@ namespace com.immortalhydra.gdtb.todos
 
             _totalQQQHeight = Offset; // This includes all prefs, not just a single one.
 
-            foreach (var qqq in QQQs)
+            for (var i = 0; i < _currentQQQs.Count; i++)
             {
-                var taskContent = new GUIContent(qqq.Task);
-                var scriptContent = new GUIContent(CreateScriptLabelText(qqq));
+                var taskContent = new GUIContent(_currentQQQs[i].Task);
+                var scriptContent = new GUIContent(CreateScriptLabelText(_currentQQQs[i]));
                 var taskHeight = _taskStyle.CalcHeight(taskContent, _qqqWidth);
                 var scriptHeight = _scriptStyle.CalcHeight(scriptContent, _qqqWidth);
                 var pinHeight = Constants.LINE_HEIGHT;
@@ -285,13 +290,14 @@ namespace com.immortalhydra.gdtb.todos
                 // I couldn't find a way around it, so what we do is swallow the exception and wait for the next draw call.
                 try
                 {
-                    DrawQQQBackground(qqqBackgroundRect,  GetQQQPriorityColor((int)qqq.Priority));
-                    DrawTaskAndScript(_qqqRect, qqq, taskHeight, scriptHeight);
-                    DrawPin(_pinRect, qqq);
-                    DrawEditAndComplete(_editAndCompleteRect, qqq);
+                    DrawQQQBackground(qqqBackgroundRect,  GetQQQPriorityColor((int)_currentQQQs[i].Priority));
+                    DrawTaskAndScript(_qqqRect, i, taskHeight, scriptHeight);
+                    DrawPin(_pinRect, i);
+                    DrawEditAndComplete(_editAndCompleteRect, i);
                 }
                 catch (System.Exception) { }
             }
+
 
             // Are we showing the scrollbar?
             _showingScrollbar = _scrollAreaRect.height < _scrollViewRect.height;
@@ -315,21 +321,21 @@ namespace com.immortalhydra.gdtb.todos
 
 
         /// Draws the "Task" and "Script" texts for QQQs.
-        private void DrawTaskAndScript(Rect aRect, QQQ aQQQ, float aTaskHeight, float aScriptHeight)
+        private void DrawTaskAndScript(Rect aRect, int qqqIndex, float aTaskHeight, float aScriptHeight)
         {
             // Task.
             var taskRect = aRect;
             taskRect.x = Offset * 2;
             taskRect.y += Offset;
             taskRect.height = aTaskHeight;
-            EditorGUI.LabelField(taskRect, aQQQ.Task, _taskStyle);
+            EditorGUI.LabelField(taskRect, _currentQQQs[qqqIndex].Task, _taskStyle);
 
             // Script.
             var scriptRect = aRect;
             scriptRect.x = Offset * 2;
             scriptRect.y += (taskRect.height + 8);
             scriptRect.height = aScriptHeight;
-            var scriptLabel = CreateScriptLabelText(aQQQ);
+            var scriptLabel = CreateScriptLabelText(_currentQQQs[qqqIndex]);
 
             EditorGUI.LabelField(scriptRect, scriptLabel, _scriptStyle);
 
@@ -337,26 +343,27 @@ namespace com.immortalhydra.gdtb.todos
             EditorGUIUtility.AddCursorRect(scriptRect, MouseCursor.Link);
             if (Event.current.type == EventType.MouseUp && scriptRect.Contains(Event.current.mousePosition))
             {
-                QQQOps.OpenScript(aQQQ);
+                QQQOps.OpenScript(_currentQQQs[qqqIndex]);
             }
         }
 
 
         /// Draws the "Pin to top" checkbox.
-        private void DrawPin(Rect aRect, QQQ qqq)
+        private void DrawPin(Rect aRect, int qqqIndex)
         {
-            var _wasPinned = qqq.IsPinned;
-            qqq.IsPinned = EditorGUI.ToggleLeft(aRect, "Pin to top", qqq.IsPinned, _scriptStyle);
+            var wasPinned = _currentQQQs[qqqIndex].IsPinned;
+            var isPinned = EditorGUI.ToggleLeft(aRect, "Pin to top", wasPinned, _scriptStyle);
 
-            if (qqq.IsPinned != _wasPinned)
+            if (isPinned != wasPinned)
             {
-                WindowMain.QQQsChanged = true;
+                QQQs[qqqIndex].IsPinned = isPinned;
+                QQQsChanged = true;
             }
         }
 
 
         /// Draw Edit and Complete buttons.
-        private void DrawEditAndComplete(Rect aRect, QQQ aQQQ)
+        private void DrawEditAndComplete(Rect aRect, int qqqIndex)
         {
             Rect editRect, completeRect;
             GUIContent editContent, completeContent;
@@ -373,7 +380,7 @@ namespace com.immortalhydra.gdtb.todos
 
             if (Controls.Button(editRect, editContent))
             {
-                WindowEdit.Init(aQQQ);
+                WindowEdit.Init(QQQs[qqqIndex]);
             }
 
 
@@ -397,7 +404,7 @@ namespace com.immortalhydra.gdtb.todos
                 // Actually do the thing.
                 if (canExecute)
                 {
-                    QQQOps.CompleteQQQ(aQQQ);
+                    QQQOps.CompleteQQQ(QQQs[qqqIndex]);
                 }
             }
         }
