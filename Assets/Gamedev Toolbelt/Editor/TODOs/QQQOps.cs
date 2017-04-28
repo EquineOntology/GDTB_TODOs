@@ -309,7 +309,8 @@ namespace com.immortalhydra.gdtb.todos
             {
                 foreach (var currentQQQ in WindowMain.QQQs)
                 {
-                    if (qqq.Script == currentQQQ.Script &&
+                    if (qqq.LineNumber == currentQQQ.LineNumber &&
+                        qqq.Script == currentQQQ.Script &&
                         qqq.Task == currentQQQ.Task &&
                         qqq.Priority == currentQQQ.Priority)
                     {
