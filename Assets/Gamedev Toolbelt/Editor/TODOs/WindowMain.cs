@@ -18,6 +18,7 @@ namespace com.immortalhydra.gdtb.todos
 
         // Fields.
         public static List<QQQ> QQQs = new List<QQQ>();
+        public static List<QQQ> CompletedQQQs = new List<QQQ>();
 
         public static bool WasHiddenByReimport;
         public static bool QQQsChanged;
@@ -64,11 +65,22 @@ namespace com.immortalhydra.gdtb.todos
 
             LoadSkin();
             LoadStyles();
+
+            IO.PersistCompletions();
+            IO.WriteQQQsToFile();
         }
 
 
         private void OnDestroy()
         {
+            IO.PersistCompletions();
+            IO.WriteQQQsToFile();
+        }
+
+
+        private void OnLostFocus()
+        {
+            IO.PersistCompletions();
             IO.WriteQQQsToFile();
         }
 
@@ -178,18 +190,7 @@ namespace com.immortalhydra.gdtb.todos
 
             // Change scrollbar color.
             var scrollbar = Resources.Load(Constants.TEX_SCROLLBAR, typeof(Texture2D)) as Texture2D;
-        #if UNITY_5 || UNITY_5_3_OR_NEWER
             scrollbar.SetPixel(0,0, Preferences.Secondary);
-        #else
-			var pixels = scrollbar.GetPixels();
-			// We do it like this because minimum texture size in older versions of Unity is 2x2.
-			for(var i = 0; i < pixels.GetLength(0); i++)
-			{
-				scrollbar.SetPixel(i, 0, Preferences.Color_Secondary);
-				scrollbar.SetPixel(i, 1, Preferences.Color_Secondary);
-			}
-        #endif
-
             scrollbar.Apply();
             _skin.verticalScrollbarThumb.normal.background = scrollbar;
             _skin.verticalScrollbarThumb.active.background = scrollbar;
@@ -404,7 +405,7 @@ namespace com.immortalhydra.gdtb.todos
                 // Actually do the thing.
                 if (canExecute)
                 {
-                    QQQOps.CompleteQQQ(QQQs[qqqIndex]);
+                    QQQOps.RemoveQQQFromList(QQQs[qqqIndex]);
                 }
             }
         }

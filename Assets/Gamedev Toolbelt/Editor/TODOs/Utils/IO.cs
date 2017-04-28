@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System;
+using NUnit.Framework;
 using UnityEngine;
 
 namespace com.immortalhydra.gdtb.todos
@@ -36,6 +37,55 @@ namespace com.immortalhydra.gdtb.todos
                         {
                             writer.WriteLine(lineWithoutQQQ);
                         }
+                    }
+                    currentLineNumber++;
+                }
+                reader.Close();
+                writer.Close();
+
+                // Overwrite the old file with the temp file.
+                File.Delete(aFile);
+                File.Move(tempFile, aFile);
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex.Message);
+                Debug.Log(ex.Data);
+                Debug.Log(ex.StackTrace);
+                reader.Dispose();
+                writer.Dispose();
+            }
+        }
+
+
+        /// Remove a group of lines from a text file.
+        public static void RemoveLinesFromFile(string aFile, int[] aLines)
+        {
+            var tempFile = Path.GetTempFileName();
+            var currentLineNumber = 0;
+
+            var reader = new StreamReader(aFile);
+            var writer = new StreamWriter(tempFile);
+
+            try
+            {
+                string line;
+                var lineIndex = 0;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    // If the line is not the one we want to remove, write it to the temp file.
+                    if (currentLineNumber != aLines[lineIndex])
+                    {
+                        writer.WriteLine(line);
+                    }
+                    else
+                    {
+                        var lineWithoutQQQ = GetLineWithoutQQQ(line);
+                        if (!String.IsNullOrEmpty(lineWithoutQQQ))
+                        {
+                            writer.WriteLine(lineWithoutQQQ);
+                        }
+                        lineIndex++;
                     }
                     currentLineNumber++;
                 }
@@ -398,6 +448,48 @@ namespace com.immortalhydra.gdtb.todos
         public static string GetPathRelativeToExtension(string aName)
         {
             return GetFirstInstanceOfFolder("TODOs") + "/" + aName;
+        }
+
+
+        /// Remove all deleted QQQs from files in one to go prevent mismatches between QQQ and line.
+        public static void PersistCompletions()
+        {
+            // First we sort the line numbers in descending order.
+            var qqqs = WindowMain.CompletedQQQs;
+            qqqs.Sort((x, y) => -1 * string.Compare(x.Script, y.Script, StringComparison.Ordinal)); // -1 * x is needed to sort in descending order.
+
+            // Group line numbers by script.
+            var groupedQQQs = new Dictionary<string, List<int>>();
+            foreach (var qqq in qqqs)
+            {
+                if (groupedQQQs.ContainsKey(qqq.Script))
+                {
+                    groupedQQQs[qqq.Script].Add(qqq.LineNumber);
+                }
+                else
+                {
+                    groupedQQQs[qqq.Script] = new List<int>();
+                    groupedQQQs[qqq.Script].Add(qqq.LineNumber);
+                }
+            }
+
+            // Finally, we remove the lines.
+            try
+            {
+                foreach (var qqq in groupedQQQs)
+                {
+                    RemoveLinesFromFile(qqq.Key, qqq.Value.ToArray());
+                }
+                WriteQQQsToFile();
+                WindowMain.CompletedQQQs.Clear();
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex.Message);
+                Debug.Log(ex.Data);
+                Debug.Log(ex.StackTrace);
+            }
+            WindowMain.QQQsChanged = true;
         }
 
 

@@ -1,6 +1,8 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace com.immortalhydra.gdtb.todos
@@ -76,7 +78,7 @@ namespace com.immortalhydra.gdtb.todos
                 var newQQQ = new QQQ();
                 if (lines[i].Contains(Preferences.TODOToken))
                 {
-                    var index = lines[i].IndexOf(Preferences.TODOToken);
+                    var index = lines[i].IndexOf(Preferences.TODOToken, StringComparison.Ordinal);
                     var hasExplicitPriority = false;
 
                     // First we find the QQQ's priority.
@@ -247,18 +249,11 @@ namespace com.immortalhydra.gdtb.todos
 
 
         /// Remove a QQQ (both from the list and from the file in which it was written).
-        public static void CompleteQQQ(QQQ aQQQ)
+        public static void RemoveQQQFromList(QQQ aQQQ)
         {
-            IO.RemoveLineFromFile(aQQQ.Script, aQQQ.LineNumber);
-            RefreshQQQs();
-        }
-
-
-        /// Remove a QQQ (both from the list and from the file in which it was written).
-        public static void RemoveQQQ(QQQ aQQQ) // Different from the method above because we don't want removing to be the same as completing (for future integrations in which the concepts are different).
-        {
-            IO.RemoveLineFromFile(aQQQ.Script, aQQQ.LineNumber);
-            RefreshQQQs();
+            WindowMain.CompletedQQQs.Add(aQQQ);
+            WindowMain.QQQs.Remove(aQQQ);
+            WindowMain.QQQsChanged = true;
         }
 
 
@@ -267,7 +262,7 @@ namespace com.immortalhydra.gdtb.todos
         {
             foreach (var qqq in WindowMain.QQQs)
             {
-                RemoveQQQ(qqq);
+                RemoveQQQFromList(qqq);
             }
             RefreshQQQs();
         }
@@ -283,11 +278,6 @@ namespace com.immortalhydra.gdtb.todos
         #elif UNITY_5
             var script = AssetDatabase.LoadAssetAtPath(aQQQ.Script, typeof(UnityEngine.TextAsset)) as UnityEngine.TextAsset;
             AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
-
-        #elif UNITY_4
-            var script = AssetDatabase.LoadAssetAtPath<UnityEngine.TextAsset>(aQQQ.Script, typeof(UnityEngine.TextAsset)) as UnityEngine.TextAsset;
-            AssetDatabase.OpenAsset(script.GetInstanceID(), (aQQQ.LineNumber + 1));
-
         #endif
         }
 
@@ -310,8 +300,26 @@ namespace com.immortalhydra.gdtb.todos
         /// Re-import all QQQs.
         public static void RefreshQQQs()
         {
+            var pinnedQQQs = WindowMain.QQQs.Where(qqq => qqq.IsPinned).ToList();
+
             WindowMain.QQQs.Clear();
             GetQQQsFromAllScripts();
+
+            foreach (var qqq in pinnedQQQs)
+            {
+                foreach (var currentQQQ in WindowMain.QQQs)
+                {
+                    if (qqq.Script == currentQQQ.Script &&
+                        qqq.Task == currentQQQ.Task &&
+                        qqq.Priority == currentQQQ.Priority)
+                    {
+                        currentQQQ.IsPinned = true;
+                        break;
+                    }
+                }
+            }
+
+            pinnedQQQs.Clear();
             ReorderQQQs();
         }
 
