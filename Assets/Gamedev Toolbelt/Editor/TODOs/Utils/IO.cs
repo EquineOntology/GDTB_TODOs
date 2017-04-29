@@ -1,65 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System;
-using NUnit.Framework;
+using System.Linq;
 using UnityEngine;
 
 namespace com.immortalhydra.gdtb.todos
 {
     public static class IO
     {
-
-#region METHODS
-
-        /// Remove a single line from a text file.
-        public static void RemoveLineFromFile(string aFile, int aLineNumber)
-        {
-            var tempFile = Path.GetTempFileName();
-            var currentLineNumber = 0;
-
-            var reader = new StreamReader(aFile);
-            var writer = new StreamWriter(tempFile);
-
-            try
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    // If the line is not the one we want to remove, write it to the temp file.
-                    if (currentLineNumber != aLineNumber)
-                    {
-                        writer.WriteLine(line);
-                    }
-                    else
-                    {
-                        var lineWithoutQQQ = GetLineWithoutQQQ(line);
-                        if (!String.IsNullOrEmpty(lineWithoutQQQ))
-                        {
-                            writer.WriteLine(lineWithoutQQQ);
-                        }
-                    }
-                    currentLineNumber++;
-                }
-                reader.Close();
-                writer.Close();
-
-                // Overwrite the old file with the temp file.
-                File.Delete(aFile);
-                File.Move(tempFile, aFile);
-            }
-            catch (Exception ex)
-            {
-                Debug.Log(ex.Message);
-                Debug.Log(ex.Data);
-                Debug.Log(ex.StackTrace);
-                reader.Dispose();
-                writer.Dispose();
-            }
-        }
-
+        #region METHODS
 
         /// Remove a group of lines from a text file.
-        public static void RemoveLinesFromFile(string aFile, int[] aLines)
+        public static void RemoveLinesFromFile(string aFile, int[] aLineNumbers)
         {
             var tempFile = Path.GetTempFileName();
             var currentLineNumber = 0;
@@ -73,19 +25,29 @@ namespace com.immortalhydra.gdtb.todos
                 var lineIndex = 0;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    // If the line is not the one we want to remove, write it to the temp file.
-                    if (currentLineNumber != aLines[lineIndex])
+                    // If we found all the QQQ lines we wanted to modify, no reason to check for others.
+                    if (lineIndex >= aLineNumbers.Length)
                     {
                         writer.WriteLine(line);
                     }
                     else
                     {
-                        var lineWithoutQQQ = GetLineWithoutQQQ(line);
-                        if (!String.IsNullOrEmpty(lineWithoutQQQ))
+                        // If the line is not the one we want to remove, write it to the temp file.
+                        if (currentLineNumber != aLineNumbers[lineIndex])
                         {
-                            writer.WriteLine(lineWithoutQQQ);
+                            writer.WriteLine(line);
                         }
-                        lineIndex++;
+                        // Else, we take the QQQ away.
+                        else
+                        {
+                            var lineWithoutQQQ = GetLineWithoutQQQ(line);
+                            if (string.IsNullOrEmpty(lineWithoutQQQ))
+                            {
+                                lineWithoutQQQ = "";
+                            }
+                            writer.WriteLine(lineWithoutQQQ);
+                            lineIndex++;
+                        }
                     }
                     currentLineNumber++;
                 }
@@ -132,7 +94,8 @@ namespace com.immortalhydra.gdtb.todos
 
                         var slashes = string.IsNullOrEmpty(lineWithoutQQQ) ? "//" : " //";
 
-                        var newLine = lineWithoutQQQ + slashes + Preferences.TODOToken + (int)aNewQQQ.Priority + " " + aNewQQQ.Task;
+                        var newLine = lineWithoutQQQ + slashes + Preferences.TODOToken + (int) aNewQQQ.Priority + " " +
+                                      aNewQQQ.Task;
                         writer.WriteLine(newLine);
                     }
                     currentLineNumber++;
@@ -165,11 +128,10 @@ namespace com.immortalhydra.gdtb.todos
             {
                 var oldLines = lines;
                 lines = new string[aQQQ.LineNumber];
-                for(var i = 0; i < oldLines.Length; i++)
+                for (var i = 0; i < oldLines.Length; i++)
                 {
                     lines[i] = oldLines[i];
                 }
-
             }
 
             var currentLineNumber = 0;
@@ -179,9 +141,10 @@ namespace com.immortalhydra.gdtb.todos
                 while (currentLineNumber < lines.Length)
                 {
                     // Add the new QQQ as the first line in the file.
-                    if (currentLineNumber == aQQQ.LineNumber - 1 || (currentLineNumber == aQQQ.LineNumber && aQQQ.LineNumber == 0))
+                    if (currentLineNumber == aQQQ.LineNumber - 1 ||
+                        (currentLineNumber == aQQQ.LineNumber && aQQQ.LineNumber == 0))
                     {
-                        var newQQQ = "//" + Preferences.TODOToken + (int)aQQQ.Priority + " " + aQQQ.Task;
+                        var newQQQ = "//" + Preferences.TODOToken + (int) aQQQ.Priority + " " + aQQQ.Task;
 
 
                         writer.WriteLine(newQQQ);
@@ -236,8 +199,10 @@ namespace com.immortalhydra.gdtb.todos
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (line.StartsWith("#") || String.IsNullOrEmpty(line) || line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
-                    { }
+                    if (line.StartsWith("#") || String.IsNullOrEmpty(line) ||
+                        line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
+                    {
+                    }
                     else
                     {
                         excludedScripts.Add(line);
@@ -259,7 +224,7 @@ namespace com.immortalhydra.gdtb.todos
         /// Load scripts stored in the "script db".
         public static void LoadScripts()
         {
-            if(QQQOps.AllScripts != null)
+            if (QQQOps.AllScripts != null)
             {
                 QQQOps.AllScripts.Clear();
             }
@@ -309,8 +274,10 @@ namespace com.immortalhydra.gdtb.todos
                     string line;
                     while ((line = reader.ReadLine()) != null)
                     {
-                        if (line.StartsWith("#") || String.IsNullOrEmpty(line) || line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
-                        { }
+                        if (line.StartsWith("#") || String.IsNullOrEmpty(line) ||
+                            line == " ") // If the line is a comment, is empty, or is a single space, ignore them.
+                        {
+                        }
                         else
                         {
                             backedQQQs.Add(ParseQQQ(line));
@@ -342,7 +309,9 @@ namespace com.immortalhydra.gdtb.todos
                 foreach (var qqq in WindowMain.QQQs)
                 {
                     var priority = QQQOps.PriorityToInt(qqq.Priority);
-                    var task = qqq.Task.Replace("|", "(U+007C)"); // Replace pipes so that the parser doesn't get confused on reimport.
+                    var task =
+                        qqq.Task.Replace("|",
+                            "(U+007C)"); // Replace pipes so that the parser doesn't get confused on reimport.
                     var line = priority + "|" + task + "|" + qqq.Script + "|" + qqq.LineNumber + "|" + qqq.IsPinned;
                     writer.WriteLine(line);
                 }
@@ -379,9 +348,10 @@ namespace com.immortalhydra.gdtb.todos
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if(line.Contains("[MenuItem"))
+                    if (line.Contains("[MenuItem"))
                     {
-                        writer.WriteLine("        [MenuItem(" + '"' + "Window/Gamedev Toolbelt/TODOs/Open TODOs " + aShortcut + '"' + ", false, 1)]");
+                        writer.WriteLine("        [MenuItem(" + '"' + "Window/Gamedev Toolbelt/TODOs/Open TODOs " +
+                                         aShortcut + '"' + ", false, 1)]");
                     }
                     else
                     {
@@ -413,7 +383,7 @@ namespace com.immortalhydra.gdtb.todos
             var tempFile = Path.GetTempFileName();
             var scriptsFile = GetPathRelativeToExtension("scripts.gdtb");
 
-            if(QQQOps.AllScripts == null)
+            if (QQQOps.AllScripts == null)
             {
                 QQQOps.AllScripts = new List<string>();
             }
@@ -454,23 +424,24 @@ namespace com.immortalhydra.gdtb.todos
         /// Remove all deleted QQQs from files in one to go prevent mismatches between QQQ and line.
         public static void PersistCompletions()
         {
-            // First we sort the line numbers in descending order.
-            var qqqs = WindowMain.CompletedQQQs;
-            qqqs.Sort((x, y) => -1 * string.Compare(x.Script, y.Script, StringComparison.Ordinal)); // -1 * x is needed to sort in descending order.
-
             // Group line numbers by script.
             var groupedQQQs = new Dictionary<string, List<int>>();
-            foreach (var qqq in qqqs)
+            foreach (var qqq in WindowMain.CompletedQQQs)
             {
-                if (groupedQQQs.ContainsKey(qqq.Script))
-                {
-                    groupedQQQs[qqq.Script].Add(qqq.LineNumber);
-                }
-                else
+                if (!groupedQQQs.ContainsKey(qqq.Script))
                 {
                     groupedQQQs[qqq.Script] = new List<int>();
-                    groupedQQQs[qqq.Script].Add(qqq.LineNumber);
                 }
+                groupedQQQs[qqq.Script].Add(qqq.LineNumber);
+            }
+
+            // Sort them (ascending script line number).
+            foreach (var qqq in groupedQQQs)
+            {
+                var orderedLines = new List<int>();
+                orderedLines = qqq.Value.OrderBy(o => o).ToList();
+                qqq.Value.Clear();
+                qqq.Value.AddRange(orderedLines);
             }
 
             // Finally, we remove the lines.
@@ -478,10 +449,15 @@ namespace com.immortalhydra.gdtb.todos
             {
                 foreach (var qqq in groupedQQQs)
                 {
+//                    foreach (var line in qqq.Value.ToArray())
+//                    {
+//                        Debug.Log(line);
+//                    }
                     RemoveLinesFromFile(qqq.Key, qqq.Value.ToArray());
                 }
                 WriteQQQsToFile();
                 WindowMain.CompletedQQQs.Clear();
+                groupedQQQs.Clear();
             }
             catch (Exception ex)
             {
@@ -491,8 +467,6 @@ namespace com.immortalhydra.gdtb.todos
             }
             WindowMain.QQQsChanged = true;
         }
-
-
 
 
         /// Return the first instance of the given folder.
@@ -505,19 +479,17 @@ namespace com.immortalhydra.gdtb.todos
             var assetsDir = "";
             foreach (var dir in listOfAssetsDirs)
             {
-
-            #if UNITY_EDITOR_WIN
+#if UNITY_EDITOR_WIN
                 if (dir.FullName.EndsWith("\\Assets"))
                 {
                     assetsDir = dir.FullName;
                 }
-            #elif UNITY_EDITOR_OSX
+#elif UNITY_EDITOR_OSX
                 if (dir.FullName.EndsWith("/Assets"))
                 {
                     assetsDir = dir.FullName;
                 }
             #endif
-
             }
             var path = assetsDir;
 
@@ -645,7 +617,6 @@ namespace com.immortalhydra.gdtb.todos
             return qqq;
         }
 
-#endregion
-
+        #endregion
     }
 }

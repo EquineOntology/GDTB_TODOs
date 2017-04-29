@@ -8,22 +8,24 @@ namespace com.immortalhydra.gdtb.todos
 {
     public class WindowMain : EditorWindow
     {
-#region FIELDS AND PROPERTIES
+        #region FIELDS AND PROPERTIES
 
         // Constants.
         private const int IconSize = Constants.ICON_SIZE;
+
         private const int Offset = Constants.OFFSET;
         private const int ButtonWidth = 70;
         private const int ButtonHeight = 18;
 
         // Fields.
-        public static List<QQQ> QQQs = new List<QQQ>();
-        public static List<QQQ> CompletedQQQs = new List<QQQ>();
+        [SerializeField] public static List<QQQ> QQQs = new List<QQQ>();
+
+        [SerializeField] public static List<QQQ> CompletedQQQs = new List<QQQ>();
 
         public static bool WasHiddenByReimport;
         public static bool QQQsChanged;
 
-        private static List<QQQ> _currentQQQs = new List<QQQ>();
+        [SerializeField] private static List<QQQ> _currentQQQs = new List<QQQ>();
 
         private GUISkin _skin;
         private GUIStyle _taskStyle, _scriptStyle, _buttonTextStyle;
@@ -38,6 +40,7 @@ namespace com.immortalhydra.gdtb.todos
 
         // Properties.
         public static WindowMain Instance { get; private set; }
+
         public static bool IsOpen
         {
             get { return Instance != null; }
@@ -46,13 +49,13 @@ namespace com.immortalhydra.gdtb.todos
         #endregion
 
 
-#region MONOBEHAVIOUR METHODS
+        #region MONOBEHAVIOUR METHODS
 
         public void OnEnable()
         {
-        #if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
+#if UNITY_5_3_OR_NEWER || UNITY_5_1 || UNITY_5_2
             titleContent = new GUIContent("TODOs");
-        #else
+#else
             title = "TODOs";
         #endif
 
@@ -65,18 +68,7 @@ namespace com.immortalhydra.gdtb.todos
 
             LoadSkin();
             LoadStyles();
-
-            IO.PersistCompletions();
-            IO.WriteQQQsToFile();
         }
-
-
-        private void OnDestroy()
-        {
-            IO.PersistCompletions();
-            IO.WriteQQQsToFile();
-        }
-
 
         private void OnLostFocus()
         {
@@ -84,6 +76,11 @@ namespace com.immortalhydra.gdtb.todos
             IO.WriteQQQsToFile();
         }
 
+        private void OnDisable()
+        {
+            IO.PersistCompletions();
+            IO.WriteQQQsToFile();
+        }
 
         private void OnGUI()
         {
@@ -92,7 +89,6 @@ namespace com.immortalhydra.gdtb.todos
 
             DrawWindowBackground();
 
-            // If the list is still clean after the above, then we really have no QQQs.
             if (QQQs.Count == 0)
             {
                 DrawNoQQQsMessage();
@@ -119,6 +115,9 @@ namespace com.immortalhydra.gdtb.todos
             DrawQQQs();
             DrawSeparator();
             DrawBottomButtons();
+//            Debug.Log("QQQs length: " + QQQs.Count);
+//            Debug.Log("CompletedQQQs length: " + CompletedQQQs.Count);
+//            Debug.Log("_currentQQQs length: " + _currentQQQs.Count);
         }
 
 
@@ -130,15 +129,16 @@ namespace com.immortalhydra.gdtb.todos
             Repaint();
         }
 
-#endregion
+        #endregion
 
-#region METHODS
+        #region METHODS
 
         [MenuItem("Window/Gamedev Toolbelt/TODOs/Open TODOs %&w", false, 1)]
         public static void Init()
         {
             // If TODOs has not been initialized, or EditorPrefs have been lost for some reason, reset them to default, and show the first start window.
-            if(!EditorPrefs.HasKey("GDTB_TODOs_firsttime") || EditorPrefs.GetBool("GDTB_TODOs_firsttime", false) == false)
+            if (!EditorPrefs.HasKey("GDTB_TODOs_firsttime") ||
+                EditorPrefs.GetBool("GDTB_TODOs_firsttime", false) == false)
             {
                 Preferences.InitExtension();
             }
@@ -159,7 +159,7 @@ namespace com.immortalhydra.gdtb.todos
 
             window.Show();
 
-            if(Preferences.ShowWelcome)
+            if (Preferences.ShowWelcome)
             {
                 WindowWelcome.Init();
             }
@@ -190,7 +190,7 @@ namespace com.immortalhydra.gdtb.todos
 
             // Change scrollbar color.
             var scrollbar = Resources.Load(Constants.TEX_SCROLLBAR, typeof(Texture2D)) as Texture2D;
-            scrollbar.SetPixel(0,0, Preferences.Secondary);
+            scrollbar.SetPixel(0, 0, Preferences.Secondary);
             scrollbar.Apply();
             _skin.verticalScrollbarThumb.normal.background = scrollbar;
             _skin.verticalScrollbarThumb.active.background = scrollbar;
@@ -206,8 +206,6 @@ namespace com.immortalhydra.gdtb.todos
         }
 
 
-
-
         /// Draw the background texture.
         private void DrawWindowBackground()
         {
@@ -218,20 +216,22 @@ namespace com.immortalhydra.gdtb.todos
         /// If there are no QQQs, tell the user.
         private void DrawNoQQQsMessage()
         {
-            var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken + " in it.\n\nIf it's the first time you open TODOs,\npress the 'Process scripts' button.\n\nIf you just reimported some files,\npress the 'Refresh tasks' button.";
+            var label = "There are currently no tasks.\nAdd one by writing a comment with " + Preferences.TODOToken +
+                        " in it.\n\nIf it's the first time you open TODOs,\npress the 'Process scripts' button.\n\nIf you just reimported some files,\npress the 'Refresh tasks' button.";
             var labelContent = new GUIContent(label);
 
             Vector2 labelSize;
-            #if UNITY_5_3_OR_NEWER
-                labelSize = EditorStyles.centeredGreyMiniLabel.CalcSize(labelContent);
-            #else
+#if UNITY_5_3_OR_NEWER
+            labelSize = EditorStyles.centeredGreyMiniLabel.CalcSize(labelContent);
+#else
                 labelSize = EditorStyles.wordWrappedMiniLabel.CalcSize(labelContent);
             #endif
 
-            var labelRect = new Rect(position.width / 2 - labelSize.x / 2, position.height / 2 - labelSize.y / 2 - Offset * 2.5f, labelSize.x, labelSize.y);
-            #if UNITY_5_3_OR_NEWER
-                EditorGUI.LabelField(labelRect, labelContent, EditorStyles.centeredGreyMiniLabel);
-            #else
+            var labelRect = new Rect(position.width / 2 - labelSize.x / 2,
+                position.height / 2 - labelSize.y / 2 - Offset * 2.5f, labelSize.x, labelSize.y);
+#if UNITY_5_3_OR_NEWER
+            EditorGUI.LabelField(labelRect, labelContent, EditorStyles.centeredGreyMiniLabel);
+#else
                 EditorGUI.LabelField(labelRect, labelContent, EditorStyles.wordWrappedMiniLabel);
             #endif
         }
@@ -268,8 +268,10 @@ namespace com.immortalhydra.gdtb.todos
                 qqqBackgroundHeight = qqqBackgroundHeight < IconSize * 2.7f ? IconSize * 2.7f : qqqBackgroundHeight;
 
                 _qqqRect = new Rect(0, _totalQQQHeight, _qqqWidth, qqqBackgroundHeight);
-                _pinRect = new Rect(Offset * 2, _totalQQQHeight + taskHeight + scriptHeight + Offset * 2, 70, Constants.LINE_HEIGHT);
-                _editAndCompleteRect = new Rect(_qqqWidth + (Offset * 2), _qqqRect.y, _buttonsWidth, qqqBackgroundHeight);
+                _pinRect = new Rect(Offset * 2, _totalQQQHeight + taskHeight + scriptHeight + Offset * 2, 70,
+                    Constants.LINE_HEIGHT);
+                _editAndCompleteRect = new Rect(_qqqWidth + (Offset * 2), _qqqRect.y, _buttonsWidth,
+                    qqqBackgroundHeight);
 
                 var qqqBackgroundRect = _qqqRect;
                 qqqBackgroundRect.height = qqqBackgroundHeight + Offset / 2;
@@ -291,12 +293,14 @@ namespace com.immortalhydra.gdtb.todos
                 // I couldn't find a way around it, so what we do is swallow the exception and wait for the next draw call.
                 try
                 {
-                    DrawQQQBackground(qqqBackgroundRect,  GetQQQPriorityColor((int)_currentQQQs[i].Priority));
+                    DrawQQQBackground(qqqBackgroundRect, GetQQQPriorityColor((int) _currentQQQs[i].Priority));
                     DrawTaskAndScript(_qqqRect, i, taskHeight, scriptHeight);
                     DrawPin(_pinRect, i);
                     DrawEditAndComplete(_editAndCompleteRect, i);
                 }
-                catch (System.Exception) { }
+                catch (System.Exception)
+                {
+                }
             }
 
 
@@ -392,7 +396,9 @@ namespace com.immortalhydra.gdtb.todos
                 if (Preferences.ShowConfirmationDialogs)
                 {
                     var token = Preferences.TODOToken;
-                    if (EditorUtility.DisplayDialog("Complete " + token, "Are you sure you're done with this " + token + "?\nIt will be removed from the code too.", "Complete " + token, "Cancel"))
+                    if (EditorUtility.DisplayDialog("Complete " + token,
+                        "Are you sure you're done with this " + token + "?\nIt will be removed from the code too.",
+                        "Complete " + token, "Cancel"))
                     {
                         canExecute = true;
                     }
@@ -423,7 +429,7 @@ namespace com.immortalhydra.gdtb.todos
             SetupButton_Settings(out settingsRect, out settingsContent);
 
             // Process scripts.
-            if(Controls.Button(processRect, processContent))
+            if (Controls.Button(processRect, processContent))
             {
                 QQQOps.FindAllScripts();
                 QQQOps.GetQQQsFromAllScripts();
@@ -449,7 +455,8 @@ namespace com.immortalhydra.gdtb.todos
                 // Unfortunately EditorApplication.ExecuteMenuItem(...) doesn't work, so we have to rely on a bit of reflection.
                 var assembly = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
                 var type = assembly.GetType("UnityEditor.PreferencesWindow");
-                var method = type.GetMethod("ShowPreferencesWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                var method = type.GetMethod("ShowPreferencesWindow",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
                 method.Invoke(null, null);
             }
         }
@@ -487,34 +494,38 @@ namespace com.immortalhydra.gdtb.todos
 
         private void SetupButton_Process(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect(position.width / 2 - ButtonWidth * 2 - Offset * 3, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 - ButtonWidth * 2 - Offset * 3, position.height - (ButtonHeight * 1.4f),
+                ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Process", "Process scripts");
         }
 
 
         private void SetupButton_Add(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect(position.width / 2 - ButtonWidth - Offset, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 - ButtonWidth - Offset, position.height - (ButtonHeight * 1.4f),
+                ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Add", "Add a new QQQ");
         }
 
 
         private void SetupButton_Refresh(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect(position.width / 2 + Offset, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 + Offset, position.height - (ButtonHeight * 1.4f), ButtonWidth,
+                ButtonHeight);
             aContent = new GUIContent("Refresh", "Refresh list");
         }
 
 
         private void SetupButton_Settings(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect(position.width / 2 + ButtonWidth + Offset * 3, position.height - (ButtonHeight * 1.4f), ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 + ButtonWidth + Offset * 3, position.height - (ButtonHeight * 1.4f),
+                ButtonWidth, ButtonHeight);
             aContent = new GUIContent("Settings", "Open Settings");
         }
 
 
         /// Create the text that indicates where the task is.
-        private string CreateScriptLabelText (QQQ aQQQ)
+        private string CreateScriptLabelText(QQQ aQQQ)
         {
             return "Line " + (aQQQ.LineNumber + 1) + " in \"" + aQQQ.Script + "\"";
         }
@@ -556,7 +567,7 @@ namespace com.immortalhydra.gdtb.todos
                 _buttonsWidth = ButtonWidth + Offset * 1;
             }
 
-            _qqqWidth = (int)width - _buttonsWidth - Offset * 3;
+            _qqqWidth = (int) width - _buttonsWidth - Offset * 3;
         }
 
 
@@ -577,7 +588,6 @@ namespace com.immortalhydra.gdtb.todos
             }
         }
 
-#endregion
-
+        #endregion
     }
 }
