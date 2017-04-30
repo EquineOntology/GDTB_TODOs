@@ -1,10 +1,11 @@
-﻿namespace com.immortalhydra.gdtb.todos
+﻿using UnityEngine;
+
+namespace com.immortalhydra.gdtb.todos
 {
     [System.Serializable]
-    public class QQQ: object
+    public class QQQ : ScriptableObject
     {
-
-#region FIELDS AND PROPERTIES
+        #region FIELDS AND PROPERTIES
 
         public QQQPriority Priority;
         public string Task;
@@ -12,88 +13,77 @@
         public int LineNumber;
         public bool IsPinned;
 
-#endregion
+        #endregion
 
-#region CONSTRUCTORS
+        #region CONSTRUCTORS
 
-        public QQQ(int aPriority, string aTask, string aScript, int aLineNumber)
+        public static QQQ Create(int aPriority, string aTask, string aScript, int aLineNumber)
         {
-            switch(aPriority)
-            {
-                case 1:
-                    Priority = QQQPriority.URGENT;
-                    break;
-                case 2:
-                    Priority = QQQPriority.NORMAL;
-                    break;
-                case 3:
-                    Priority = QQQPriority.MINOR;
-                    break;
-                default:
-                    Priority = QQQPriority.NORMAL;
-                    break;
-            }
-            Task = aTask;
-            Script = aScript;
-            LineNumber = aLineNumber;
-            IsPinned = false;
+            var qqq = CreateInstance<QQQ>();
+
+            qqq.Priority = QQQOps.IntToPriority(aPriority);
+            qqq.Task = aTask;
+            qqq.Script = aScript;
+            qqq.LineNumber = aLineNumber;
+            qqq.IsPinned = false;
+
+            return qqq;
         }
 
 
-        public QQQ(int aPriority, string aTask, string aScript, int aLineNumber, bool isPinned)
+        public static QQQ Create(int aPriority, string aTask, string aScript, int aLineNumber, bool isPinned)
         {
-            switch(aPriority)
-            {
-                case 1:
-                    Priority = QQQPriority.URGENT;
-                    break;
-                case 2:
-                    Priority = QQQPriority.NORMAL;
-                    break;
-                case 3:
-                    Priority = QQQPriority.MINOR;
-                    break;
-                default:
-                    Priority = QQQPriority.NORMAL;
-                    break;
-            }
-            Task = aTask;
-            Script = aScript;
-            LineNumber = aLineNumber;
-            IsPinned = isPinned;
+            var qqq = CreateInstance<QQQ>();
+
+            qqq.Priority = QQQOps.IntToPriority(aPriority);
+            qqq.Task = aTask;
+            qqq.Script = aScript;
+            qqq.LineNumber = aLineNumber;
+            qqq.IsPinned = isPinned;
+
+            return qqq;
         }
 
 
-        public QQQ(QQQPriority aPriority, string aTask, string aScript, int aLineNumber)
+        public static QQQ Create(QQQPriority aPriority, string aTask, string aScript, int aLineNumber)
         {
-            Priority = aPriority;
-            Task = aTask;
-            Script = aScript;
-            LineNumber = aLineNumber;
-            IsPinned = false;
+            var qqq = CreateInstance<QQQ>();
+
+            qqq.Priority = aPriority;
+            qqq.Task = aTask;
+            qqq.Script = aScript;
+            qqq.LineNumber = aLineNumber;
+            qqq.IsPinned = false;
+
+            return qqq;
         }
 
 
-        public QQQ(string aTask, string aScript)
+        public static QQQ Create(string aTask, string aScript)
         {
-            Priority = QQQPriority.NORMAL;
-            Task = aTask;
-            Script = aScript;
-            LineNumber = 0;
-            IsPinned = false;
+            var qqq = CreateInstance<QQQ>();
+
+            qqq.Priority = QQQPriority.NORMAL;
+            qqq.Task = aTask;
+            qqq.Script = aScript;
+            qqq.LineNumber = 0;
+            qqq.IsPinned = false;
+
+            return qqq;
         }
 
-
-        public QQQ()
+        public static QQQ Create()
         {
-            Priority = QQQPriority.NORMAL;
-            Task = "";
-            Script = "";
-            LineNumber = 0;
-            IsPinned = false;
+            var qqq = CreateInstance<QQQ>();
+            qqq.Priority = QQQPriority.NORMAL;
+            qqq.Task = "";
+            qqq.Script = "";
+            qqq.LineNumber = 0;
+            qqq.IsPinned = false;
+
+            return qqq;
         }
 
-#endregion
-
+        #endregion
     }
 }

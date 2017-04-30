@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 namespace com.immortalhydra.gdtb.todos
@@ -10,9 +9,9 @@ namespace com.immortalhydra.gdtb.todos
 #region FIELDS AND PROPERTIES
 
         // Constants.
-        private const int ButtonWidth = 70;
-        private const int ButtonHeight = 18;
-        private const int FieldsWidth = 120;
+        private const int _BUTTON_WIDTH = 70;
+        private const int _BUTTON_HEIGHT = 18;
+        private const int _FIELDS_WIDTH = 120;
 
         // Fields.
         private GUISkin _skin;
@@ -136,7 +135,7 @@ namespace com.immortalhydra.gdtb.todos
             var labelRect = new Rect(10, 112, position.width - 20, 16);
             EditorGUI.LabelField(labelRect, "Choose a priority:", _boldStyle);
 
-            var priorityRect = new Rect(10, 130, FieldsWidth, 16);
+            var priorityRect = new Rect(10, 130, _FIELDS_WIDTH, 16);
             _priority = EditorGUI.Popup(priorityRect, _priority - 1, _qqqPriorities) + 1;
         }
 
@@ -147,7 +146,7 @@ namespace com.immortalhydra.gdtb.todos
             var labelRect = new Rect(10, 155, position.width - 20, 32);
             EditorGUI.LabelField(labelRect, "Choose the line number:", _boldStyle);
 
-            var lineRect = new Rect(10, 176, FieldsWidth, 16);
+            var lineRect = new Rect(10, 176, _FIELDS_WIDTH, 16);
             _lineNumber = EditorGUI.IntField(lineRect, _lineNumber);
 
             if (_lineNumber < 1)
@@ -175,7 +174,7 @@ namespace com.immortalhydra.gdtb.todos
         /// Setup the Add button.
         private void SetupButton_Add(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect(position.width / 2 - ButtonWidth / 2, position.height - ButtonHeight * 1.5f, ButtonWidth, ButtonHeight);
+            aRect = new Rect(position.width / 2 - _BUTTON_WIDTH / 2, position.height - _BUTTON_HEIGHT * 1.5f, _BUTTON_WIDTH, _BUTTON_HEIGHT);
             aContent = new GUIContent("Add task", "Add task");
         }
 
@@ -211,7 +210,7 @@ namespace com.immortalhydra.gdtb.todos
                 if (execute)
                 {
                     var path = AssetDatabase.GetAssetPath(_script);
-                    var newQQQ = new QQQ(_priority, _task, path, _lineNumber);
+                    var newQQQ = QQQ.Create(_priority, _task, path, _lineNumber);
                     QQQOps.AddQQQ(newQQQ);
                     GetWindow(typeof(WindowAdd)).Close();
                 }

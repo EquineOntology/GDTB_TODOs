@@ -10,14 +10,15 @@ namespace com.immortalhydra.gdtb.todos
     public static class QQQOps
     {
 
-#region FIELDS AND PROPERTIES
+    #region FIELDS AND PROPERTIES
 
+        [SerializeField]
         public static List<string> AllScripts = new List<string>();
 
-#endregion
+    #endregion
 
 
-#region METHODS
+    #region METHODS
         /// Find all files ending with .cs or .js (exclude those in exclude.txt).
         public static void FindAllScripts()
         {
@@ -55,7 +56,7 @@ namespace com.immortalhydra.gdtb.todos
 
 
         /// Find all QQQs in all scripts.
-        public static void GetQQQsFromAllScripts()
+        public static List<QQQ> GetQQQsFromAllScripts()
         {
             var qqqs = new List<QQQ>();
 
@@ -63,7 +64,7 @@ namespace com.immortalhydra.gdtb.todos
             {
                 qqqs.AddRange(GetQQQsFromScript(script));
             }
-            WindowMain.QQQs = qqqs;
+            return qqqs;
         }
 
 
@@ -75,7 +76,7 @@ namespace com.immortalhydra.gdtb.todos
 
             for (var i = 0; i < lines.Length; i++)
             {
-                var newQQQ = new QQQ();
+                var newQQQ = QQQ.Create();
                 if (lines[i].Contains(Preferences.TODOToken))
                 {
                     var index = lines[i].IndexOf(Preferences.TODOToken, StringComparison.Ordinal);
@@ -126,30 +127,15 @@ namespace com.immortalhydra.gdtb.todos
         }
 
 
-        /// Add the QQQs in a script to the list in TODOs.
-        public static void AddQQQs(string aScript)
-        {
-            var qqqs = GetQQQsFromScript(aScript);
-
-            foreach (var qqq in qqqs)
-            {
-                if (!WindowMain.QQQs.Contains(qqq))
-                {
-                    WindowMain.QQQs.Add(qqq);
-                }
-            }
-        }
-
-
-        /// Remove all references to the given script in TODOs.QQQs.
-        public static void RemoveScript(string aScript)
+        /// Remove all references to the given script in TODO.QQQs.
+        public static List<QQQ> RemoveScript(List<QQQ> aQQQList, string aScript)
         {
             // Remove from QQQs.
-            for (var i = 0; i < WindowMain.QQQs.Count; i++)
+            for (var i = 0; i < aQQQList.Count; i++)
             {
-                if (WindowMain.QQQs[i].Script == aScript)
+                if (aQQQList[i].Script == aScript)
                 {
-                    WindowMain.QQQs.Remove(WindowMain.QQQs[i]);
+                    aQQQList.Remove(aQQQList[i]);
                     i--;
                 }
             }
@@ -163,19 +149,23 @@ namespace com.immortalhydra.gdtb.todos
                     break; // We have just one instance, we can exit the loop.
                 }
             }
+
+            return aQQQList;
         }
 
 
-        /// Change all references to a script in TODOs.QQQs to another script (for when a script is moved).
-        public static void ChangeScriptOfQQQ(string aPathTo, string aPathFrom)
+        /// Change all references to a script in TODO.QQQs to another script (for when a script is moved).
+        public static List<QQQ> ChangeScriptOfQQQ(List<QQQ> aQQQList, string aPathTo, string aPathFrom)
         {
-            foreach (var qqq in WindowMain.QQQs)
+            foreach (var qqq in aQQQList)
             {
                 if (qqq.Script == aPathTo)
                 {
                     qqq.Script = aPathFrom;
                 }
             }
+
+            return aQQQList;
         }
 
 
@@ -192,9 +182,9 @@ namespace com.immortalhydra.gdtb.todos
 
 
         /// Reorder the given QQQ list based on the urgency of tasks.
-        public static void ReorderQQQs()
+        public static List<QQQ> ReorderQQQs(List<QQQ> aQQQList)
         {
-            var originalQQQs = WindowMain.QQQs;
+            var originalQQQs = aQQQList;
             var orderedQQQs = new List<QQQ>();
 
             // First are pinned tasks (ordered urgent-normal-minor), then urgent, then normal, then minor ones.
@@ -244,27 +234,31 @@ namespace com.immortalhydra.gdtb.todos
             orderedQQQs.AddRange(normalQQQs);
             orderedQQQs.AddRange(minorQQQs);
 
-            WindowMain.QQQs = orderedQQQs;
+            return orderedQQQs;
         }
 
 
         /// Remove a QQQ (both from the list and from the file in which it was written).
-        public static void RemoveQQQFromList(QQQ aQQQ)
+        public static TODO CompleteQQQ(TODO aTODO, QQQ aQQQ)
         {
-            WindowMain.CompletedQQQs.Add(aQQQ);
-            WindowMain.QQQs.Remove(aQQQ);
+            aTODO.CompletedQQQs.Add(aQQQ);
+            aTODO.QQQs.Remove(aQQQ);
             WindowMain.QQQsChanged = true;
+
+            return aTODO;
         }
 
 
         /// Remove all QQQs.
-        public static void RemoveAllQQQs()
+        public static TODO RemoveAllQQQs(TODO aTODO)
         {
-            foreach (var qqq in WindowMain.QQQs)
+            foreach (var qqq in aTODO.QQQs)
             {
-                RemoveQQQFromList(qqq);
+                aTODO = CompleteQQQ(aTODO, qqq);
             }
-            RefreshQQQs();
+            aTODO.QQQs = RefreshQQQs(aTODO.QQQs);
+
+            return aTODO;
         }
 
 
@@ -283,31 +277,31 @@ namespace com.immortalhydra.gdtb.todos
 
 
         /// Change the task of a QQQ.
-        public static void UpdateTask(QQQ anOldQQQ, QQQ aNewQQQ)
+        public static List<QQQ> UpdateTask(List<QQQ> aQQQList, QQQ anOldQQQ, QQQ aNewQQQ)
         {
-            IO.ChangeQQQ(anOldQQQ, aNewQQQ);
-            for (var i = 0; i < WindowMain.QQQs.Count; i++)
+            for (var i = 0; i < aQQQList.Count; i++)
             {
-                if (WindowMain.QQQs[i].Script == aNewQQQ.Script && WindowMain.QQQs[i].LineNumber == aNewQQQ.LineNumber)
+                if (aQQQList[i].Script == aNewQQQ.Script && aQQQList[i].LineNumber == aNewQQQ.LineNumber)
                 {
-                    WindowMain.QQQs[i] = aNewQQQ;
+                    aQQQList[i] = aNewQQQ;
                     break;
                 }
             }
+            return aQQQList;
         }
 
 
         /// Re-import all QQQs.
-        public static void RefreshQQQs()
+        public static List<QQQ> RefreshQQQs(List<QQQ> aQQQList)
         {
-            var pinnedQQQs = WindowMain.QQQs.Where(qqq => qqq.IsPinned).ToList();
+            var pinnedQQQs = aQQQList.Where(qqq => qqq.IsPinned).ToList();
 
-            WindowMain.QQQs.Clear();
-            GetQQQsFromAllScripts();
+            aQQQList.Clear();
+            aQQQList = GetQQQsFromAllScripts();
 
             foreach (var qqq in pinnedQQQs)
             {
-                foreach (var currentQQQ in WindowMain.QQQs)
+                foreach (var currentQQQ in aQQQList)
                 {
                     if (qqq.LineNumber == currentQQQ.LineNumber &&
                         qqq.Script == currentQQQ.Script &&
@@ -321,7 +315,9 @@ namespace com.immortalhydra.gdtb.todos
             }
 
             pinnedQQQs.Clear();
-            ReorderQQQs();
+            aQQQList = ReorderQQQs(aQQQList);
+
+            return aQQQList;
         }
 
 
@@ -329,7 +325,7 @@ namespace com.immortalhydra.gdtb.todos
         public static void AddQQQ(QQQ aQQQ)
         {
             IO.AddQQQ(aQQQ);
-            RefreshQQQs();
+            WindowMain.AddedQQQs.Add(aQQQ);
             EditorWindow.GetWindow(typeof(WindowMain)).Repaint();
         }
 
@@ -363,7 +359,7 @@ namespace com.immortalhydra.gdtb.todos
             }
         }
 
-#endregion
+    #endregion
 
     }
 }

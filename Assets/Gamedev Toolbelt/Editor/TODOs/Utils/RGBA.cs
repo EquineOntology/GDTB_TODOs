@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Globalization;
+using UnityEngine;
 
 namespace com.immortalhydra.gdtb.todos
 {
@@ -9,7 +10,10 @@ namespace com.immortalhydra.gdtb.todos
 
         public static string ColorToString(Color aColor)
         {
-            var colorString = aColor.r.ToString() + '/' + aColor.g.ToString() + '/' + aColor.b.ToString() + '/' + aColor.a.ToString();
+            var colorString = aColor.r.ToString(CultureInfo.InvariantCulture) + '/' +
+                              aColor.g.ToString(CultureInfo.InvariantCulture) + '/' +
+                              aColor.b.ToString(CultureInfo.InvariantCulture) + '/' +
+                              aColor.a.ToString(CultureInfo.InvariantCulture);
             return colorString;
         }
 

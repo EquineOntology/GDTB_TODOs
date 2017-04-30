@@ -5,24 +5,25 @@ namespace com.immortalhydra.gdtb.todos
 {
     public class WindowEdit : EditorWindow
     {
-
-#region FIELDS AND PROPERTIES
+        #region FIELDS AND PROPERTIES
 
         // Fields.
         private static QQQ _oldQQQ;
+
         private static QQQ _newQQQ;
 
-        private string[] _qqqPriorities = { "Urgent", "Normal", "Minor" };
+        private readonly string[] _qqqPriorities = {"Urgent", "Normal", "Minor"};
         private bool _prioritySetOnce;
 
         private GUISkin _skin;
         private GUIStyle _boldStyle, _buttonTextStyle;
 
-        private const int ButtonWidth = 70;
-        private const int ButtonHeight = 18;
+        private const int _BUTTON_WIDTH = 70;
+        private const int _BUTTON_HEIGHT = 18;
 
         // Properties.
         public static WindowEdit Instance { get; private set; }
+
         public static bool IsOpen
         {
             get { return Instance != null; }
@@ -30,7 +31,7 @@ namespace com.immortalhydra.gdtb.todos
 
         #endregion
 
-#region MONOBEHAVIOUR METHODS
+        #region MONOBEHAVIOUR METHODS
 
         public void OnEnable()
         {
@@ -52,8 +53,6 @@ namespace com.immortalhydra.gdtb.todos
         }
 
 
-
-
         private void OnGUI()
         {
             GUI.skin = _skin;
@@ -63,17 +62,18 @@ namespace com.immortalhydra.gdtb.todos
             DrawEdit();
         }
 
-#endregion
+        #endregion
 
 
-#region METHODS
+        #region METHODS
+
         public static void Init(QQQ aQQQ)
         {
             // Get existing open window or if none, make a new one.
             var window = (WindowEdit) GetWindow(typeof(WindowEdit));
             window.minSize = new Vector2(208f, 140f);
             _oldQQQ = aQQQ;
-            _newQQQ = new QQQ((int)aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);
+            _newQQQ = QQQ.Create(aQQQ.Priority, aQQQ.Task, aQQQ.Script, aQQQ.LineNumber);
             window.Show();
         }
 
@@ -99,8 +99,6 @@ namespace com.immortalhydra.gdtb.todos
         }
 
 
-
-
         /// Draw the background texture.
         private void DrawWindowBackground()
         {
@@ -117,17 +115,17 @@ namespace com.immortalhydra.gdtb.todos
             int priorityIndex;
             if (!_prioritySetOnce)
             {
-                priorityIndex = (int)_newQQQ.Priority;
+                priorityIndex = (int) _newQQQ.Priority;
             }
             else
             {
-                priorityIndex = (int)_oldQQQ.Priority;
+                priorityIndex = (int) _oldQQQ.Priority;
                 _prioritySetOnce = true;
             }
             var popupRect = new Rect(10, 28, 70, 16);
             priorityIndex = EditorGUI.Popup(popupRect, priorityIndex - 1, _qqqPriorities) + 1;
 
-            _newQQQ.Priority = (QQQPriority)priorityIndex;
+            _newQQQ.Priority = (QQQPriority) priorityIndex;
         }
 
 
@@ -162,7 +160,8 @@ namespace com.immortalhydra.gdtb.todos
         /// Setup the Edit button.
         private void SetupButton_Edit(out Rect aRect, out GUIContent aContent)
         {
-            aRect = new Rect((position.width / 2) - ButtonWidth/2, position.height - ButtonHeight * 1.5f, ButtonWidth, ButtonHeight);
+            aRect = new Rect((position.width / 2) - _BUTTON_WIDTH / 2, position.height - _BUTTON_HEIGHT * 1.5f, _BUTTON_WIDTH,
+                _BUTTON_HEIGHT);
             aContent = new GUIContent("Save", "Save edits");
         }
 
@@ -175,7 +174,10 @@ namespace com.immortalhydra.gdtb.todos
 
             if (Preferences.ShowConfirmationDialogs)
             {
-                if (EditorUtility.DisplayDialog("Save changes to task?", "Are you sure you want to save the changes to the task?", "Save", "Cancel"))
+                if (EditorUtility.DisplayDialog("Save changes to task?",
+                    "Are you sure you want to save the changes to the task?",
+                    "Save",
+                    "Cancel"))
                 {
                     execute = true;
                 }
@@ -188,7 +190,9 @@ namespace com.immortalhydra.gdtb.todos
             // Do the thing.
             if (execute)
             {
-                QQQOps.UpdateTask(_oldQQQ, _newQQQ);
+                IO.ChangeQQQ(_oldQQQ, _newQQQ);
+
+                WindowMain.ImportedScripts.Add(_oldQQQ.Script);
                 if (WindowMain.IsOpen)
                 {
                     GetWindow(typeof(WindowMain)).Repaint();
@@ -197,7 +201,6 @@ namespace com.immortalhydra.gdtb.todos
             }
         }
 
-#endregion
-
+        #endregion
     }
 }

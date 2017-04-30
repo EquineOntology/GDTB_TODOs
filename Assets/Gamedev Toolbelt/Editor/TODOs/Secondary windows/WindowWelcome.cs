@@ -9,7 +9,7 @@ namespace com.immortalhydra.gdtb.todos
 #region FIELDS AND PROPERTIES
 
         // Constants.
-        private const int Offset = Constants.OFFSET;
+        private const int _OFFSET = Constants.OFFSET;
 
         // Fields.
         private GUISkin _skin;
@@ -60,37 +60,37 @@ namespace com.immortalhydra.gdtb.todos
 
         private void OnGUI()
         {
-            _usableWidth = position.width - Offset * 2;
+            _usableWidth = position.width - _OFFSET * 2;
             GUI.skin = _skin;
 
             DrawWindowBackground();
             var label1Content = new GUIContent("Hello! Using TODOs is easy.");
             var label1Height = _wordWrappedColoredLabel.CalcHeight(label1Content, _usableWidth);
-            var label1Rect = new Rect(Offset * 2, Offset * 2, _usableWidth - Offset * 2, label1Height);
+            var label1Rect = new Rect(_OFFSET * 2, _OFFSET * 2, _usableWidth - _OFFSET * 2, label1Height);
             EditorGUI.LabelField(label1Rect, label1Content, _wordWrappedColoredLabel);
 
             var header1Content = new GUIContent("1. Press the 'Process scripts' button to analyze your project and find the script files.");
             var header1Height = _headerLabel.CalcHeight(header1Content, _usableWidth);
-            var header1Rect = new Rect(Offset * 2, Offset * 2 + 30, _usableWidth - Offset * 2, header1Height);
+            var header1Rect = new Rect(_OFFSET * 2, _OFFSET * 2 + 30, _usableWidth - _OFFSET * 2, header1Height);
             EditorGUI.LabelField(header1Rect, header1Content, _headerLabel);
 
             DrawProcessButtons();
 
             var header2Content = new GUIContent("2. Click on the 'Refresh tasks' button, which will look through the scripts and find pending tasks.");
             var header2Height = _headerLabel.CalcHeight(header2Content, _usableWidth);
-            var header2Rect = new Rect(Offset * 2, Offset * 2 + 80, _usableWidth - Offset * 2, header2Height);
+            var header2Rect = new Rect(_OFFSET * 2, _OFFSET * 2 + 80, _usableWidth - _OFFSET * 2, header2Height);
             header2Rect.y += 25;
             EditorGUI.LabelField(header2Rect, header2Content, _headerLabel);
 
             DrawRefreshButtons();
 
             var header3Content = new GUIContent("3. Define a task by starting a comment with your token.");
-            var header3Rect = new Rect(Offset * 2, Offset * 2 + 200, _usableWidth - Offset * 2, 0);
+            var header3Rect = new Rect(_OFFSET * 2, _OFFSET * 2 + 200, _usableWidth - _OFFSET * 2, 0);
             header3Rect.height = _headerLabel.CalcHeight(header3Content, _usableWidth);
             EditorGUI.LabelField(header3Rect, header3Content, _headerLabel);
 
             var label2Content =  new GUIContent("Your currently set token is '" + Preferences.TODOToken + "'.\nYou can change that and much more in the Preferences, where a section has been added for TODOs.\n\nDon't forget to check the README for advanced features and info!");
-            var label2Rect = new Rect(Offset * 2, Offset + 2 + 220, _usableWidth - Offset * 2, 0);
+            var label2Rect = new Rect(_OFFSET * 2, _OFFSET + 2 + 220, _usableWidth - _OFFSET * 2, 0);
             label2Rect.height = _wordWrappedColoredLabel.CalcHeight(label2Content, _usableWidth);
             EditorGUI.LabelField(label2Rect, label2Content, _wordWrappedColoredLabel);
 
@@ -158,7 +158,7 @@ namespace com.immortalhydra.gdtb.todos
 
         private void DrawToggle()
         {
-            var rect = new Rect(Offset * 2, position.height - 20 - Offset, position.width, 20);
+            var rect = new Rect(_OFFSET * 2, position.height - 20 - _OFFSET, position.width, 20);
             _welcomeValue = EditorGUI.ToggleLeft(rect, " Show this window every time TODOs is opened", _welcomeValue, _wordWrappedColoredLabel);
             if (_welcomeValue != Preferences.ShowWelcome)
             {
@@ -170,7 +170,10 @@ namespace com.immortalhydra.gdtb.todos
         private void SetMinSize()
         {
             var window = GetWindow(typeof(WindowWelcome)) as WindowWelcome;
-            window.minSize = new Vector2(450f, 350f);
+            if (window != null)
+            {
+                window.minSize = new Vector2(450f, 350f);
+            }
         }
 
 #endregion

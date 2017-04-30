@@ -6,7 +6,7 @@ namespace com.immortalhydra.gdtb.todos
 	public static class Controls
 	{
 
-#region METHODS
+	#region METHODS
 
 		public static bool Button(Rect controlRect, GUIContent controlContent)
 		{
@@ -93,7 +93,7 @@ namespace com.immortalhydra.gdtb.todos
 			EditorGUI.LabelField(textRect, aContent.text, style);
 		}
 
-#endregion
+	#endregion
 
 	}
 }

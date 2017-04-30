@@ -298,7 +298,7 @@ namespace com.immortalhydra.gdtb.todos
 
 
         /// Write QQQs in memory to the backup file.
-        public static void WriteQQQsToFile()
+        public static void WriteQQQsToFile(List<QQQ> qqqs)
         {
             var tempFile = Path.GetTempFileName();
             var bakFile = GetPathRelativeToExtension("bak.gdtb");
@@ -306,7 +306,7 @@ namespace com.immortalhydra.gdtb.todos
             var writer = new StreamWriter(tempFile, false);
             try
             {
-                foreach (var qqq in WindowMain.QQQs)
+                foreach (var qqq in qqqs)
                 {
                     var priority = QQQOps.PriorityToInt(qqq.Priority);
                     var task =
@@ -350,7 +350,7 @@ namespace com.immortalhydra.gdtb.todos
                 {
                     if (line.Contains("[MenuItem"))
                     {
-                        writer.WriteLine("        [MenuItem(" + '"' + "Window/Gamedev Toolbelt/TODOs/Open TODOs " +
+                        writer.WriteLine("        [MenuItem(" + '"' + "Window/Gamedev Toolbelt/TODOs/Open TODO " +
                                          aShortcut + '"' + ", false, 1)]");
                     }
                     else
@@ -422,11 +422,11 @@ namespace com.immortalhydra.gdtb.todos
 
 
         /// Remove all deleted QQQs from files in one to go prevent mismatches between QQQ and line.
-        public static void PersistCompletions()
+        public static void PersistCompletions(TODO todos)
         {
             // Group line numbers by script.
             var groupedQQQs = new Dictionary<string, List<int>>();
-            foreach (var qqq in WindowMain.CompletedQQQs)
+            foreach (var qqq in todos.CompletedQQQs)
             {
                 if (!groupedQQQs.ContainsKey(qqq.Script))
                 {
@@ -438,8 +438,7 @@ namespace com.immortalhydra.gdtb.todos
             // Sort them (ascending script line number).
             foreach (var qqq in groupedQQQs)
             {
-                var orderedLines = new List<int>();
-                orderedLines = qqq.Value.OrderBy(o => o).ToList();
+                var orderedLines = qqq.Value.OrderBy(o => o).ToList();
                 qqq.Value.Clear();
                 qqq.Value.AddRange(orderedLines);
             }
@@ -455,8 +454,8 @@ namespace com.immortalhydra.gdtb.todos
 //                    }
                     RemoveLinesFromFile(qqq.Key, qqq.Value.ToArray());
                 }
-                WriteQQQsToFile();
-                WindowMain.CompletedQQQs.Clear();
+                WriteQQQsToFile(todos.QQQs);
+                todos.CompletedQQQs.Clear();
                 groupedQQQs.Clear();
             }
             catch (Exception ex)
@@ -613,7 +612,7 @@ namespace com.immortalhydra.gdtb.todos
                 isPinned = false;
             }
 
-            var qqq = new QQQ(priority, task, parts[2], lineNumber, isPinned);
+            var qqq = QQQ.Create(priority, task, parts[2], lineNumber, isPinned);
             return qqq;
         }
 

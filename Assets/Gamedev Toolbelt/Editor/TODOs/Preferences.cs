@@ -7,9 +7,9 @@ namespace com.immortalhydra.gdtb.todos
     {
 #region FIELDS AND PROPERTIES
         // TODO token (QQQ).
-        private const string PREFS_TODOS_TOKEN = "GDTB_TODOs_TODOToken";
+        private const string _PREFS_TODOS_TOKEN = "GDTB_TODOs_TODOToken";
         private static string _todoToken = "QQQ";
-        private const string TODOTokenDefault = "QQQ";
+        private const string _TODO_TOKEN_DEFAULT = "QQQ";
         public static string TODOToken
         {
             get { return _todoToken; }
@@ -18,9 +18,9 @@ namespace com.immortalhydra.gdtb.todos
 
 
         // Confirmation dialogs.
-        private const string PREFS_TODOS_CONFIRMATION_DIALOGS = "GDTB_TODOs_ConfirmationDialogs";
+        private const string _PREFS_TODOS_CONFIRMATION_DIALOGS = "GDTB_TODOs_ConfirmationDialogs";
         private static bool _confirmationDialogs = true;
-        private const bool ConfirmationDialogsDefault = true;
+        private const bool _CONFIRMATION_DIALOGS_DEFAULT = true;
         public static bool ShowConfirmationDialogs
         {
             get { return _confirmationDialogs; }
@@ -30,9 +30,9 @@ namespace com.immortalhydra.gdtb.todos
 
 
         // Welcome window.
-        private const string PREFS_TODOS_WELCOME = "GDTB_TODOs_Welcome";
+        private const string _PREFS_TODOS_WELCOME = "GDTB_TODOs_Welcome";
         private static bool _showWelcome = true;
-        private const bool ShowWelcomeDefault = true;
+        private const bool _SHOW_WELCOME_DEFAULT = true;
         public static bool ShowWelcome
         {
             get { return _showWelcome; }
@@ -41,7 +41,7 @@ namespace com.immortalhydra.gdtb.todos
 
         #region Colors
         // Primary color.
-        private const string PREFS_TODOS_COLOR_PRIMARY = "GDTB_TODOs_Primary";
+        private const string _PREFS_TODOS_COLOR_PRIMARY = "GDTB_TODOs_Primary";
         private static Color _primary = new Color(56,56,56,1);
         private static Color _primaryDark = new Color(56, 56, 56, 1);
         private static Color _primaryLight = new Color(255, 255, 255, 1);
@@ -54,7 +54,7 @@ namespace com.immortalhydra.gdtb.todos
         }
 
         // Secondary color.
-        private const string PREFS_TODOS_COLOR_SECONDARY = "GDTB_TODOs_Secondary";
+        private const string _PREFS_TODOS_COLOR_SECONDARY = "GDTB_TODOs_Secondary";
         private static Color _secondary = new Color(255, 90, 90, 1);
         private static Color _secondaryDark = new Color(255, 90, 90, 1);
         private static Color _secondaryLight = new Color(165, 0, 0, 1);
@@ -67,7 +67,7 @@ namespace com.immortalhydra.gdtb.todos
         }
 
         // Tertiary color.
-        private const string PREFS_TODOS_COLOR_TERTIARY = "GDTB_TODOs_Tertiary";
+        private const string _PREFS_TODOS_COLOR_TERTIARY = "GDTB_TODOs_Tertiary";
         private static Color _tertiary = new Color(255, 248, 248, 1);
         private static Color _tertiaryDark = new Color(255, 248, 248, 1);
         private static Color _tertiaryLight = new Color(56, 56, 56, 1);
@@ -80,7 +80,7 @@ namespace com.immortalhydra.gdtb.todos
         }
 
         // Quaternary color.
-        private const string PREFS_TODOS_COLOR_QUATERNARY = "GDTB_TODOs_Quaternary";
+        private const string _PREFS_TODOS_COLOR_QUATERNARY = "GDTB_TODOs_Quaternary";
         private static Color _quaternary = new Color(70, 70, 70, 1);
         private static Color _quaternaryDark = new Color(70, 70, 70, 1);
         private static Color _quaternaryLight = new Color(242, 242, 242, 1);
@@ -92,7 +92,7 @@ namespace com.immortalhydra.gdtb.todos
         }
 
         // Color of URGENT tasks.
-        private const string PREFS_TODOS_COLOR_PRI1 = "GDTB_TODOs_Urgent";
+        private const string _PREFS_TODOS_COLOR_PRI1 = "GDTB_TODOs_Urgent";
         private static Color _priorityUrgent = new Color(246, 71, 71, 1);
         private static readonly Color PriorityUrgentDefault = new Color(246, 71, 71, 1);
         private static Color _priorityUrgentDark = new Color(246, 71, 71, 1);
@@ -104,7 +104,7 @@ namespace com.immortalhydra.gdtb.todos
         }
 
         // Color of NORMAL tasks
-        private const string PREFS_TODOS_COLOR_PRI2 = "GDTB_TODOs_Normal";
+        private const string _PREFS_TODOS_COLOR_PRI2 = "GDTB_TODOs_Normal";
         private static Color _priorityNormal = new Color(244, 208, 63, 1);
         private static readonly Color PriorityNormalDefault = new Color(244, 208, 63, 1);
         private static Color _priorityNormalDark = new Color(244, 208, 63, 1);
@@ -116,7 +116,7 @@ namespace com.immortalhydra.gdtb.todos
         }
 
         // Color of MINOR tasks
-        private const string PREFS_TODOS_COLOR_PRI3 = "GDTB_TODOs_Minor";
+        private const string _PREFS_TODOS_COLOR_PRI3 = "GDTB_TODOs_Minor";
         private static Color _priorityMinor = new Color(46, 204, 113, 1);
         private static readonly Color PriorityMinorDefault = new Color(46, 204, 113, 1);
         private static Color _priorityMinorDark = new Color(46, 204, 113, 1);
@@ -130,10 +130,10 @@ namespace com.immortalhydra.gdtb.todos
         #endregion
 
         // Custom shortcut
-        private const string PREFS_TODOS_SHORTCUT = "GDTB_TODOs_Shortcut";
+        private const string _PREFS_TODOS_SHORTCUT = "GDTB_TODOs_Shortcut";
         private static string _shortcut = "%|t";
         private static string _newShortcut;
-        private const string ShortcutDefault = "%|t";
+        private const string _SHORTCUT_DEFAULT = "%|t";
         public static string Shortcut
         {
             get { return _shortcut; }
@@ -147,9 +147,9 @@ namespace com.immortalhydra.gdtb.todos
 
 
         // Thick borders
-        private const string PREFS_TODOS_BORDER_THICKNESS = "GDTB_TODOs_BorderThickness";
+        private const string _PREFS_TODOS_BORDER_THICKNESS = "GDTB_TODOs_BorderThickness";
         private static int _borderThickness;
-        private const int BorderThicknessDefault = 1;
+        private const int _BORDER_THICKNESS_DEFAULT = 1;
         public static int BorderThickness
         {
             get { return _borderThickness; }
@@ -211,19 +211,19 @@ namespace com.immortalhydra.gdtb.todos
         /// Set the value of ShowWelcome.
         public static void SetWelcome(bool val)
         {
-            EditorPrefs.SetBool(PREFS_TODOS_WELCOME, val);
+            EditorPrefs.SetBool(_PREFS_TODOS_WELCOME, val);
         }
 
 
         /// If preferences have keys already saved in EditorPrefs, get them. Otherwise, set them.
         public static void GetAllPrefValues()
         {
-            TODOToken = GetPrefValue(PREFS_TODOS_TOKEN, TODOTokenDefault); // TODO token.
-            ShowConfirmationDialogs = GetPrefValue(PREFS_TODOS_CONFIRMATION_DIALOGS, ConfirmationDialogsDefault);
-            ShowWelcome = GetPrefValue(PREFS_TODOS_WELCOME, ShowWelcomeDefault);
-            BorderThickness = GetPrefValue(PREFS_TODOS_BORDER_THICKNESS, BorderThicknessDefault);
+            TODOToken = GetPrefValue(_PREFS_TODOS_TOKEN, _TODO_TOKEN_DEFAULT); // TODO token.
+            ShowConfirmationDialogs = GetPrefValue(_PREFS_TODOS_CONFIRMATION_DIALOGS, _CONFIRMATION_DIALOGS_DEFAULT);
+            ShowWelcome = GetPrefValue(_PREFS_TODOS_WELCOME, _SHOW_WELCOME_DEFAULT);
+            BorderThickness = GetPrefValue(_PREFS_TODOS_BORDER_THICKNESS, _BORDER_THICKNESS_DEFAULT);
             GetColorPrefs();
-            Shortcut = GetPrefValue(PREFS_TODOS_SHORTCUT, ShortcutDefault); // Shortcut.
+            Shortcut = GetPrefValue(_PREFS_TODOS_SHORTCUT, _SHORTCUT_DEFAULT); // Shortcut.
             ParseShortcutValues();
         }
 
@@ -233,9 +233,9 @@ namespace com.immortalhydra.gdtb.todos
         /// Set the value of all preferences.
         private static void SetPrefValues()
         {
-            EditorPrefs.SetString(PREFS_TODOS_TOKEN, TODOToken);
-            EditorPrefs.SetBool(PREFS_TODOS_CONFIRMATION_DIALOGS, ShowConfirmationDialogs);
-            EditorPrefs.SetInt(PREFS_TODOS_BORDER_THICKNESS, BorderThickness);
+            EditorPrefs.SetString(_PREFS_TODOS_TOKEN, TODOToken);
+            EditorPrefs.SetBool(_PREFS_TODOS_CONFIRMATION_DIALOGS, ShowConfirmationDialogs);
+            EditorPrefs.SetInt(_PREFS_TODOS_BORDER_THICKNESS, BorderThickness);
             SetWelcome(ShowWelcome);
             SetColorPrefs();
             SetShortcutPrefs();
@@ -245,14 +245,14 @@ namespace com.immortalhydra.gdtb.todos
         /// Set the value of a Color preference.
         private static void SetColorPrefs()
         {
-            EditorPrefs.SetString(PREFS_TODOS_COLOR_PRIMARY, RGBA.ColorToString(Primary));
-            EditorPrefs.SetString(PREFS_TODOS_COLOR_SECONDARY, RGBA.ColorToString(Secondary));
-            EditorPrefs.SetString(PREFS_TODOS_COLOR_TERTIARY, RGBA.ColorToString(Tertiary));
-            EditorPrefs.SetString(PREFS_TODOS_COLOR_QUATERNARY, RGBA.ColorToString(Quaternary));
+            EditorPrefs.SetString(_PREFS_TODOS_COLOR_PRIMARY, RGBA.ColorToString(Primary));
+            EditorPrefs.SetString(_PREFS_TODOS_COLOR_SECONDARY, RGBA.ColorToString(Secondary));
+            EditorPrefs.SetString(_PREFS_TODOS_COLOR_TERTIARY, RGBA.ColorToString(Tertiary));
+            EditorPrefs.SetString(_PREFS_TODOS_COLOR_QUATERNARY, RGBA.ColorToString(Quaternary));
 
-            EditorPrefs.SetString(PREFS_TODOS_COLOR_PRI1, RGBA.ColorToString(PriorityUrgent));
-            EditorPrefs.SetString(PREFS_TODOS_COLOR_PRI2, RGBA.ColorToString(PriorityNormal));
-            EditorPrefs.SetString(PREFS_TODOS_COLOR_PRI3, RGBA.ColorToString(PriorityMinor));
+            EditorPrefs.SetString(_PREFS_TODOS_COLOR_PRI1, RGBA.ColorToString(PriorityUrgent));
+            EditorPrefs.SetString(_PREFS_TODOS_COLOR_PRI2, RGBA.ColorToString(PriorityNormal));
+            EditorPrefs.SetString(_PREFS_TODOS_COLOR_PRI3, RGBA.ColorToString(PriorityMinor));
         }
 
 
@@ -262,7 +262,7 @@ namespace com.immortalhydra.gdtb.todos
             if (_newShortcut != Shortcut && _newShortcut != null)
             {
                 Shortcut = _newShortcut;
-                EditorPrefs.SetString(PREFS_TODOS_SHORTCUT, Shortcut);
+                EditorPrefs.SetString(_PREFS_TODOS_SHORTCUT, Shortcut);
                 var formattedShortcut = Shortcut.Replace("|", "");
                 IO.OverwriteShortcut(formattedShortcut);
             }
@@ -272,14 +272,14 @@ namespace com.immortalhydra.gdtb.todos
         /// Load color preferences.
         private static void GetColorPrefs()
         {
-            Primary = GetPrefValue(PREFS_TODOS_COLOR_PRIMARY, RGBA.GetNormalizedColor(PrimaryDefault));
-            Secondary = GetPrefValue(PREFS_TODOS_COLOR_SECONDARY, RGBA.GetNormalizedColor(SecondaryDefault));
-            Tertiary = GetPrefValue(PREFS_TODOS_COLOR_TERTIARY, RGBA.GetNormalizedColor(TertiaryDefault));
-            Quaternary = GetPrefValue(PREFS_TODOS_COLOR_QUATERNARY, RGBA.GetNormalizedColor(QuaternaryDefault));
+            Primary = GetPrefValue(_PREFS_TODOS_COLOR_PRIMARY, RGBA.GetNormalizedColor(PrimaryDefault));
+            Secondary = GetPrefValue(_PREFS_TODOS_COLOR_SECONDARY, RGBA.GetNormalizedColor(SecondaryDefault));
+            Tertiary = GetPrefValue(_PREFS_TODOS_COLOR_TERTIARY, RGBA.GetNormalizedColor(TertiaryDefault));
+            Quaternary = GetPrefValue(_PREFS_TODOS_COLOR_QUATERNARY, RGBA.GetNormalizedColor(QuaternaryDefault));
 
-            PriorityUrgent = GetPrefValue(PREFS_TODOS_COLOR_PRI1, RGBA.GetNormalizedColor(PriorityUrgentDefault));
-            PriorityNormal = GetPrefValue(PREFS_TODOS_COLOR_PRI2, RGBA.GetNormalizedColor(PriorityNormalDefault));
-            PriorityMinor = GetPrefValue(PREFS_TODOS_COLOR_PRI3, RGBA.GetNormalizedColor(PriorityMinorDefault));
+            PriorityUrgent = GetPrefValue(_PREFS_TODOS_COLOR_PRI1, RGBA.GetNormalizedColor(PriorityUrgentDefault));
+            PriorityNormal = GetPrefValue(_PREFS_TODOS_COLOR_PRI2, RGBA.GetNormalizedColor(PriorityNormalDefault));
+            PriorityMinor = GetPrefValue(_PREFS_TODOS_COLOR_PRI3, RGBA.GetNormalizedColor(PriorityMinorDefault));
 
             // If all colors are the same, there's been some issue. Revert to initial dark scheme.
             if(Primary == Secondary && Primary == Tertiary && Primary == Quaternary)
@@ -295,10 +295,10 @@ namespace com.immortalhydra.gdtb.todos
         /// Reset all preferences to default.
         private static void ResetPrefsToDefault()
         {
-            TODOToken = TODOTokenDefault;
-            ShowConfirmationDialogs = ConfirmationDialogsDefault;
-            ShowWelcome = ShowWelcomeDefault;
-            BorderThickness = BorderThicknessDefault;
+            TODOToken = _TODO_TOKEN_DEFAULT;
+            ShowConfirmationDialogs = _CONFIRMATION_DIALOGS_DEFAULT;
+            ShowWelcome = _SHOW_WELCOME_DEFAULT;
+            BorderThickness = _BORDER_THICKNESS_DEFAULT;
             Primary = RGBA.GetNormalizedColor(PrimaryDefault);
             Secondary = RGBA.GetNormalizedColor(SecondaryDefault);
             Tertiary = RGBA.GetNormalizedColor(TertiaryDefault);
@@ -306,7 +306,7 @@ namespace com.immortalhydra.gdtb.todos
             PriorityUrgent = RGBA.GetNormalizedColor(PriorityUrgentDefault);
             PriorityNormal = RGBA.GetNormalizedColor(PriorityNormalDefault);
             PriorityMinor = RGBA.GetNormalizedColor(PriorityMinorDefault);
-            Shortcut = ShortcutDefault;
+            Shortcut = _SHORTCUT_DEFAULT;
 
             SetPrefValues();
             GetAllPrefValues();
@@ -575,22 +575,34 @@ namespace com.immortalhydra.gdtb.todos
             if (WindowMain.IsOpen)
             {
                 var window = EditorWindow.GetWindow(typeof(WindowMain)) as WindowMain;
-                window.LoadStyles();
+                if (window != null)
+                {
+                    window.LoadStyles();
+                }
             }
             if (WindowAdd.IsOpen)
             {
                 var window = EditorWindow.GetWindow(typeof(WindowAdd)) as WindowMain;
-                window.LoadStyles();
+                if (window != null)
+                {
+                    window.LoadStyles();
+                }
             }
             if (WindowEdit.IsOpen)
             {
                 var window = EditorWindow.GetWindow(typeof(WindowEdit)) as WindowMain;
-                window.LoadStyles();
+                if (window != null)
+                {
+                    window.LoadStyles();
+                }
             }
             if (WindowWelcome.IsOpen)
             {
                 var window = EditorWindow.GetWindow(typeof(WindowWelcome)) as WindowWelcome;
-                window.LoadStyle();
+                if (window != null)
+                {
+                    window.LoadStyle();
+                }
             }
         }
 

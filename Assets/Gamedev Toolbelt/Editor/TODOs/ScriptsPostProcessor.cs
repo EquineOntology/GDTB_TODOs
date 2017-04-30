@@ -1,6 +1,5 @@
 using UnityEditor;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace com.immortalhydra.gdtb.todos
 {
@@ -17,7 +16,8 @@ namespace com.immortalhydra.gdtb.todos
                 //Debug.Log("deletedassets: " + asset);
                 if (asset.EndsWith(".cs") || asset.EndsWith(".js"))
                 {
-                    QQQOps.RemoveScript(asset);
+                    WindowMain.RemovedScripts.Add(asset);
+
                 }
             }
 
@@ -27,7 +27,8 @@ namespace com.immortalhydra.gdtb.todos
                 //Debug.Log("movedassets: " + movedAssets[i]);
                 if (movedAssets[i].EndsWith(".cs") || movedAssets[i].EndsWith(".js"))
                 {
-                    QQQOps.ChangeScriptOfQQQ(movedFromAssetPaths[i], movedAssets[i]);
+                    WindowMain.MovedFromScripts.Add(movedFromAssetPaths[i]);
+                    WindowMain.MovedToScripts.Add(movedAssets[i]);
                 }
             }
 
@@ -57,7 +58,7 @@ namespace com.immortalhydra.gdtb.todos
                 //Debug.Log("Importedassetscopy: " + asset);
                 if (asset.EndsWith(".cs") || asset.EndsWith(".js"))
                 {
-                    QQQOps.AddQQQs(asset);
+                    WindowMain.ImportedScripts.Add(asset);
 
                     if(!QQQOps.AllScripts.Contains(asset))
                     {
@@ -65,9 +66,6 @@ namespace com.immortalhydra.gdtb.todos
                     }
                 }
             }
-
-            IO.WriteQQQsToFile();
-            WindowMain.WasHiddenByReimport = true;
         }
     }
 }

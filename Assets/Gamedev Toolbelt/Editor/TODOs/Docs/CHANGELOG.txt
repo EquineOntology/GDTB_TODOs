@@ -3,6 +3,7 @@
 * Let user change the border thickness in Settings.
 * Change default shortcut to CTRL/CMD + T (Q was quitting Unity on MacOS).
 * QQQs can now be pinned - a pinned QQQ will jump to the top of the list.
+* TODOs are not reset anymore when reimporting assets! :D
 
 ====== 2017.1 ======
 
