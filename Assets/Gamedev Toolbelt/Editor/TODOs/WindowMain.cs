@@ -19,7 +19,6 @@ namespace com.immortalhydra.gdtb.todos
         public static List<string> MovedToScripts = new List<string>();
         public static List<string> ImportedScripts = new List<string>();
 
-        public static bool WasHiddenByReimport;
         public static bool QQQsChanged;
 
         [SerializeField]
@@ -71,6 +70,8 @@ namespace com.immortalhydra.gdtb.todos
             {
                 TODO = TODO.Create();
             }
+
+            IO.LoadScripts();
         }
 
 
@@ -90,6 +91,7 @@ namespace com.immortalhydra.gdtb.todos
 
         private void OnGUI()
         {
+            Debug.Log(QQQOps.AllScripts.Count);
             UpdateLayoutingSizes();
             GUI.skin = _skin; // Without this, almost everything will work aside from the scrollbar.
 
@@ -479,6 +481,7 @@ namespace com.immortalhydra.gdtb.todos
             {
                 QQQOps.FindAllScripts();
                 TODO.QQQs = QQQOps.GetQQQsFromAllScripts();
+                TODO.QQQs = QQQOps.ReorderQQQs(TODO.QQQs);
             }
 
             // Add new QQQ.

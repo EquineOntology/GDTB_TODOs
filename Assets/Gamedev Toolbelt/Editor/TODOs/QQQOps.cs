@@ -7,7 +7,8 @@ using UnityEngine;
 
 namespace com.immortalhydra.gdtb.todos
 {
-    public static class QQQOps
+    [Serializable]
+    public class QQQOps
     {
 
     #region FIELDS AND PROPERTIES

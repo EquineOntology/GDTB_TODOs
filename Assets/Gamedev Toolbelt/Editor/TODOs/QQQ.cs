@@ -15,6 +15,15 @@ namespace com.immortalhydra.gdtb.todos
 
         #endregion
 
+        #region MONOBEHAVIOUR METHODS
+
+        private void OnEnable()
+        {
+            hideFlags = HideFlags.HideAndDontSave;
+        }
+
+        #endregion
+
         #region CONSTRUCTORS
 
         public static QQQ Create(int aPriority, string aTask, string aScript, int aLineNumber)
