@@ -21,6 +21,8 @@ namespace com.immortalhydra.gdtb.todos
 
         public static bool QQQsChanged;
 
+        public static bool TriggeredByConfirmationWindow;
+
         [SerializeField]
         public TODO TODO;
 
@@ -77,8 +79,11 @@ namespace com.immortalhydra.gdtb.todos
 
         private void OnLostFocus()
         {
-            IO.PersistCompletions(TODO);
-            IO.WriteQQQsToFile(TODO.QQQs);
+            if (!TriggeredByConfirmationWindow)
+            {
+                IO.PersistCompletions(TODO);
+                IO.WriteQQQsToFile(TODO.QQQs);
+            }
         }
 
 
@@ -89,62 +94,24 @@ namespace com.immortalhydra.gdtb.todos
         }
 
 
+        private void OnFocus()
+        {
+            if (TriggeredByConfirmationWindow)
+            {
+                ApplyQQQChanges();
+                TriggeredByConfirmationWindow = false;
+            }
+        }
+
+
         private void OnGUI()
         {
-            Debug.Log(QQQOps.AllScripts.Count);
             UpdateLayoutingSizes();
             GUI.skin = _skin; // Without this, almost everything will work aside from the scrollbar.
 
             DrawWindowBackground();
 
-            // If we have added a QQQ through the "Add window", we add it to the QQQ list.
-            if (AddedQQQs.Count > 0)
-            {
-                foreach (var qqq in AddedQQQs)
-                {
-                    TODO.QQQs.Add(qqq);
-                }
-                AddedQQQs.Clear();
-                QQQsChanged = true;
-            }
-
-            // If any script was moved, we change the reference of any QQQ from it.
-            if (MovedFromScripts.Count > 0 && MovedFromScripts.Count == MovedToScripts.Count)
-            {
-                for (var i = 0; i < MovedFromScripts.Count; i++)
-                {
-                    TODO.QQQs = QQQOps.ChangeScriptOfQQQ(TODO.QQQs, MovedFromScripts[i], MovedToScripts[i]);
-                }
-                MovedFromScripts.Clear();
-                MovedToScripts.Clear();
-                QQQsChanged = true;
-            }
-
-            // If any script was removed, we remove any QQQs referencing it.
-            if (RemovedScripts.Count > 0)
-            {
-                foreach (var script in RemovedScripts)
-                {
-                    TODO.QQQs = QQQOps.RemoveScript(TODO.QQQs, script);
-                }
-                RemovedScripts.Clear();
-                QQQsChanged = true;
-            }
-
-            // If we (re)imported any scripts, we first remove the existing ones, and then reimport them.
-            if (ImportedScripts.Count > 0)
-            {
-                foreach (var script in ImportedScripts)
-                {
-                    for(var i = 0; i < TODO.QQQs.Count; i++)
-                    {
-                        TODO.QQQs.RemoveAll(x => x.Script == script);
-                    }
-                    TODO.QQQs.AddRange(QQQOps.GetQQQsFromScript(script));
-                }
-                ImportedScripts.Clear();
-                QQQsChanged = true;
-            }
+            ApplyQQQChanges();
 
             if (TODO.QQQs.Count == 0)
             {
@@ -443,6 +410,7 @@ namespace com.immortalhydra.gdtb.todos
                 var canExecute = false;
                 if (Preferences.ShowConfirmationDialogs)
                 {
+                    TriggeredByConfirmationWindow = true;
                     var token = Preferences.TODOToken;
                     if (EditorUtility.DisplayDialog("Complete " + token,
                         "Are you sure you're done with this " + token + "?\nIt will be removed from the code too.",
@@ -460,6 +428,7 @@ namespace com.immortalhydra.gdtb.todos
                 if (canExecute)
                 {
                     TODO = QQQOps.CompleteQQQ(TODO, TODO.QQQs[qqqIndex]);
+                    GetWindow<WindowMain>().Focus();
                 }
             }
         }
@@ -634,6 +603,60 @@ namespace com.immortalhydra.gdtb.todos
             if (WindowWelcome.IsOpen)
             {
                 GetWindow(typeof(WindowWelcome)).Close();
+            }
+        }
+
+
+        /// Check if changes to QQQs were made.
+        private void ApplyQQQChanges()
+        {
+            // If we have added a QQQ through the "Add window", we add it to the QQQ list.
+            if (AddedQQQs.Count > 0)
+            {
+                foreach (var qqq in AddedQQQs)
+                {
+                    TODO.QQQs.Add(qqq);
+                }
+                AddedQQQs.Clear();
+                QQQsChanged = true;
+            }
+
+            // If any script was moved, we change the reference of any QQQ from it.
+            if (MovedFromScripts.Count > 0 && MovedFromScripts.Count == MovedToScripts.Count)
+            {
+                for (var i = 0; i < MovedFromScripts.Count; i++)
+                {
+                    TODO.QQQs = QQQOps.ChangeScriptOfQQQ(TODO.QQQs, MovedFromScripts[i], MovedToScripts[i]);
+                }
+                MovedFromScripts.Clear();
+                MovedToScripts.Clear();
+                QQQsChanged = true;
+            }
+
+            // If any script was removed, we remove any QQQs referencing it.
+            if (RemovedScripts.Count > 0)
+            {
+                foreach (var script in RemovedScripts)
+                {
+                    TODO.QQQs = QQQOps.RemoveScript(TODO.QQQs, script);
+                }
+                RemovedScripts.Clear();
+                QQQsChanged = true;
+            }
+
+            // If we (re)imported any scripts, we first remove the existing ones, and then reimport them.
+            if (ImportedScripts.Count > 0)
+            {
+                foreach (var script in ImportedScripts)
+                {
+                    for(var i = 0; i < TODO.QQQs.Count; i++)
+                    {
+                        TODO.QQQs.RemoveAll(x => x.Script == script);
+                    }
+                    TODO.QQQs.AddRange(QQQOps.GetQQQsFromScript(script));
+                }
+                ImportedScripts.Clear();
+                QQQsChanged = true;
             }
         }
 
